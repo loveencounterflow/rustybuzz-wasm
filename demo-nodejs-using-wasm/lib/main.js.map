@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/main.coffee"
+  ],
+  "names": [],
+  "mappings": "AAGA;EAAA;AAAA,MAAA,GAAA,EAAA,KAAA,EAAA,KAAA,EAAA,KAAA,EAAA,IAAA,EAAA,IAAA,EAAA,IAAA,EAAA,GAAA,EAAA,IAAA,EAAA,IAAA,EAAA,OAAA;;;EAIA,GAAA,GAA4B,OAAA,CAAQ,KAAR;;EAC5B,GAAA,GAA4B,GAAG,CAAC;;EAChC,KAAA,GAA4B;;EAC5B,KAAA,GAA4B,GAAG,CAAC,UAAJ,CAAe,OAAf,EAA4B,KAA5B;;EAC5B,KAAA,GAA4B,GAAG,CAAC,UAAJ,CAAe,OAAf,EAA4B,KAA5B;;EAC5B,OAAA,GAA4B,GAAG,CAAC,UAAJ,CAAe,SAAf,EAA4B,KAA5B;;EAC5B,IAAA,GAA4B,GAAG,CAAC,UAAJ,CAAe,MAAf,EAA4B,KAA5B;;EAC5B,IAAA,GAA4B,GAAG,CAAC,UAAJ,CAAe,MAAf,EAA4B,KAA5B;;EAC5B,IAAA,GAA4B,GAAG,CAAC,UAAJ,CAAe,MAAf,EAA4B,KAA5B;;EAC5B,IAAA,GAA4B,GAAG,CAAC,UAAJ,CAAe,MAAf,EAA4B,KAA5B;;EAC5B,IAAA,GAA4B,GAAG,CAAC,IAAI,CAAC,IAAT,CAAc,GAAd,EAd5B;;;EAkBA,IAAG,MAAA,KAAU,OAAO,CAAC,IAArB;IAAkC,CAAA,KAAA,CAAA,CAAA,GAAA;AAClC,UAAA,KAAA,EAAA,CAAA,EAAA,GAAA,EAAA,IAAA,EAAA;MAAE,KAAA,GAAQ,CACN,yBADM,EAEN,4BAFM,EAGN,8BAHM,EAIN,wBAJM,EAKN,+BALM;MAOR,KAAA,uCAAA;;QACE,OAAA,CAAQ,IAAR;AACA;UAAI,KAAA,CAAM,CAAA,MAAM,OAAA,CAAQ,IAAR,CAAN,CAAN,EAAJ;SAA6B,cAAA;UAAM;UAAW,IAAA,CAAK,KAAK,CAAC,OAAX,EAAjB;;MAF/B;AAGA,aAAO;IAXyB,CAAA,IAAlC;;AAlBA",
+  "sourcesContent": [
+    "\n\n\n'use strict'\n\n\n############################################################################################################\nCND                       = require 'cnd'\nrpr                       = CND.rpr\nbadge                     = 'DEMO-HARFBUZZJS'\ndebug                     = CND.get_logger 'debug',     badge\nalert                     = CND.get_logger 'alert',     badge\nwhisper                   = CND.get_logger 'whisper',   badge\nwarn                      = CND.get_logger 'warn',      badge\nhelp                      = CND.get_logger 'help',      badge\nurge                      = CND.get_logger 'urge',      badge\ninfo                      = CND.get_logger 'info',      badge\necho                      = CND.echo.bind CND\n\n\n############################################################################################################\nif module is require.main then do =>\n  paths = [\n    '../../pkg/hello_wasm.js'\n    '../../pkg/hello_wasm_bg.js'\n    '../../pkg/hello_wasm_bg.wasm'\n    '../../pkg/package.json'\n    '@loveencounterflow/hello-wasm'\n    ]\n  for path in paths\n    whisper path\n    try debug await require path catch error then warn error.message\n  return null\n\n\n\n\n\n\n\n"
+  ]
+}

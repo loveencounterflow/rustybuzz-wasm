@@ -1,9 +1,16 @@
+dependencies:
+  '@loveencounterflow/hello-wasm': 0.1.2
+  cnd: 9.2.1
 devDependencies:
   webpack: 4.46.0_webpack-cli@3.3.12
   webpack-cli: 3.3.12_webpack@4.46.0
   webpack-dev-server: 3.11.2_46edf965869dcc7c8d09e022f331d1ea
 lockfileVersion: 5.2
 packages:
+  /@loveencounterflow/hello-wasm/0.1.2:
+    dev: false
+    resolution:
+      integrity: sha512-tyQGxZRMMbWLnL+fmaVrn3esprGvLkejafN+Go+F+KZ9qP5oa1CTZG2IM657FnDt2s+nxSjDiLPkQ/O5fvO4Pw==
   /@types/glob/7.1.3:
     dependencies:
       '@types/minimatch': 3.0.3
@@ -689,6 +696,11 @@ packages:
     dev: true
     resolution:
       integrity: sha512-PYeGSEmmHM6zvoef2w8TPzlrnNpXIjTipYK780YswmIP9vjxmd6Y2a3CB2Ks6/AU8NHjZugXvo8w3oWM2qnwXA==
+  /cnd/9.2.1:
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-JszZtSlOCxkIvNPKpw1PmIcQUjYO+pBqVoKVH2STHLtG4JHHJ1NHowv39lhyxzlPxUTZk7pZ3qO7CfrfJ8ZSKw==
   /collection-visit/1.0.0:
     dependencies:
       map-visit: 1.0.0
@@ -3889,6 +3901,8 @@ packages:
     resolution:
       integrity: sha512-AX3Zw5iPruN5ie6xGRIDgqkT+ZhnRlZMLMHAs8tg7nRruy2Nb+i5o9bwghAogtM08q1dpr2LVoS8KSTMYpWXUw==
 specifiers:
+  '@loveencounterflow/hello-wasm': ^0.1.2
+  cnd: ^9.2.1
   webpack: ^4.25.1
   webpack-cli: ^3.1.2
   webpack-dev-server: ^3.1.10
