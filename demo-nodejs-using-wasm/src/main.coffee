@@ -16,20 +16,32 @@ help                      = CND.get_logger 'help',      badge
 urge                      = CND.get_logger 'urge',      badge
 info                      = CND.get_logger 'info',      badge
 echo                      = CND.echo.bind CND
+FS                        = ( require 'fs' ).promises
+PATH                      = require 'path'
+# { promisify }
+
+#-----------------------------------------------------------------------------------------------------------
+@load_wasm = ( path ) ->
+  env =
+    memoryBase: 0,
+    tableBase: 0,
+    memory: new WebAssembly.Memory { initial: 256, }
+    table:  new WebAssembly.Table { initial: 0, element: 'anyfunc', }
+  data        = await FS.readFile path
+  typedArray  = new Uint8Array data
+  result      = await WebAssembly.instantiate typedArray #, env.memory
+  # result      = await WebAssembly.instantiate typedArray, { env, }
+  # result  = await WebAssembly.instantiateStreaming data
+  result.instance.exports.memory.grow 400 # each page is 64kb in size
+  return result.instance
 
 
 ############################################################################################################
 if module is require.main then do =>
-  paths = [
-    '../../pkg/hello_wasm.js'
-    '../../pkg/hello_wasm_bg.js'
-    '../../pkg/hello_wasm_bg.wasm'
-    '../../pkg/package.json'
-    '@loveencounterflow/hello-wasm'
-    ]
-  for path in paths
-    whisper path
-    try debug await require path catch error then warn error.message
+  globalThis.alert = alert
+  ### NOTE only works with `wasm-pack build --target nodejs` ###
+  HELO = require '../../pkg'
+  HELO.greet 'everyone'
   return null
 
 
