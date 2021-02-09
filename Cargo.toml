@@ -14,3 +14,7 @@ crate-type = ["cdylib"]
 wasm-bindgen = "0.2"
 rustybuzz = "0.3"
 ttf-parser = "0.11"
+
+# [dev-dependencies]
+pico-args = "0.3"
+libc = "0.2"
