@@ -8,6 +8,7 @@
 
 - [Steps to Follow](#steps-to-follow)
 - [Installation](#installation)
+- [Publish Compiled WASM Code](#publish-compiled-wasm-code)
 - [Command Lines](#command-lines)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -42,6 +43,11 @@ libc = "0.2"
 cargo install wasm-pack
 ```
 
+## Publish Compiled WASM Code
+
+```sh
+pnpm version patch && pnpm publish --access public && git push
+```
 
 ## Command Lines
 
