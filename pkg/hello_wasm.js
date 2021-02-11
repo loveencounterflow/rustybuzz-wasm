@@ -86,6 +86,14 @@ module.exports.__wbg_alert_a5a2f68cc09adc6e = function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
 };
 
+module.exports.__wbg_info_f3070520764e1649 = function(arg0, arg1) {
+    info(getStringFromWasm0(arg0, arg1));
+};
+
+module.exports.__wbg_help_54f2a7bc35ffcfe5 = function(arg0, arg1) {
+    help(getStringFromWasm0(arg0, arg1));
+};
+
 const path = require('path').join(__dirname, 'hello_wasm_bg.wasm');
 const bytes = require('fs').readFileSync(path);
 
