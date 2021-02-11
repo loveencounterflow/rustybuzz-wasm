@@ -54,9 +54,9 @@ pub struct Cfg {
     pub text_file:        Option<PathBuf>,
     pub unicodes:         Option<String>,
     pub variations:       Vec<rustybuzz::Variation>,
-    // pub features:         Vec<rustybuzz::Feature>,
-    // pub language:         rustybuzz::Language,
-    // pub script:           rustybuzz::Script,
+    pub features:         Vec<rustybuzz::Feature>,
+    pub script:           Option<rustybuzz::Script>,
+    pub language:         rustybuzz::Language,
     //......................................................................................................
     // not implemented:
     // pub help:             bool,
@@ -75,6 +75,7 @@ pub struct Cfg {
 //     Ok(features)
 // }
 
+// //----------------------------------------------------------------------------------------------------------
 // fn system_language() -> rustybuzz::Language {
 //     unsafe {
 //         libc::setlocale(libc::LC_ALL, b"\0" as *const _ as *const i8);
@@ -110,9 +111,11 @@ pub fn greet( user_cfg: &JsValue ) {
     font_ptem:      cfg_opt.font_ptem,
     // font_ptem:      match cfg_opt.font_ptem { None => 42.0, Some( x ) => x, },
     //......................................................................................................
-    // features:       parse_features( "liga" )?.unwrap_or_default(),
-    // language:       rustybuzz::Language::from( "English" ),
+    language:       rustybuzz::Language::from_str("English").unwrap(),
     //......................................................................................................
+    // script:         Some( rustybuzz::Script::new() ),
+    script:         None,
+    features:       vec![],
     variations:     vec![],
     unicodes:       Some( String::new() ),
     text_file:      Some( PathBuf::new() ),
