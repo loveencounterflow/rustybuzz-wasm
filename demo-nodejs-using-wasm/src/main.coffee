@@ -23,7 +23,10 @@ PATH                      = require 'path'
 
 ############################################################################################################
 if module is require.main then do =>
-  globalThis.alert = alert
+  globalThis.alert  = alert
+  globalThis.help   = help
+  globalThis.urge   = urge
+  globalThis.info   = info
   ### NOTE only works with `wasm-pack build --target nodejs` ###
   HELO = require '../../pkg'
   HELO.greet 'everyone'
