@@ -180,10 +180,6 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_info_f3070520764e1649 = function(arg0, arg1) {
-    info(getStringFromWasm0(arg0, arg1));
-};
-
 module.exports.__wbg_help_54f2a7bc35ffcfe5 = function(arg0, arg1) {
     help(getStringFromWasm0(arg0, arg1));
 };
