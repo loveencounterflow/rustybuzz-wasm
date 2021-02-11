@@ -15,6 +15,10 @@ extern {
     pub fn help(  s: &str );
     pub fn urge(  s: &str ); }
 
+//----------------------------------------------------------------------------------------------------------
+use std::path::PathBuf;
+// use std::str::FromStr;
+
 //==========================================================================================================
 // CONFIGURATION
 //----------------------------------------------------------------------------------------------------------
@@ -22,19 +26,38 @@ extern {
 // acc to https://doc.rust-lang.org/std/fmt/trait.Debug.html
 #[derive(Debug)]
 pub struct CfgOpt {
-    pub help:    Option<bool>,
-    pub text:    Option<String>,
-    pub perhaps: Option<u32>,
-    // pub perhaps: u32,
+    pub text:             Option<String>,
 }
 
 // #[derive(Serialize, Deserialize)]
 #[derive(Debug)]
 pub struct Cfg {
-    pub help: bool,
-    pub text: String,
-    pub perhaps: u32,
-    // pub perhaps: u32,
+    pub text:             String,
+    pub cluster_level:    rustybuzz::BufferClusterLevel,
+    // pub direction:        rustybuzz::Direction,
+    pub face_index:       u32,
+    // pub features:         Vec<rustybuzz::Feature>,
+    // pub font_file:        PathBuf,
+    // pub font_ptem:        f32,
+    // pub free:             Vec<String>,
+    // pub language:         rustybuzz::Language,
+    // pub ned:              bool,
+    // pub no_advances:      bool,
+    // pub no_clusters:      bool,
+    // pub no_glyph_names:   bool,
+    // pub no_positions:     bool,
+    // pub script:           rustybuzz::Script,
+    // pub show_extents:     bool,
+    // pub show_flags:       bool,
+    // pub text:             String,
+    // pub text_file:        PathBuf,
+    // pub unicodes:         String,
+    // pub utf8_clusters:    bool,
+    // pub variations:       Vec<rustybuzz::Variation>,
+    //......................................................................................................
+    // not implemented:
+    // pub help:             bool,
+    // pub version:          bool,
 }
 
 
@@ -44,12 +67,16 @@ pub struct Cfg {
 #[wasm_bindgen]
 pub fn greet( user_cfg: &JsValue ) {
   // help( &format!( "^4575^ {:#?}", &user_cfg ) );
-  //......................................................................................................
+  //........................................................................................................
   let cfg_opt: CfgOpt = user_cfg.into_serde().unwrap();
   let cfg = Cfg {
-    help:    match cfg_opt.help    { None => false,                       Some( x ) => x, },
-    text:    match cfg_opt.text    { None => String::from( "some text" ), Some( x ) => x, },
-    perhaps: match cfg_opt.perhaps { None => 42,                          Some( x ) => x, }, };
+    text:         match cfg_opt.text    { None => String::from( "some text" ), Some( x ) => x, },
+    cluster_level: rustybuzz::BufferClusterLevel::MonotoneGraphemes,
+    // cluster_level: rustybuzz::BufferClusterLevel::MonotoneCharacters,
+    // cluster_level: rustybuzz::BufferClusterLevel::Characters,
+    //......................................................................................................
+    face_index:   0,
+  };
   urge( &format!( "^4575^ {:#?}", cfg ) );
 }
 
