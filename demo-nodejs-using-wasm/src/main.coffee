@@ -29,7 +29,10 @@ if module is require.main then do =>
   globalThis.info   = info
   ### NOTE only works with `wasm-pack build --target nodejs` ###
   HELO = require '../../pkg'
-  HELO.greet 'everyone'
+  cfg =
+    help: true
+    text: "text for typesetting"
+  HELO.greet cfg
   return null
 
 
