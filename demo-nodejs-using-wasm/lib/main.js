@@ -43,8 +43,12 @@
       HELO = require('../../pkg');
       cfg = {
         help: true,
-        text: "text for typesetting"
+        extra: 42/* NOTE extraneous values will be silently ignored */,
+        text: "text for typesetting",
+        perhaps: 123
       };
+      HELO.greet(cfg);
+      delete cfg.perhaps;
       HELO.greet(cfg);
       return null;
     })();
