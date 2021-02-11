@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {string} name
+* @param {any} user_cfg
 */
-export function greet(name: string): void;
+export function greet(user_cfg: any): void;

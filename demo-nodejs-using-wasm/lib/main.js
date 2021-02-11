@@ -35,13 +35,17 @@
   if (module === require.main) {
     (() => {
       /* NOTE only works with `wasm-pack build --target nodejs` */
-      var HELO;
+      var HELO, cfg;
       globalThis.alert = alert;
       globalThis.help = help;
       globalThis.urge = urge;
       globalThis.info = info;
       HELO = require('../../pkg');
-      HELO.greet('everyone');
+      cfg = {
+        help: true,
+        text: "text for typesetting"
+      };
+      HELO.greet(cfg);
       return null;
     })();
   }
