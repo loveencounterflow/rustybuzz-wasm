@@ -35,17 +35,17 @@
   if (module === require.main) {
     (() => {
       /* NOTE only works with `wasm-pack build --target nodejs` */
-      var HELO, cfg;
+      var HELO, cfg, font_path;
       globalThis.alert = alert;
       globalThis.help = help;
       globalThis.urge = urge;
       globalThis.info = info;
       HELO = require('../../pkg');
+      font_path = 'EBGaramond08-Italic.otf';
+      font_path = PATH.resolve(PATH.join(__dirname, '../fonts', font_path));
       cfg = {
-        help: true,
-        extra: 42/* NOTE extraneous values will be silently ignored */,
         text: "text for typesetting",
-        perhaps: 123
+        font_file: font_path
       };
       HELO.greet(cfg);
       delete cfg.help;
