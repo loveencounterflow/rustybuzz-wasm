@@ -24,6 +24,8 @@ pub struct Cfg {
     pub help: bool,
     // pub text: Option<String>,
     pub text: String,
+    pub perhaps: Option<u32>,
+    // pub perhaps: u32,
 }
 
 impl Cfg {
@@ -44,15 +46,18 @@ impl Cfg {
 pub fn greet( user_cfg: &JsValue ) {
     // // alert( &format!("{}", alert ) );
     // alert( &format!("Hello, {}!", name ) );
+    //......................................................................................................
     let cfg = Cfg {
         help: true,
         text: String::from( "some text" ),
+        // extra: 108,
+        perhaps: Some( 111 ),
     };
-    let elements: Cfg = user_cfg.into_serde().unwrap();
-
-    // cfg.show_details();
     info( &format!( "^34553^ help: {:#?}", cfg ) );
+    //......................................................................................................
     help( &format!( "^4575^ {:#?}", &user_cfg ) );
+    //......................................................................................................
+    let elements: Cfg = user_cfg.into_serde().unwrap();
     help( &format!( "^4575^ {:#?}", elements.text ) );
     urge( &format!( "^4575^ {:#?}", elements ) );
     // help( &format!( "^4575^ {:#?}", &user_cfg ) );

@@ -30,8 +30,12 @@ if module is require.main then do =>
   ### NOTE only works with `wasm-pack build --target nodejs` ###
   HELO = require '../../pkg'
   cfg =
-    help: true
-    text: "text for typesetting"
+    help:     true
+    extra:    42 ### NOTE extraneous values will be silently ignored ###
+    text:     "text for typesetting"
+    perhaps:  123
+  HELO.greet cfg
+  delete cfg.perhaps
   HELO.greet cfg
   return null
 
