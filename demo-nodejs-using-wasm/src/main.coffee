@@ -35,6 +35,8 @@ if module is require.main then do =>
     text:     "text for typesetting"
     perhaps:  123
   HELO.greet cfg
+  delete cfg.help
+  delete cfg.text
   delete cfg.perhaps
   HELO.greet cfg
   return null
