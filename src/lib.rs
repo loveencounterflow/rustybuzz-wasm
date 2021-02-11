@@ -16,6 +16,8 @@ extern {
     pub fn urge(  s: &str ); }
 
 //----------------------------------------------------------------------------------------------------------
+use std::str::FromStr;
+use rustybuzz;
 use std::path::PathBuf;
 // use std::str::FromStr;
 
@@ -27,6 +29,8 @@ use std::path::PathBuf;
 #[derive(Debug)]
 pub struct CfgOpt {
     pub text:             Option<String>,
+    pub font_file:        Option<PathBuf>,
+    pub font_ptem:        Option<f32>,
 }
 
 // #[derive(Serialize, Deserialize)]
@@ -34,31 +38,61 @@ pub struct CfgOpt {
 pub struct Cfg {
     pub text:             String,
     pub cluster_level:    rustybuzz::BufferClusterLevel,
-    // pub direction:        rustybuzz::Direction,
+    pub direction:        rustybuzz::Direction,
     pub face_index:       u32,
     // pub features:         Vec<rustybuzz::Feature>,
-    // pub font_file:        PathBuf,
-    // pub font_ptem:        f32,
-    // pub free:             Vec<String>,
+    pub font_file:        PathBuf,
+    pub font_ptem:        f32,
+    pub free:             Vec<String>,
     // pub language:         rustybuzz::Language,
-    // pub ned:              bool,
-    // pub no_advances:      bool,
-    // pub no_clusters:      bool,
-    // pub no_glyph_names:   bool,
-    // pub no_positions:     bool,
+    pub ned:              bool,
+    pub no_advances:      bool,
+    pub no_clusters:      bool,
+    pub no_glyph_names:   bool,
+    pub no_positions:     bool,
     // pub script:           rustybuzz::Script,
-    // pub show_extents:     bool,
-    // pub show_flags:       bool,
-    // pub text:             String,
-    // pub text_file:        PathBuf,
-    // pub unicodes:         String,
-    // pub utf8_clusters:    bool,
-    // pub variations:       Vec<rustybuzz::Variation>,
+    pub show_extents:     bool,
+    pub show_flags:       bool,
+    pub utf8_clusters:    bool,
+    pub text_file:        Option<PathBuf>,
+    pub unicodes:         Option<String>,
+    pub variations:       Vec<rustybuzz::Variation>,
     //......................................................................................................
     // not implemented:
     // pub help:             bool,
     // pub version:          bool,
 }
+
+
+//==========================================================================================================
+//
+//----------------------------------------------------------------------------------------------------------
+// fn parse_features(s: &str) -> Result<Vec<rustybuzz::Feature>, String> {
+//     let mut features = Vec::new();
+//     for f in s.split(',') {
+//         features.push(rustybuzz::Feature::from_str(&f)?);
+//     }
+//     Ok(features)
+// }
+
+// fn system_language() -> rustybuzz::Language {
+//     unsafe {
+//         libc::setlocale(libc::LC_ALL, b"\0" as *const _ as *const i8);
+//         let s = libc::setlocale(libc::LC_CTYPE, std::ptr::null());
+//         let s = std::ffi::CStr::from_ptr(s);
+//         let s = s.to_str().expect("locale must be ASCII");
+//         rustybuzz::Language::from_str(s).unwrap()
+//     }
+// }
+
+// //----------------------------------------------------------------------------------------------------------
+// fn parse_variations(s: &str) -> Result<Vec<rustybuzz::Variation>, String> {
+//     let mut variations = Vec::new();
+//     for v in s.split(',') {
+//         variations.push(rustybuzz::Variation::from_str(&v)?);
+//     }
+//     Ok(variations)
+// }
 
 
 //==========================================================================================================
@@ -70,11 +104,29 @@ pub fn greet( user_cfg: &JsValue ) {
   //........................................................................................................
   let cfg_opt: CfgOpt = user_cfg.into_serde().unwrap();
   let cfg = Cfg {
-    text:         match cfg_opt.text    { None => String::from( "some text" ), Some( x ) => x, },
-    cluster_level: rustybuzz::BufferClusterLevel::MonotoneGraphemes,
+    text:           match cfg_opt.text      { None => String::from( "some text" ), Some( x ) => x, },
+    font_file:      match cfg_opt.font_file { None => PathBuf::from( "/tmp/foo.ttf" ), Some( x ) => x, },
+    font_ptem:      match cfg_opt.font_ptem { None => 42.0, Some( x ) => x, },
+    //......................................................................................................
+    // features:       parse_features( "liga" )?.unwrap_or_default(),
+    // language:       rustybuzz::Language::from( "English" ),
+    //......................................................................................................
+    variations:     vec![],
+    unicodes:       Some( String::new() ),
+    text_file:      Some( PathBuf::new() ),
+    show_extents:   false,
+    show_flags:     false,
+    utf8_clusters:  false,
+    no_advances:    false,
+    no_clusters:    false,
+    no_glyph_names: false,
+    no_positions:   false,
+    ned:            false, // No Extra Data; Do not output clusters or advances
+    free:           vec![],
+    direction:      rustybuzz::Direction::LeftToRight,
+    cluster_level:  rustybuzz::BufferClusterLevel::MonotoneGraphemes,
     // cluster_level: rustybuzz::BufferClusterLevel::MonotoneCharacters,
     // cluster_level: rustybuzz::BufferClusterLevel::Characters,
-    //......................................................................................................
     face_index:   0,
   };
   urge( &format!( "^4575^ {:#?}", cfg ) );
