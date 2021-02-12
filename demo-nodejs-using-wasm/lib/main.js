@@ -53,6 +53,7 @@
       // font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
       font_bytes = FS.readFileSync(font_path);
       font_bytes_hex = font_bytes.toString('hex');
+      // font_bytes_hex      = 'abcdefgh'
       text = "text for typesetting";
       cfg = {font_bytes_hex, text};
       // delete cfg.font_path

@@ -136,16 +136,8 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_info_f3070520764e1649 = logError(function(arg0, arg1) {
-    info(getStringFromWasm0(arg0, arg1));
-});
-
 module.exports.__wbg_alert_a5a2f68cc09adc6e = logError(function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
-});
-
-module.exports.__wbg_urge_ae2692d82ada4bf1 = logError(function(arg0, arg1) {
-    urge(getStringFromWasm0(arg0, arg1));
 });
 
 module.exports.__wbindgen_throw = function(arg0, arg1) {
