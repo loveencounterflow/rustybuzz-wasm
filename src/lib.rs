@@ -149,8 +149,8 @@ pub fn shape_text( user_cfg: &JsValue ) {
   if cfg.no_advances || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES;    }
   if cfg.show_extents           { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS;  }
   if cfg.show_flags             { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;    }
-  alert( "^3334-15^" );
-  info( &format!( "{}", glyph_buffer.serialize(&face,  format_flags ) ) );
+  let r = glyph_buffer.serialize( &face,  format_flags );
+  info( &format!( "{}", r ) );
   return;
 }
 
