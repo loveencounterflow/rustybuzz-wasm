@@ -35,7 +35,7 @@
   if (module === require.main) {
     (() => {
       /* NOTE only works with `wasm-pack build --target nodejs` */
-      var HELO, cfg, font_bytes, font_bytes_hex, font_path, text;
+      var HELO, font_path, xxx;
       globalThis.alert = alert;
       globalThis.help = help;
       globalThis.urge = urge;
@@ -51,14 +51,19 @@
       font_path = 'EBGaramond08-Italic.otf';
       font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
       // font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
-      font_bytes = FS.readFileSync(font_path);
-      font_bytes_hex = font_bytes.toString('hex');
-      // font_bytes_hex      = 'abcdefgh'
-      text = "text for typesetting";
-      cfg = {font_bytes_hex, text};
-      // delete cfg.font_path
-      // delete cfg.font_bytes
-      info('^223^', HELO.shape_text(cfg));
+      xxx = function() {
+        var cfg, font_bytes, font_bytes_hex, text;
+        font_bytes = FS.readFileSync(font_path);
+        font_bytes_hex = font_bytes.toString('hex');
+        // font_bytes_hex      = 'abcdefgh'
+        text = "text for typesetting";
+        cfg = {font_bytes_hex, text};
+        // delete cfg.font_path
+        // delete cfg.font_bytes
+        return info('^223^', HELO.shape_text(cfg));
+      };
+      xxx();
+      info('^223^', HELO.f("abc"));
       return null;
     })();
   }

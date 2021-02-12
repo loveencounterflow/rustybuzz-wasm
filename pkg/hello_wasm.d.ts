@@ -1,6 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {any} user_cfg
+* @param {string} name
+* @returns {string}
 */
-export function shape_text(user_cfg: any): void;
+export function f(name: string): string;
+/**
+* @param {any} user_cfg
+* @returns {string}
+*/
+export function shape_text(user_cfg: any): string;

@@ -108,6 +108,24 @@ function logError(f) {
         }
     };
 }
+/**
+* @param {string} name
+* @returns {string}
+*/
+module.exports.f = function(name) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        var ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.f(retptr, ptr0, len0);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        wasm.__wbindgen_free(r0, r1);
+    }
+};
 
 let stack_pointer = 32;
 
@@ -118,12 +136,19 @@ function addBorrowedObject(obj) {
 }
 /**
 * @param {any} user_cfg
+* @returns {string}
 */
 module.exports.shape_text = function(user_cfg) {
     try {
-        wasm.shape_text(addBorrowedObject(user_cfg));
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.shape_text(retptr, addBorrowedObject(user_cfg));
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        return getStringFromWasm0(r0, r1);
     } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
         heap[stack_pointer++] = undefined;
+        wasm.__wbindgen_free(r0, r1);
     }
 };
 
@@ -135,10 +160,6 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 1] = len0;
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
-
-module.exports.__wbg_info_f3070520764e1649 = logError(function(arg0, arg1) {
-    info(getStringFromWasm0(arg0, arg1));
-});
 
 module.exports.__wbg_alert_a5a2f68cc09adc6e = logError(function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
