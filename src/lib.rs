@@ -1,6 +1,7 @@
 
 extern crate serde_json;
 extern crate wasm_bindgen;
+extern crate hex;
 use wasm_bindgen::prelude::*;
 // mod cfg;
 // mod shape;
@@ -26,10 +27,15 @@ extern crate serde_derive;
 
 #[wasm_bindgen]
 extern {
-    pub fn info(  s: &str );
-    pub fn alert( s: &str );
-    pub fn help(  s: &str );
-    pub fn urge(  s: &str ); }
+  pub fn info(  s: &str );
+  pub fn alert( s: &str );
+  pub fn help(  s: &str );
+  pub fn urge(  s: &str ); }
+
+// #[wasm_bindgen(catch)]
+// extern {
+//   // pub fn read_file( path: &str ) -> Result<bool, JsValue>; }
+//   pub fn read_file( path: &str ) -> Result<JsValue>; }
 
 //----------------------------------------------------------------------------------------------------------
 use std::str::FromStr;
@@ -45,19 +51,18 @@ use std::path::PathBuf;
 #[derive(Debug)]
 pub struct CfgOpt {
     pub text:             Option<String>,
-    pub font_path:        Option<PathBuf>,
-    pub font_ptem:        Option<f32>,
-}
+    // pub font_path:        Option<PathBuf>,
+    pub font_bytes_hex:   Option<String>,
+    pub font_ptem:        Option<f32>, }
 
-// #[derive(Serialize, Deserialize)]
 #[derive(Debug)]
 pub struct Cfg {
     pub text:             Option<String>,
     pub cluster_level:    rustybuzz::BufferClusterLevel,
     pub direction:        rustybuzz::Direction,
     pub face_index:       u32,
-    pub font_path:        PathBuf,
-    // pub font_path:        Option<PathBuf>,
+    // pub font_path:        PathBuf,
+    pub font_bytes:       Vec<u8>,
     pub font_ptem:        Option<f32>,
     pub free:             Vec<String>,
     pub ned:              bool,
@@ -73,8 +78,7 @@ pub struct Cfg {
     pub variations:       Vec<rustybuzz::Variation>,
     pub features:         Vec<rustybuzz::Feature>,
     pub script:           Option<rustybuzz::Script>,
-    pub language:         rustybuzz::Language,
-}
+    pub language:         rustybuzz::Language, }
 
 
 //==========================================================================================================
@@ -84,10 +88,24 @@ pub struct Cfg {
 pub fn shape_text( user_cfg: &JsValue ) {
   // help( &format!( "^4575^ {:#?}", &user_cfg ) );
   //........................................................................................................
+  alert( "^3334-1^" );
   let cfg_opt: CfgOpt = user_cfg.into_serde().unwrap();
+  urge( &format!( "^4575^ {:#?}", cfg_opt ) );
+  alert( "^3334-2^" );
+  //........................................................................................................
+  let font_bytes = match cfg_opt.font_bytes_hex {
+    None => { info( "^7764-1" ); vec![] },
+    Some( x ) => match hex::decode( x ) {
+      Ok( v ) => { info( "^7764-2" ); v },
+      Err( error ) => {
+        alert( &format!( "error decoding hexadecimal: {}", error ) );
+        vec![] }, },
+    };
+  //........................................................................................................
   let cfg = Cfg {
     text:           cfg_opt.text,
-    font_path:      match cfg_opt.font_path { None => PathBuf::from( "somepath" ), Some( x ) => x, },
+    font_bytes:     font_bytes,
+    // font_path:      match cfg_opt.font_path { None => PathBuf::from( "somepath" ), Some( x ) => x, },
     // font_path:      cfg_opt.font_path,
     font_ptem:      cfg_opt.font_ptem,
     //......................................................................................................
@@ -114,25 +132,18 @@ pub fn shape_text( user_cfg: &JsValue ) {
     // cluster_level: rustybuzz::BufferClusterLevel::Characters,
     face_index:   0,
   };
+  alert( "^3334-3^" );
   urge( &format!( "^4575^ {:#?}", cfg ) );
+  alert( "^3334-4^" );
+  urge( &format!( "^43447^ {:#?}", cfg.font_bytes )  );
+  return;
 
-  // let mut font_set_as_free_arg = false;
-  // let font_path = if let Some(path) = cfg.font_path {
-  //   path.clone()
-  // } else if !cfg.free.is_empty() {
-  //   font_set_as_free_arg = true;
-  //   PathBuf::from(&cfg.free[0])
-  // } else {
-  //   eprintln!("Error: font is not set.");
-  //   std::process::exit(1);
-  // };
-
-  alert( "^3334-1^" );
-  urge( &format!( "^43447^ {:#?}", cfg.font_path )  );
-  urge( &format!( "^43447^ {:#?}", cfg.font_path.exists() )  );
+  // let xxx = cfg.font_path.to_string_lossy();
+  // let mut xxx_r: bool;
+  // urge( &format!( "^43447^ {:#?}", cfg.font_path )  );
+  // urge( &format!( "^43447^ {:#?}", read_file( &xxx.into_owned() ) )  );
   // urge( &format!( "^43447^ {:#?}", font_path )  );
   // urge( &format!( "^43447^ {:#?}", font_path.exists() )  );
-  return;
   // if !font_path.exists() {
   //   alert( &format!( "Error: '{}' does not exist.", font_path.display() ) );
   //   std::process::exit(1);
@@ -140,14 +151,14 @@ pub fn shape_text( user_cfg: &JsValue ) {
 
 
   /*
-  alert( "^3334-2^" );
+  alert( "^3334-5^" );
 
   let font_data = std::fs::read(font_path).unwrap();
-  alert( "^3334-3^" );
+  alert( "^3334-6^" );
   let mut face = rustybuzz::Face::from_slice(&font_data, cfg.face_index).unwrap();
-  alert( "^3334-4^" );
+  alert( "^3334-7^" );
 
-  alert( "^3334-5^" );
+  alert( "^3334-8^" );
   face.set_points_per_em(cfg.font_ptem);
 
   if !cfg.variations.is_empty() {
@@ -177,7 +188,7 @@ pub fn shape_text( user_cfg: &JsValue ) {
     // buffer.set_direction(d);
   // }
 
-  alert( "^3334-6^" );
+  alert( "^3334-9^" );
   buffer.set_language(cfg.language);
 
   if let Some(script) = cfg.script {
@@ -197,7 +208,7 @@ pub fn shape_text( user_cfg: &JsValue ) {
     format_flags |= rustybuzz::SerializeFlags::NO_GLYPH_NAMES;
   }
 
-  alert( "^3334-7^" );
+  alert( "^3334-10^" );
   if cfg.no_clusters || cfg.ned {
     format_flags |= rustybuzz::SerializeFlags::NO_CLUSTERS;
   }
@@ -217,7 +228,7 @@ pub fn shape_text( user_cfg: &JsValue ) {
   if cfg.show_flags {
     format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;
   }
-  alert( "^3334-8^" );
+  alert( "^3334-11^" );
   // info( &format!( "{}", glyph_buffer.serialize(&face,  format_flags ) ) );
 */
 }
