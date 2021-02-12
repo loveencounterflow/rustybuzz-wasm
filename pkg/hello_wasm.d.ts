@@ -3,4 +3,4 @@
 /**
 * @param {any} user_cfg
 */
-export function greet(user_cfg: any): void;
+export function shape_text(user_cfg: any): void;

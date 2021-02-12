@@ -35,23 +35,19 @@
   if (module === require.main) {
     (() => {
       /* NOTE only works with `wasm-pack build --target nodejs` */
-      var HELO, cfg, font_path;
+      var HELO, cfg, font_path, text;
       globalThis.alert = alert;
       globalThis.help = help;
       globalThis.urge = urge;
       globalThis.info = info;
+      globalThis.debug = debug;
       HELO = require('../../pkg');
-      font_path = 'EBGaramond08-Italic.otf';
-      font_path = PATH.resolve(PATH.join(__dirname, '../fonts', font_path));
-      cfg = {
-        text: "text for typesetting",
-        font_file: font_path
-      };
-      HELO.greet(cfg);
-      delete cfg.help;
-      delete cfg.text;
-      delete cfg.perhaps;
-      HELO.greet(cfg);
+      // font_path         = 'EBGaramond08-Italic.otf'
+      // font_path         = PATH.resolve PATH.join __dirname, '../../fonts', font_path
+      font_path = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf';
+      text = "text for typesetting";
+      cfg = {font_path, text};
+      info('^223^', HELO.shape_text(cfg));
       return null;
     })();
   }
