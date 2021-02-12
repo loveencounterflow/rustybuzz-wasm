@@ -84,8 +84,15 @@ pub struct Cfg {
 //==========================================================================================================
 //
 //----------------------------------------------------------------------------------------------------------
+// thx to https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
 #[wasm_bindgen]
-pub fn shape_text( user_cfg: &JsValue ) {
+pub fn f(name: &str) -> String {
+    format!("Hello, {}!", name)
+}
+
+//----------------------------------------------------------------------------------------------------------
+#[wasm_bindgen]
+pub fn shape_text( user_cfg: &JsValue ) -> String {
   //........................................................................................................
   let cfg_opt: CfgOpt = user_cfg.into_serde().unwrap();
   //........................................................................................................
@@ -150,7 +157,7 @@ pub fn shape_text( user_cfg: &JsValue ) {
   if cfg.show_extents           { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS;  }
   if cfg.show_flags             { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;    }
   let r = glyph_buffer.serialize( &face,  format_flags );
-  info( &format!( "{}", r ) );
-  return;
+  format!( "{}", r )
+  // return;
 }
 
