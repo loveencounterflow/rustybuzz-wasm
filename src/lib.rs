@@ -145,6 +145,30 @@ pub fn shape_text( user_cfg: &JsValue ) {
   alert( "^3334-7^" );
   buffer.set_direction( cfg.direction );
   alert( "^3334-8^" );
+
+  buffer.set_language(cfg.language);
+
+  if let Some(script) = cfg.script {
+    buffer.set_script(script);
+  }
+
+  buffer.set_cluster_level(cfg.cluster_level);
+
+  if !cfg.utf8_clusters {
+    buffer.reset_clusters();
+  }
+
+  let glyph_buffer = rustybuzz::shape(&face, &cfg.features, buffer);
+
+  let mut format_flags = rustybuzz::SerializeFlags::default();
+  if cfg.no_glyph_names { format_flags |= rustybuzz::SerializeFlags::NO_GLYPH_NAMES; }
+  if cfg.no_clusters || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_CLUSTERS; }
+  if cfg.no_positions { format_flags |= rustybuzz::SerializeFlags::NO_POSITIONS; }
+  if cfg.no_advances || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES; }
+  if cfg.show_extents { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS; }
+  if cfg.show_flags { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS; }
+  alert( "^3334-15^" );
+  info( &format!( "{}", glyph_buffer.serialize(&face,  format_flags ) ) );
   return;
 
   // let xxx = cfg.font_path.to_string_lossy();
