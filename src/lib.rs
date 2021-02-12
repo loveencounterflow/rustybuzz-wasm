@@ -86,12 +86,8 @@ pub struct Cfg {
 //----------------------------------------------------------------------------------------------------------
 #[wasm_bindgen]
 pub fn shape_text( user_cfg: &JsValue ) {
-  // help( &format!( "^4575^ {:#?}", &user_cfg ) );
   //........................................................................................................
-  alert( "^3334-1^" );
   let cfg_opt: CfgOpt = user_cfg.into_serde().unwrap();
-  // urge( &format!( "^4575^ {:#?}", cfg_opt ) );
-  alert( "^3334-2^" );
   //........................................................................................................
   let font_bytes = match cfg_opt.font_bytes_hex {
     None => vec![],
@@ -99,8 +95,7 @@ pub fn shape_text( user_cfg: &JsValue ) {
       Ok( v ) => v,
       Err( error ) => {
         alert( &format!( "^89573485^ error decoding hexadecimal: {}", error ) );
-        std::process::exit( 1 ); }, },
-    };
+        std::process::exit( 1 ); }, }, };
   //........................................................................................................
   let cfg = Cfg {
     text:           match cfg_opt.text { None => String::from( "some text" ), Some( x ) => x, },
@@ -132,192 +127,30 @@ pub fn shape_text( user_cfg: &JsValue ) {
     // cluster_level: rustybuzz::BufferClusterLevel::Characters,
     face_index:   0,
   };
+  //........................................................................................................
   let mut face = rustybuzz::Face::from_slice(&cfg.font_bytes, cfg.face_index).unwrap();
-  // urge( &format!( "^4575^ {:#?}", cfg ) );
-  alert( "^3334-3^" );
-  face.set_points_per_em(cfg.font_ptem);
-  alert( "^3334-4^" );
+  face.set_points_per_em( cfg.font_ptem );
   if !cfg.variations.is_empty() { face.set_variations( &cfg.variations ); }
-  alert( "^3334-5^" );
   let mut buffer = rustybuzz::UnicodeBuffer::new();
-  alert( "^3334-6^" );
   buffer.push_str( &cfg.text );
-  alert( "^3334-7^" );
   buffer.set_direction( cfg.direction );
-  alert( "^3334-8^" );
-
+  //........................................................................................................
   buffer.set_language(cfg.language);
-
-  if let Some(script) = cfg.script {
-    buffer.set_script(script);
-  }
-
+  if let Some(script) = cfg.script { buffer.set_script(script); }
   buffer.set_cluster_level(cfg.cluster_level);
-
-  if !cfg.utf8_clusters {
-    buffer.reset_clusters();
-  }
-
-  let glyph_buffer = rustybuzz::shape(&face, &cfg.features, buffer);
-
+  if !cfg.utf8_clusters { buffer.reset_clusters(); }
+  //........................................................................................................
+  let glyph_buffer = rustybuzz::shape( &face, &cfg.features, buffer );
+  //........................................................................................................
   let mut format_flags = rustybuzz::SerializeFlags::default();
-  if cfg.no_glyph_names { format_flags |= rustybuzz::SerializeFlags::NO_GLYPH_NAMES; }
-  if cfg.no_clusters || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_CLUSTERS; }
-  if cfg.no_positions { format_flags |= rustybuzz::SerializeFlags::NO_POSITIONS; }
-  if cfg.no_advances || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES; }
-  if cfg.show_extents { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS; }
-  if cfg.show_flags { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS; }
+  if cfg.no_glyph_names         { format_flags |= rustybuzz::SerializeFlags::NO_GLYPH_NAMES; }
+  if cfg.no_clusters || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_CLUSTERS;    }
+  if cfg.no_positions           { format_flags |= rustybuzz::SerializeFlags::NO_POSITIONS;   }
+  if cfg.no_advances || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES;    }
+  if cfg.show_extents           { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS;  }
+  if cfg.show_flags             { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;    }
   alert( "^3334-15^" );
   info( &format!( "{}", glyph_buffer.serialize(&face,  format_flags ) ) );
   return;
-
-  // let xxx = cfg.font_path.to_string_lossy();
-  // let mut xxx_r: bool;
-  // urge( &format!( "^43447^ {:#?}", cfg.font_path )  );
-  // urge( &format!( "^43447^ {:#?}", read_file( &xxx.into_owned() ) )  );
-  // urge( &format!( "^43447^ {:#?}", font_path )  );
-  // urge( &format!( "^43447^ {:#?}", font_path.exists() )  );
-  // if !font_path.exists() {
-  //   alert( &format!( "Error: '{}' does not exist.", font_path.display() ) );
-  //   std::process::exit(1);
-  // }
-
-
-  /*
-  alert( "^3334-9^" );
-
-  let font_data = std::fs::read(font_path).unwrap();
-  alert( "^3334-10^" );
-  let mut face = rustybuzz::Face::from_slice(&font_data, cfg.face_index).unwrap();
-  alert( "^3334-11^" );
-
-  alert( "^3334-12^" );
-  face.set_points_per_em(cfg.font_ptem);
-
-  if !cfg.variations.is_empty() {
-    face.set_variations(&cfg.variations);
-  }
-
-  let text = if let Some(path) = cfg.text_file {
-    std::fs::read_to_string(path).unwrap()
-  } else if cfg.free.len() == 2 && font_set_as_free_arg {
-    cfg.free[1].clone()
-  } else if cfg.free.len() == 1 && !font_set_as_free_arg {
-    cfg.free[0].clone()
-  } else if let Some(ref text) = cfg.unicodes {
-    text.clone()
-  } else if let Some(ref text) = cfg.text {
-    text.clone()
-  } else {
-    eprintln!("Error: text is not set.");
-    std::process::exit(1);
-  };
-
-  let mut buffer = rustybuzz::UnicodeBuffer::new();
-  buffer.push_str(&text);
-
-    buffer.set_direction(cfg.direction);
-  // if let Some(d) = cfg.direction {
-    // buffer.set_direction(d);
-  // }
-
-  alert( "^3334-13^" );
-  buffer.set_language(cfg.language);
-
-  if let Some(script) = cfg.script {
-    buffer.set_script(script);
-  }
-
-  buffer.set_cluster_level(cfg.cluster_level);
-
-  if !cfg.utf8_clusters {
-    buffer.reset_clusters();
-  }
-
-  let glyph_buffer = rustybuzz::shape(&face, &cfg.features, buffer);
-
-  let mut format_flags = rustybuzz::SerializeFlags::default();
-  if cfg.no_glyph_names {
-    format_flags |= rustybuzz::SerializeFlags::NO_GLYPH_NAMES;
-  }
-
-  alert( "^3334-14^" );
-  if cfg.no_clusters || cfg.ned {
-    format_flags |= rustybuzz::SerializeFlags::NO_CLUSTERS;
-  }
-
-  if cfg.no_positions {
-    format_flags |= rustybuzz::SerializeFlags::NO_POSITIONS;
-  }
-
-  if cfg.no_advances || cfg.ned {
-    format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES;
-  }
-
-  if cfg.show_extents {
-    format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS;
-  }
-
-  if cfg.show_flags {
-    format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;
-  }
-  alert( "^3334-15^" );
-  // info( &format!( "{}", glyph_buffer.serialize(&face,  format_flags ) ) );
-*/
 }
 
-// //==========================================================================================================
-// //
-// //----------------------------------------------------------------------------------------------------------
-// fn parse_unicodes(s: &str) -> Result<String, String> {
-//   use std::convert::TryFrom;
-
-//   let mut text = String::new();
-//   for u in s.split(',') {
-//     let u = u32::from_str_radix(&u[2..], 16)
-//       .map_err(|_| format!("'{}' is not a valid codepoint", u))?;
-
-//     let c = char::try_from(u).map_err(|_| format!("{} is not a valid codepoint", u))?;
-
-//     text.push(c);
-//   }
-
-//   Ok(text)
-// }
-
-// fn parse_features(s: &str) -> Result<Vec<rustybuzz::Feature>, String> {
-//   let mut features = Vec::new();
-//   for f in s.split(',') {
-//     features.push(rustybuzz::Feature::from_str(&f)?);
-//   }
-
-//   Ok(features)
-// }
-
-// fn parse_variations(s: &str) -> Result<Vec<rustybuzz::Variation>, String> {
-//   let mut variations = Vec::new();
-//   for v in s.split(',') {
-//     variations.push(rustybuzz::Variation::from_str(&v)?);
-//   }
-
-//   Ok(variations)
-// }
-
-// fn parse_cluster(s: &str) -> Result<rustybuzz::BufferClusterLevel, String> {
-//   match s {
-//     "0" => Ok(rustybuzz::BufferClusterLevel::MonotoneGraphemes),
-//     "1" => Ok(rustybuzz::BufferClusterLevel::MonotoneCharacters),
-//     "2" => Ok(rustybuzz::BufferClusterLevel::Characters),
-//     _ => Err(format!("invalid cluster level"))
-//   }
-// }
-
-// fn system_language() -> rustybuzz::Language {
-//   unsafe {
-//     libc::setlocale(libc::LC_ALL, b"\0" as *const _ as *const i8);
-//     let s = libc::setlocale(libc::LC_CTYPE, std::ptr::null());
-//     let s = std::ffi::CStr::from_ptr(s);
-//     let s = s.to_str().expect("locale must be ASCII");
-//     rustybuzz::Language::from_str(s).unwrap()
-//   }
-// }
