@@ -1,28 +1,10 @@
 // #![allow(dead_code)]
-#![allow(unused_variables)]
+// #![allow(unused_variables)]
 
 extern crate serde_json;
 extern crate wasm_bindgen;
 extern crate hex;
 use wasm_bindgen::prelude::*;
-// mod cfg;
-// mod shape;
-
-// #[wasm_bindgen]
-// pub fn init_panic_hook() {
-//     console_error_panic_hook::set_once();
-// }
-
-// use std::panic;
-// #[macro_use]
-// extern crate stdweb;
-
-// fn main() {
-//     panic::set_hook(Box::new(|p| {
-//         let s = p.to_string();
-//         js!{ console.error(@{s});}
-//     }));
-// }
 
 #[macro_use]
 extern crate serde_derive;
@@ -34,16 +16,10 @@ extern {
   pub fn help(  s: &str );
   pub fn urge(  s: &str ); }
 
-// #[wasm_bindgen(catch)]
-// extern {
-//   // pub fn read_file( path: &str ) -> Result<bool, JsValue>; }
-//   pub fn read_file( path: &str ) -> Result<JsValue>; }
-
 //----------------------------------------------------------------------------------------------------------
 use std::str::FromStr;
 use rustybuzz;
 use std::path::PathBuf;
-// use std::str::FromStr;
 
 //==========================================================================================================
 // CONFIGURATION
@@ -86,12 +62,7 @@ pub struct Cfg {
 //==========================================================================================================
 //
 //----------------------------------------------------------------------------------------------------------
-// // thx to https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
-// #[wasm_bindgen]
-// pub fn f(name: &str) -> String {
-//     format!("Hello, {}!", name) }
-
-//----------------------------------------------------------------------------------------------------------
+// thx to https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
 #[wasm_bindgen]
 pub fn shape_text( user_cfg: &JsValue ) -> String {
   //........................................................................................................
