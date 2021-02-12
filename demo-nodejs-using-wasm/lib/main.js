@@ -25,7 +25,7 @@
 
   echo = CND.echo.bind(CND);
 
-  FS = (require('fs')).promises;
+  FS = require('fs');
 
   PATH = require('path');
 
@@ -35,18 +35,28 @@
   if (module === require.main) {
     (() => {
       /* NOTE only works with `wasm-pack build --target nodejs` */
-      var HELO, cfg, font_path, text;
+      var HELO, cfg, font_bytes, font_bytes_hex, font_path, text;
       globalThis.alert = alert;
       globalThis.help = help;
       globalThis.urge = urge;
       globalThis.info = info;
       globalThis.debug = debug;
+      // globalThis.read_file      = FS.readFileSync
+      globalThis.read_file = function(path) {
+        urge('^44877^', rpr(path));
+        // return FS.readFileSync path
+        return true;
+      };
       HELO = require('../../pkg');
-      // font_path         = 'EBGaramond08-Italic.otf'
-      // font_path         = PATH.resolve PATH.join __dirname, '../../fonts', font_path
-      font_path = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf';
+      font_path = 'EBGaramond08-Italic.otf';
+      font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
+      // font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
+      font_bytes = FS.readFileSync(font_path);
+      font_bytes_hex = font_bytes.toString('hex');
       text = "text for typesetting";
-      cfg = {font_path, text};
+      cfg = {font_bytes_hex, text};
+      // delete cfg.font_path
+      // delete cfg.font_bytes
       info('^223^', HELO.shape_text(cfg));
       return null;
     })();
