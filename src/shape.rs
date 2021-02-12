@@ -94,9 +94,6 @@ fn parse_args() -> Result<Args, pico_args::Error> {
     Ok(args)
 }
 
-pub fn shape_text() {
-    }
-
 fn main() {
     let args = match parse_args() {
         Ok(v) => v,
