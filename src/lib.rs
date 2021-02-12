@@ -128,25 +128,19 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   if cfg.no_advances || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES;    }
   if cfg.show_extents           { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS;  }
   if cfg.show_flags             { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;    }
-  urge( &format!( "^33321^ {}", glyfs_as_short( &glyph_buffer, &face, format_flags ) ) );
+  urge( &format!( "^33321^ {}", glyfs_as_short( &glyph_buffer, ) ) );
   // let r = glyph_buffer.serialize( &face,  format_flags );
-  return glyfs_as_json( &glyph_buffer, &face, format_flags ); }
+  return glyfs_as_json( &glyph_buffer, ); }
 
 
 //==========================================================================================================
 //
 //----------------------------------------------------------------------------------------------------------
-pub fn glyfs_as_json(
-  glyph_buffer: &rustybuzz::GlyphBuffer,
-  face: &rustybuzz::Face,
-  flags: rustybuzz::SerializeFlags ) -> String {
-  _glyfs_as_json( &glyph_buffer, face, flags ).unwrap_or_default() }
+pub fn glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {
+  _glyfs_as_json( &glyph_buffer, ).unwrap_or_default() }
 
 //----------------------------------------------------------------------------------------------------------
-fn _glyfs_as_json(
-  glyph_buffer: &rustybuzz::GlyphBuffer,
-  face: &rustybuzz::Face,
-  flags: rustybuzz::SerializeFlags) -> Result<String, std::fmt::Error> {
+fn _glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, std::fmt::Error> {
   use std::fmt::Write;
   let mut s = String::with_capacity(64);
   let info  = glyph_buffer.glyph_infos();
@@ -173,17 +167,11 @@ fn _glyfs_as_json(
 //==========================================================================================================
 //
 //----------------------------------------------------------------------------------------------------------
-pub fn glyfs_as_short(
-  glyph_buffer: &rustybuzz::GlyphBuffer,
-  face: &rustybuzz::Face,
-  flags: rustybuzz::SerializeFlags ) -> String {
-  _glyfs_as_short( &glyph_buffer, face, flags ).unwrap_or_default() }
+pub fn glyfs_as_short( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {
+  _glyfs_as_short( &glyph_buffer, ).unwrap_or_default() }
 
 //----------------------------------------------------------------------------------------------------------
-fn _glyfs_as_short(
-  glyph_buffer: &rustybuzz::GlyphBuffer,
-  face: &rustybuzz::Face,
-  flags: rustybuzz::SerializeFlags) -> Result<String, std::fmt::Error> {
+fn _glyfs_as_short( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, std::fmt::Error> {
   use std::fmt::Write;
   let mut s = String::with_capacity(64);
   let info  = glyph_buffer.glyph_infos();
