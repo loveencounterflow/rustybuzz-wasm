@@ -29,6 +29,7 @@ use rustybuzz;
 pub struct CfgOpt {
     pub text:             Option<String>,
     pub font_bytes_hex:   Option<String>,
+    pub format:           Option<String>,
     pub font_ptem:        Option<f32>, }
 
 #[derive(Debug)]
@@ -39,6 +40,7 @@ pub struct Cfg {
     pub face_index:       u32,
     pub font_bytes:       Vec<u8>,
     pub font_ptem:        f32,
+    pub format:           String,
     pub variations:       Vec<rustybuzz::Variation>,
     pub features:         Vec<rustybuzz::Feature>,
     pub script:           Option<rustybuzz::Script>,
@@ -64,6 +66,8 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   //........................................................................................................
   let cfg = Cfg {
     text:           match cfg_opt.text { None => String::from( "some text" ), Some( x ) => x, },
+    // ### TAINT use enumeration
+    format:         match cfg_opt.format { None => String::from( "json" ), Some( x ) => x, },
     font_bytes:     font_bytes,
     font_ptem:      match cfg_opt.font_ptem { None => 1000.0, Some( x ) => x, },
     language:       rustybuzz::Language::from_str( "English" ).unwrap(),
@@ -92,8 +96,9 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   //........................................................................................................
   let glyph_buffer = rustybuzz::shape( &face, &cfg.features, buffer );
   //........................................................................................................
-  urge( &format!( "^33321^ {}", glyfs_as_short( &glyph_buffer, ) ) );
-  return glyfs_as_json( &glyph_buffer, ); }
+  if cfg.format == "json" { return glyfs_as_json( &glyph_buffer, ); }
+  // urge( &format!( "^33321^ {}", glyfs_as_short( &glyph_buffer, ) ) );
+  return glyfs_as_short( &glyph_buffer, ); }
 
 
 //==========================================================================================================
