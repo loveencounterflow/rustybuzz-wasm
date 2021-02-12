@@ -59,6 +59,8 @@
       // delete cfg.font_path
       // delete cfg.font_bytes
       info('^223^', HELO.shape_text(cfg));
+      cfg.format = 'short';
+      info('^223^', HELO.shape_text(cfg));
       // info '^223^', HELO.f "abc"
       return null;
     })();
