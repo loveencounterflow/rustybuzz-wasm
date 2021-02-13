@@ -6,6 +6,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [What it Does](#what-it-does)
+- [What it Is](#what-it-is)
 - [Steps to Follow](#steps-to-follow)
 - [Installation](#installation)
 - [Publish Compiled WASM Code](#publish-compiled-wasm-code)
@@ -14,6 +16,30 @@
 - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## What it Does
+
+This module allows users to take a Unicode text and a path to a font file as inputs and obtain a list of
+GlyfIDs and 2D positions back. This process is known as [text
+shaping](https://en.wikipedia.org/wiki/Complex_text_layout). It is an indespensible ingredient for
+compositing text in so-called 'complex' writing systems like Arabic and Indic alphabets, but even when
+applied to text written in the Latin alphabet, there are finer points of typesetting like
+[kerning](https://en.wikipedia.org/wiki/Kerning) and the choice of
+[ligatures](https://en.wikipedia.org/wiki/Orthographic_ligature) which makes this process too difficult to
+be reasonably implemented on-the-fly for each piece of software that uses text. Instead, what one wants is a
+specialized library that knows lots of details about font file formats, OpenType font features, type metrics
+and so on and applies that knowledge to a given text string to derive poisitioning data for the individual
+graphical pieces ('glyfs') that, when drawn out on a canvas (such as an HTML `<canvas>` or an `<svg>`
+element) then instruct the rendering software to render an aesthetically pleasing and orthographically
+correct (image of a) text.
+
+
+## What it Is
+
+To implement `rustybuzz-wasm` I started with [the example shipped with
+`rustybuzz`](https://github.com/RazrFalcon/rustybuzz/blob/master/examples/shape.rs) which compiles to an
+executable that accepts a path to a font file and a text and then echoes a containing glyf IDs and
+positioning data.
 
 ## Steps to Follow
 
