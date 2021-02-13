@@ -108,6 +108,21 @@ function logError(f) {
         }
     };
 }
+/**
+* @returns {number}
+*/
+module.exports.inc = function() {
+    var ret = wasm.inc();
+    return ret;
+};
+
+/**
+* @returns {number}
+*/
+module.exports.dec = function() {
+    var ret = wasm.dec();
+    return ret;
+};
 
 let stack_pointer = 32;
 
