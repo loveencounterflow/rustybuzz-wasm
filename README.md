@@ -56,5 +56,16 @@ cargo new --lib hello-wasm && cd hello-wasm
 wasm-pack build --target nodejs && trash pkg/.gitignore
 ```
 
+To build and test in dev (much faster, but also *much* slower)
+
+```sh
+wasm-pack build --debug --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/nodexh ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
+```
+
+To build and test production:
+
+```sh
+wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/nodexh ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
+```
 
 
