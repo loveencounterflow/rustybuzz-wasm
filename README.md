@@ -67,6 +67,9 @@ that later.
   that this *does not tell you how fast HarfBuzz itself is* because secondary effects (overhead of one
   process per line of text, re-reading fonts) can be reasonably expected to dominate performance.
 
+The benchmarks ([source here]()) were done with 100 lines of text with 100 words on each line; counts
+represent Unicode code units (thus, approximately characters).
+
 ```
 rustybuzz_wasm_rusty_shaping   0.300 s   65,732 items   218,840⏶Hz     4,570⏷nspc
 rustybuzz_wasm_json_shaping    0.368 s   65,732 items   178,605⏶Hz     5,599⏷nspc
