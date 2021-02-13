@@ -81,6 +81,15 @@ pub struct Cfg {
     pub script:           Option<rustybuzz::Script>,
     pub language:         rustybuzz::Language, }
 
+static FORMAT_FLAGS: rustybuzz::SerializeFlags = rustybuzz::SerializeFlags::NO_GLYPH_NAMES;
+// let mut format_flags = rustybuzz::SerializeFlags::default();
+// if cfg.no_glyph_names         { format_flags |= rustybuzz::SerializeFlags::NO_GLYPH_NAMES; }
+// if cfg.no_clusters || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_CLUSTERS;    }
+// if cfg.no_positions           { format_flags |= rustybuzz::SerializeFlags::NO_POSITIONS;   }
+// if cfg.no_advances || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES;    }
+// if cfg.show_extents           { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS;  }
+// if cfg.show_flags             { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;    }
+
 
 //==========================================================================================================
 //
@@ -132,6 +141,7 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   let glyph_buffer = rustybuzz::shape( &face, &cfg.features, buffer );
   //........................................................................................................
   if cfg.format == "json" { return glyfs_as_json( &glyph_buffer, ); }
+  else if cfg.format == "rusty" { return glyph_buffer.serialize( &face, FORMAT_FLAGS ); }
   // urge( &format!( "^33321^ {}", glyfs_as_short( &glyph_buffer, ) ) );
   return glyfs_as_short( &glyph_buffer, ); }
 
