@@ -33,7 +33,9 @@ and so on and applies that knowledge to a given text string to derive poisitioni
 graphical pieces ('glyfs') that, when drawn out on a canvas (such as an HTML `<canvas>` or an `<svg>`
 element) then instruct the rendering software to render an aesthetically pleasing and orthographically
 correct (image of a) text. You can see all this in action in the [live HarfBuzz demo
-page](https://harfbuzz.github.io/harfbuzzjs/).
+page](https://harfbuzz.github.io/harfbuzzjs/). If you want to know more about text shaping, be sure to read
+[Ramsey Nasser's *Unplain text: A primer on text shaping and rendering non-Latin text in the shadow of an
+ASCII-dominated world*](https://increment.com/programming-languages/unplain-text-primer-on-non-latin/)
 
 The leading free software to provide text shaping is [HarfBuzz](https://harfbuzz.github.io/) ([repo
 here](https://github.com/harfbuzz/harfbuzz)), which is written in C++.
@@ -163,7 +165,8 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 * [ ] implement language selection?
 * [ ] implement script selection?
 * [ ] implement clustering selection?
-
+* [ ] <strike>add https://github.com/nasser/node-harfbuzz/tree/remove-freetype to benchmarks</strike>
+  (compilation on Linux Mint fails although `libharfbuzz-dev` v1.7.2 is installed)
 
 
 
