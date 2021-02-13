@@ -58,6 +58,9 @@
       cfg = {font_bytes_hex, text};
       // delete cfg.font_path
       // delete cfg.font_bytes
+      info('^223^', RBW.has_font_bytes());
+      info('^223^', RBW.set_font_bytes(font_bytes_hex));
+      info('^223^', RBW.has_font_bytes());
       info('^223^', RBW.shape_text(cfg));
       cfg.format = 'short';
       info('^223^', RBW.shape_text(cfg));

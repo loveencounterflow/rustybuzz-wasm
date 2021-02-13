@@ -124,6 +124,23 @@ module.exports.dec = function() {
     return ret;
 };
 
+/**
+* @param {string} font_bytes_hex
+*/
+module.exports.set_font_bytes = function(font_bytes_hex) {
+    var ptr0 = passStringToWasm0(font_bytes_hex, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.set_font_bytes(ptr0, len0);
+};
+
+/**
+* @returns {boolean}
+*/
+module.exports.has_font_bytes = function() {
+    var ret = wasm.has_font_bytes();
+    return ret !== 0;
+};
+
 let stack_pointer = 32;
 
 function addBorrowedObject(obj) {
