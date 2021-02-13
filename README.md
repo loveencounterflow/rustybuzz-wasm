@@ -67,8 +67,16 @@ that later.
   that this *does not tell you how fast HarfBuzz itself is* because secondary effects (overhead of one
   process per line of text, re-reading fonts) can be reasonably expected to dominate performance.
 
-The benchmarks ([source here]()) were done with 100 lines of text with 100 words on each line; counts
-represent Unicode code units (thus, approximately characters).
+The benchmarks ([source
+here](https://github.com/loveencounterflow/hengist/blob/master/dev/glyphshapes-and-typesetting-with-harfbuzz/src/textshaping.benchmarks.coffee))
+were done with 100 lines of text with 100 words on each line; counts represent Unicode code units (thus,
+approximately characters). "1,000 nspc" means "one thousand nanoseconds per cycle", a cycle being the unit
+of counting (roughly, one Unicode codepoint); here, lower figurs are better. The reciprocal value expressed
+in Hertz (cycles per send) tells you how many items you can expect to get through your chosen process, so
+higher numbers are better. The bar charts express relative performance with the top performer being pegged
+to 100%. Several runs were performed with randomized order of execution to minimize noise. The hardware is a
+2015 customer grade, not fast, not new, not fancy laptop, so many machines will be considerably faster for
+all contestants.
 
 ```
 rustybuzz_wasm_rusty_shaping   0.300 s   65,732 items   218,840⏶Hz     4,570⏷nspc
