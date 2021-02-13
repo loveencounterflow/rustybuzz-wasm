@@ -8,11 +8,11 @@
 
 - [What it Does](#what-it-does)
 - [What it Is](#what-it-is)
+- [How Does it Compare](#how-does-it-compare)
 - [Steps to Follow](#steps-to-follow)
 - [Installation](#installation)
 - [Publish Compiled WASM Code](#publish-compiled-wasm-code)
 - [Command Lines](#command-lines)
-- [Benchmarks](#benchmarks)
 - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -31,7 +31,14 @@ specialized library that knows lots of details about font file formats, OpenType
 and so on and applies that knowledge to a given text string to derive poisitioning data for the individual
 graphical pieces ('glyfs') that, when drawn out on a canvas (such as an HTML `<canvas>` or an `<svg>`
 element) then instruct the rendering software to render an aesthetically pleasing and orthographically
-correct (image of a) text.
+correct (image of a) text. You can see all this in action in the [live HarfBuzz demo
+page](https://harfbuzz.github.io/harfbuzzjs/).
+
+The leading free software to provide text shaping is [HarfBuzz](https://harfbuzz.github.io/) ([repo
+here](https://github.com/harfbuzz/harfbuzz)), which is written in C++.
+[`rustybuzz`](https://github.com/RazrFalcon/rustybuzz) is "is a complete harfbuzz's shaping algorithm port
+to Rust", and since it's written in Rust, we can compile it to WASM and write a nice API surface for it,
+which is what I did.
 
 
 ## What it Is
@@ -39,7 +46,44 @@ correct (image of a) text.
 To implement `rustybuzz-wasm` I started with [the example shipped with
 `rustybuzz`](https://github.com/RazrFalcon/rustybuzz/blob/master/examples/shape.rs) which compiles to an
 executable that accepts a path to a font file and a text and then echoes a containing glyf IDs and
-positioning data.
+positioning data. This I turned into [a minimalist version with WASM entry
+points](https://github.com/loveencounterflow/rustybuzz-wasm/blob/master/src/lib.rs). There's still a lot
+missing, especially font feature selection, but since everything went so well so far, I guess I'll get to
+that later.
+
+## How Does it Compare
+
+* `rustybuzz-wasm` is not feature-complete with `rustybuzz`, yet.
+* `rustybuzz-wasm` would appear to be 1.5 times faster than
+  [`harfbuzzjs`](https://github.com/harfbuzz/harfbuzzjs) (which is what drives the [HarfBuzz demo
+  page](https://harfbuzz.github.io/harfbuzzjs/)]), and
+* over 3 times faster than using
+  [`opentype.js`](https://github.com/opentypejs/opentype.js).
+* HarfBuzz does have command line utilities, too (referred to as `harfbuzzjs_shaping` in the below benchmark
+  results), but the fact that one has to open a sub-process for each piece of text and re-read font files
+  damages performance a great deal. This means that `rustybuzz-wasm` (running as WASM attached to a NodeJS
+  process) is over 12 times as performant as `harfbuzz` (using child processes over the command line). Note
+  that this *does not tell you how fast HarfBuzz itself is* because secondary effects (overhead of one
+  process per line of text, re-reading fonts) can be reasonably expected to dominate performance.
+
+```
+opentypejs_shaping                         0.928 s          65,732 items          70,815⏶Hz          14,121⏷nspc
+harfbuzzjs_shaping                         0.373 s          65,732 items         176,392⏶Hz           5,669⏷nspc
+rustybuzz_wasm_short_shaping               0.331 s          65,732 items         198,465⏶Hz           5,039⏷nspc
+harfbuzz_shaping                           3.745 s          65,732 items          17,553⏶Hz          56,971⏷nspc
+rustybuzz_wasm_json_shaping                0.368 s          65,732 items         178,605⏶Hz           5,599⏷nspc
+rustybuzz_wasm_rusty_shaping               0.300 s          65,732 items         218,840⏶Hz           4,570⏷nspc
+fontkit_shaping                            2.203 s          65,732 items          29,840⏶Hz          33,512⏷nspc
+00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_rusty_shaping                     220,399 Hz   100.0 % │████████████▌│
+00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_short_shaping                     194,886 Hz    88.4 % │███████████  │
+00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_json_shaping                      180,277 Hz    81.8 % │██████████▎  │
+00:23 HENGIST/BENCHMARKS  ▶  harfbuzzjs_shaping                               143,434 Hz    65.1 % │████████▏    │
+00:23 HENGIST/BENCHMARKS  ▶  opentypejs_shaping                                65,468 Hz    29.7 % │███▊         │
+00:23 HENGIST/BENCHMARKS  ▶  fontkit_shaping                                   29,605 Hz    13.4 % │█▋           │
+00:23 HENGIST/BENCHMARKS  ▶  harfbuzz_shaping                                  17,153 Hz     7.8 % │█            │
+```
+
+
 
 ## Steps to Follow
 
@@ -96,27 +140,7 @@ To build and test production:
 wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/nodexh ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
 ```
 
-## Benchmarks
 
-Yay!
-
-```
-00:14 TEXTSHAPING  ▶  ------------------------------------------------------------------------------------------------------------
-opentypejs_shaping                         0.928 s          65,732 items          70,815⏶Hz          14,121⏷nspc
-harfbuzzjs_shaping                         0.373 s          65,732 items         176,392⏶Hz           5,669⏷nspc
-rustybuzz_wasm_short_shaping               0.331 s          65,732 items         198,465⏶Hz           5,039⏷nspc
-harfbuzz_shaping                           3.745 s          65,732 items          17,553⏶Hz          56,971⏷nspc
-rustybuzz_wasm_json_shaping                0.368 s          65,732 items         178,605⏶Hz           5,599⏷nspc
-rustybuzz_wasm_rusty_shaping               0.300 s          65,732 items         218,840⏶Hz           4,570⏷nspc
-fontkit_shaping                            2.203 s          65,732 items          29,840⏶Hz          33,512⏷nspc
-00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_rusty_shaping                     220,399 Hz   100.0 % │████████████▌│
-00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_short_shaping                     194,886 Hz    88.4 % │███████████  │
-00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_json_shaping                      180,277 Hz    81.8 % │██████████▎  │
-00:23 HENGIST/BENCHMARKS  ▶  harfbuzzjs_shaping                               143,434 Hz    65.1 % │████████▏    │
-00:23 HENGIST/BENCHMARKS  ▶  opentypejs_shaping                                65,468 Hz    29.7 % │███▊         │
-00:23 HENGIST/BENCHMARKS  ▶  fontkit_shaping                                   29,605 Hz    13.4 % │█▋           │
-00:23 HENGIST/BENCHMARKS  ▶  harfbuzz_shaping                                  17,153 Hz     7.8 % │█            │
-```
 
 ## To Do
 
