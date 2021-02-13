@@ -35,7 +35,10 @@ element) then instruct the rendering software to render an aesthetically pleasin
 correct (image of a) text. You can see all this in action in the [live HarfBuzz demo
 page](https://harfbuzz.github.io/harfbuzzjs/). If you want to know more about text shaping, be sure to read
 [Ramsey Nasser's *Unplain text: A primer on text shaping and rendering non-Latin text in the shadow of an
-ASCII-dominated world*](https://increment.com/programming-languages/unplain-text-primer-on-non-latin/)
+ASCII-dominated world*](https://increment.com/programming-languages/unplain-text-primer-on-non-latin/);
+also, you might want to take a look at the [HarfBuzz terminology
+glossary](https://harfbuzz.github.io/terminology.html).
+
 
 The leading free software to provide text shaping is [HarfBuzz](https://harfbuzz.github.io/) ([repo
 here](https://github.com/harfbuzz/harfbuzz)), which is written in C++.
