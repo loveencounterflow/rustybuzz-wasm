@@ -57,8 +57,9 @@ that later.
 * `rustybuzz-wasm` is not feature-complete with `rustybuzz`, yet.
 * `rustybuzz-wasm` would appear to be 1.5 times faster than
   [`harfbuzzjs`](https://github.com/harfbuzz/harfbuzzjs) (which is what drives the [HarfBuzz demo
-  page](https://harfbuzz.github.io/harfbuzzjs/)]), and
-* over 3 times faster than using
+  page](https://harfbuzz.github.io/harfbuzzjs/)]). `harfbuzzjs` does not allow arbitrarily long lines and
+  does not support font features (which `rustybuzz` will probably soon have).
+* `rustybuzz-wasm` is over 3 times faster than using
   [`opentype.js`](https://github.com/opentypejs/opentype.js).
 * HarfBuzz does have command line utilities, too (referred to as `harfbuzzjs_shaping` in the below benchmark
   results), but the fact that one has to open a sub-process for each piece of text and re-read font files
