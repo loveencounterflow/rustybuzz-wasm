@@ -67,20 +67,21 @@ that later.
   process per line of text, re-reading fonts) can be reasonably expected to dominate performance.
 
 ```
-opentypejs_shaping                         0.928 s          65,732 items          70,815⏶Hz          14,121⏷nspc
-harfbuzzjs_shaping                         0.373 s          65,732 items         176,392⏶Hz           5,669⏷nspc
-rustybuzz_wasm_short_shaping               0.331 s          65,732 items         198,465⏶Hz           5,039⏷nspc
-harfbuzz_shaping                           3.745 s          65,732 items          17,553⏶Hz          56,971⏷nspc
-rustybuzz_wasm_json_shaping                0.368 s          65,732 items         178,605⏶Hz           5,599⏷nspc
-rustybuzz_wasm_rusty_shaping               0.300 s          65,732 items         218,840⏶Hz           4,570⏷nspc
-fontkit_shaping                            2.203 s          65,732 items          29,840⏶Hz          33,512⏷nspc
-00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_rusty_shaping                     220,399 Hz   100.0 % │████████████▌│
-00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_short_shaping                     194,886 Hz    88.4 % │███████████  │
-00:23 HENGIST/BENCHMARKS  ▶  rustybuzz_wasm_json_shaping                      180,277 Hz    81.8 % │██████████▎  │
-00:23 HENGIST/BENCHMARKS  ▶  harfbuzzjs_shaping                               143,434 Hz    65.1 % │████████▏    │
-00:23 HENGIST/BENCHMARKS  ▶  opentypejs_shaping                                65,468 Hz    29.7 % │███▊         │
-00:23 HENGIST/BENCHMARKS  ▶  fontkit_shaping                                   29,605 Hz    13.4 % │█▋           │
-00:23 HENGIST/BENCHMARKS  ▶  harfbuzz_shaping                                  17,153 Hz     7.8 % │█            │
+rustybuzz_wasm_rusty_shaping   0.300 s   65,732 items   218,840⏶Hz     4,570⏷nspc
+rustybuzz_wasm_json_shaping    0.368 s   65,732 items   178,605⏶Hz     5,599⏷nspc
+rustybuzz_wasm_short_shaping   0.331 s   65,732 items   198,465⏶Hz     5,039⏷nspc
+harfbuzzjs_shaping             0.373 s   65,732 items   176,392⏶Hz     5,669⏷nspc
+opentypejs_shaping             0.928 s   65,732 items    70,815⏶Hz    14,121⏷nspc
+fontkit_shaping                2.203 s   65,732 items    29,840⏶Hz    33,512⏷nspc
+harfbuzz_shaping               3.745 s   65,732 items    17,553⏶Hz    56,971⏷nspc
+
+rustybuzz_wasm_rusty_shaping     220,399 Hz   100.0 % │████████████▌│
+rustybuzz_wasm_short_shaping     194,886 Hz    88.4 % │███████████  │
+rustybuzz_wasm_json_shaping      180,277 Hz    81.8 % │██████████▎  │
+harfbuzzjs_shaping               143,434 Hz    65.1 % │████████▏    │
+opentypejs_shaping                65,468 Hz    29.7 % │███▊         │
+fontkit_shaping                   29,605 Hz    13.4 % │█▋           │
+harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 ```
 
 
