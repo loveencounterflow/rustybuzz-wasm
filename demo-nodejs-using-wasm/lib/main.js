@@ -64,12 +64,8 @@
       info('^223^', RBW.shape_text(cfg));
       cfg.format = 'short';
       info('^223^', RBW.shape_text(cfg));
-      info('^223^', RBW.inc());
-      info('^223^', RBW.inc());
-      info('^223^', RBW.inc());
-      info('^223^', RBW.dec());
-      info('^223^', RBW.dec());
-      // info '^223^', RBW.f "abc"
+      cfg.format = 'rusty';
+      info('^223^', RBW.shape_text(cfg));
       return null;
     })();
   }
