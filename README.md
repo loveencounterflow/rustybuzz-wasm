@@ -9,6 +9,7 @@
 - [What it Does](#what-it-does)
 - [What it Is](#what-it-is)
 - [How Does it Compare](#how-does-it-compare)
+- [Caveats](#caveats)
 - [Steps to Follow](#steps-to-follow)
 - [Installation](#installation)
 - [Publish Compiled WASM Code](#publish-compiled-wasm-code)
@@ -84,6 +85,9 @@ fontkit_shaping                   29,605 Hz    13.4 % │█▋           │
 harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 ```
 
+## Caveats
+
+Rust Newbie here so probably the code is not ideal in some respects.
 
 
 ## Steps to Follow
@@ -124,11 +128,6 @@ pnpm version patch && pnpm publish --access public && git push
 
 ## Command Lines
 
-```sh
-cargo new --lib hello-wasm && cd hello-wasm
-wasm-pack build --target nodejs && trash pkg/.gitignore
-```
-
 To build and test in dev (much faster, but also *much* slower)
 
 ```sh
@@ -147,5 +146,12 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 
 * [ ] find out what makes format `rusty` (which has quite a few options) so much faster than the
   minimalistic `short` format (which has no options); to do so, modify the (constant) format flags
+* [ ] implement OpenType font features
+* [ ] implement face selection
+* [ ] implement language selection?
+* [ ] implement script selection?
+* [ ] implement clustering selection?
+
+
 
 
