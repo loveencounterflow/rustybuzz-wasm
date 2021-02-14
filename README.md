@@ -58,6 +58,14 @@ note that while the bounding boxes of the glyfs differ in their vertical placeme
 reflects tthe different areas covered by the outlines; in the underlying SVG, the `y` attributes of all
 paths are set to `0` (i.e. all glyfs are still nominally sitting on the baseline).*
 
+![A Tibetan Sample](artwork/sample-tibetan.png)
+
+*Sample in Tibetan, using the [Tibetan Machine Uni
+Typeface](https://collab.its.virginia.edu/access/wiki/site/26a34146-33a6-48ce-001e-f16ce7908a6a/tibetan%20machine%20uni.html).
+Again, a complex composition is made from a linear string of codepoints ` ཨ`, ` ོ`, ` ཾ`, ` ་`, ` མ`, ` ་`,
+` ཎ`, ` ི`, ` ་`, ` པ`, ` ད`, ` ྨ`, ` ེ`, ` ་`, ` ཧ`, ` ཱ`, ` ུ`*
+
+
 
 ## What it Is
 

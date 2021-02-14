@@ -38,6 +38,7 @@ if module is require.main then do =>
   font_path           = 'EBGaramond08-Italic.otf'
   font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
   font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
+  font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
   # font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
   font_bytes          = FS.readFileSync font_path
   font_bytes_hex      = font_bytes.toString 'hex'
@@ -50,6 +51,7 @@ if module is require.main then do =>
   texts               = [
     # "a"
     # "affix"
+    "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
     ( [ "الخط الأمیری"... ].reverse() ).join ''
     # "af#fix"
     # " "
