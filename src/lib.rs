@@ -81,14 +81,11 @@ pub struct Cfg {
     pub script:           Option<rustybuzz::Script>,
     pub language:         rustybuzz::Language, }
 
-static FORMAT_FLAGS: rustybuzz::SerializeFlags = rustybuzz::SerializeFlags::NO_GLYPH_NAMES;
-// let mut format_flags = rustybuzz::SerializeFlags::default();
-// if cfg.no_glyph_names         { format_flags |= rustybuzz::SerializeFlags::NO_GLYPH_NAMES; }
-// if cfg.no_clusters || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_CLUSTERS;    }
-// if cfg.no_positions           { format_flags |= rustybuzz::SerializeFlags::NO_POSITIONS;   }
-// if cfg.no_advances || cfg.ned { format_flags |= rustybuzz::SerializeFlags::NO_ADVANCES;    }
-// if cfg.show_extents           { format_flags |= rustybuzz::SerializeFlags::GLYPH_EXTENTS;  }
-// if cfg.show_flags             { format_flags |= rustybuzz::SerializeFlags::GLYPH_FLAGS;    }
+fn parse_features(s: &str) -> Result<Vec<rustybuzz::Feature>, String> {
+    let mut features = Vec::new();
+    for f in s.split(',') {
+        features.push(rustybuzz::Feature::from_str(&f)?); }
+    Ok(features) }
 
 
 //==========================================================================================================
