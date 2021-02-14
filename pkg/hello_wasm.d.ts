@@ -21,3 +21,8 @@ export function has_font_bytes(): boolean;
 * @returns {string}
 */
 export function shape_text(user_cfg: any): string;
+/**
+* @param {any} js_glyph_id
+* @returns {string}
+*/
+export function glyph_to_svg_pathdata(js_glyph_id: any): string;

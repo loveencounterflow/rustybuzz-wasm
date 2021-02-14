@@ -166,6 +166,24 @@ module.exports.shape_text = function(user_cfg) {
     }
 };
 
+/**
+* @param {any} js_glyph_id
+* @returns {string}
+*/
+module.exports.glyph_to_svg_pathdata = function(js_glyph_id) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.glyph_to_svg_pathdata(retptr, addBorrowedObject(js_glyph_id));
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        heap[stack_pointer++] = undefined;
+        wasm.__wbindgen_free(r0, r1);
+    }
+};
+
 module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     const obj = getObject(arg1);
     var ret = JSON.stringify(obj === undefined ? null : obj);

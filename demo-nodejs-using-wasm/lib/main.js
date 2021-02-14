@@ -68,6 +68,7 @@
         cfg = {format, text};
         info('^223^', RBW.shape_text(cfg));
       }
+      urge('^690^', RBW.glyph_to_svg_pathdata(42));
       return null;
     })();
   }
