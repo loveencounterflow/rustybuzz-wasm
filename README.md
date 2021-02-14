@@ -66,12 +66,13 @@ paths are set to `0` (i.e. all glyfs are still nominally sitting on the baseline
 
 *Sample in Tibetan, using the [Tibetan Machine Uni
 Typeface](https://collab.its.virginia.edu/access/wiki/site/26a34146-33a6-48ce-001e-f16ce7908a6a/tibetan%20machine%20uni.html).
-to type out* ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ. *Again, a complex composition is made from a linear string of codepoints
-`ཨ`, ` ོ`, ` ཾ`, ` ་`, ` མ`, ` ་`, ` ཎ`, ` ི`, ` ་`, ` པ`, ` ད`, ` ྨ`, ` ེ`, ` ་`, ` ཧ`, ` ཱ`, ` ུ`. Notice
-that in this font, a choice has been made to precompose the stacked clusters* ` ད`, ` ྨ` *and* ` ཧ`, ` ཱ`, `
-ུ`*; this is a design choice which, were it not for a text shaper like `rustybuzz`, would cause a
-considerable amount of work for anyone striving to display Tibetan script correctly with this font and
-others whose choice of ligatures may be completely different.*
+to type out* ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ *(there is a certain chance even in 2021 that this piece of text will not be
+rendered correctly across systems and browsers). Again, a complex composition is made from a linear string
+of codepoints `ཨ`, ` ོ`, ` ཾ`, ` ་`, ` མ`, ` ་`, ` ཎ`, ` ི`, ` ་`, ` པ`, ` ད`, ` ྨ`, ` ེ`, ` ་`, ` ཧ`, ` ཱ`,
+` ུ`. Notice that in this font, a choice has been made to precompose the stacked clusters* ` ད`, ` ྨ` *and*
+` ཧ`, ` ཱ`, ` ུ`*; this is a design choice which, were it not for a text shaper like `rustybuzz`, would
+cause a considerable amount of work for anyone striving to display Tibetan script correctly with this font
+and others whose choice of ligatures may be completely different.*
 
 
 
