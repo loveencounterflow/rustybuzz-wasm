@@ -254,24 +254,12 @@ pub fn glyph_to_svg_pathdata( js_glyph_id: &JsValue ) -> String {
     "br": bbox_svg,
   }).to_string();
 }
-  // return String::from(
-  //   &format!(
-  //     "units_per_em: {:#?},
-  //     scale: {:#?},
-  //     bbox_svg: {:?}
-  //     segment: {:#?},
-  //     path_buf: {:#?}",
-  //       units_per_em,
-  //       scale,
-  //       bbox_svg,
-  //       path_buf[ 0 ],
-  //       path_buf.to_string() ) );
 
 // ---------------------------------------------------------------------------------------------------------
 fn rectangle_from_bbox( bbox: ttf_parser::Rect, scale: f64, ) -> String {
   return format!( "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\"/>",
     scale_coordinate(  bbox.x_min    as f64, scale ),
-    scale_coordinate( -bbox.y_min    as f64, scale ),
+    scale_coordinate(  ( - bbox.y_min - bbox.height() )   as f64, scale ),
     scale_coordinate(  bbox.width()  as f64, scale ),
     scale_coordinate(  bbox.height() as f64, scale ), ) }
 
