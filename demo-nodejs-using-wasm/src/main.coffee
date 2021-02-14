@@ -36,6 +36,7 @@ if module is require.main then do =>
   ### NOTE only works with `wasm-pack build --target nodejs` ###
   RBW                 = require '../../pkg'
   font_path           = 'EBGaramond08-Italic.otf'
+  font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
   font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
   # font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
   font_bytes          = FS.readFileSync font_path
@@ -48,7 +49,8 @@ if module is require.main then do =>
   shy                 = '\xad'
   texts               = [
     # "a"
-    "affix"
+    # "affix"
+    ( [ "الخط الأمیری"... ].reverse() ).join ''
     # "af#fix"
     # " "
     # "#"
@@ -68,9 +70,10 @@ if module is require.main then do =>
     path {
       stroke:                 red;
       stroke-width:           3px;
-      fill:                   grey; }
+      opacity:                75%;
+      fill:                   red; }
     rect {
-      stroke:                 green;
+      stroke:                 black;
       stroke-width:           3px;
       fill:                   transparent; }
       </style>"""
