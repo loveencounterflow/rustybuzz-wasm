@@ -243,131 +243,101 @@ pub fn glyph_to_svg_pathdata( js_glyph_id: &JsValue ) -> String {
   let bbox          = face.outline_glyph( glyph_id, &mut builder );
   // match bbox { Some(v) => v, None => return, };
   for seg in path_buf.iter_mut() { scale_segment( seg, scale ); };
+  // let bbox_rect     = rectangle_from_bbox( bbox, scale, );
+  let bbox_svg     = rectangle_from_bbox( match bbox {
+    None      => ttf_parser::Rect { x_min: 0, y_min: 0, x_max: 0, y_max: 0, },
+    Some( x ) => x, },
+    scale );
   //........................................................................................................
-  return String::from( &format!("units_per_em: {:#?}, scale: {:#?}, bbox: {:#?}", units_per_em, scale, bbox ) ); }
-  // return String::from( &format!("{:?}", glyph_id ) ); }
+  return String::from(
+    &format!(
+      "units_per_em: {:#?},
+      scale: {:#?},
+      bbox: {:#?},
+      bbox_svg: {:#?}
+      segment: {:#?},
+      path_buf: {:#?}",
+        units_per_em,
+        scale,
+        bbox,
+        bbox_svg,
+        path_buf[ 0 ],
+        path_buf.to_string() ) ); }
 
-// fn glyph_to_path(
-//     face: &ttf_parser::Face,
-//     scale: f64,
-//     path_buf: &mut svgtypes::Path,
-// ) {
-//     path_buf.clear();
-//     let mut builder = Builder(path_buf);
-//     let bbox = match face.outline_glyph(glyph_id, &mut builder) {
-//         Some(v) => v,
-//         None => return,
-//     };
+// ---------------------------------------------------------------------------------------------------------
+fn rectangle_from_bbox( bbox: ttf_parser::Rect, scale: f64, ) -> String {
+  return format!( "width=\"{}\"", bbox.width() as f64 * scale )
+//   let bbox_h = (bbox.y_max as f64 - bbox.y_min as f64) * scale;
+//   let bbox_x = x + dx + bbox.x_min as f64 * scale;
+//   let bbox_y = y - bbox.y_max as f64 * scale;
 
-//     // println!("path_buf: A {}", path_buf );
-//     for seg in path_buf.iter_mut() {
-//         scale_segment( seg, scale );
-//         };
-//     // println!("path_buf: B {}", path_buf );
-
-//     // ### TAINT computation only needed for DRAW_BBOX
-//     let bbox_w = (bbox.x_max as f64 - bbox.x_min as f64) * scale;
-//     let dx = (cell_size - bbox_w) / 2.0;
-//     let y = y + cell_size + face.descender() as f64 * scale;
-
-//     let mut ts = svgtypes::Transform::default();
-//     ts.translate(x + dx, y);
-//     // ts.scale(1.0, -1.0);
-//     // ts.scale(scale, scale);
-
-//     svg.start_element("path");
-//     svg.write_attribute_raw("d", |buf| path_buf.write_buf(buf));
-//     svg.write_attribute_raw("transform", |buf| ts.write_buf(buf));
-//     svg.end_element();
-
-//     if DRAW_BBOX {
-//         let bbox_h = (bbox.y_max as f64 - bbox.y_min as f64) * scale;
-//         let bbox_x = x + dx + bbox.x_min as f64 * scale;
-//         let bbox_y = y - bbox.y_max as f64 * scale;
-
-//         svg.start_element("rect");
-//         svg.write_attribute("x", &bbox_x);
-//         svg.write_attribute("y", &bbox_y);
-//         svg.write_attribute("width", &bbox_w);
-//         svg.write_attribute("height", &bbox_h);
-//         svg.write_attribute("fill", "none");
-//         svg.write_attribute("stroke", "green");
-//         svg.end_element();
-//     };
-// }
-
-struct Builder<'a>(&'a mut svgtypes::Path);
-
-impl ttf_parser::OutlineBuilder for Builder<'_> {
-    fn move_to(&mut self, x: f32, y: f32) {
-        self.0.push_move_to(x as f64, -y as f64);
-    }
-
-    fn line_to(&mut self, x: f32, y: f32) {
-        self.0.push_line_to(x as f64, -y as f64);
-    }
-
-    fn quad_to(&mut self, x1: f32, y1: f32, x: f32, y: f32) {
-        self.0.push_quad_to(x1 as f64, -y1 as f64, x as f64, -y as f64);
-    }
-
-    fn curve_to(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, x: f32, y: f32) {
-        self.0.push_curve_to(x1 as f64, -y1 as f64, x2 as f64, -y2 as f64, x as f64, -y as f64);
-    }
-
-    fn close(&mut self) {
-        self.0.push_close_path();
-    }
+//   svg.start_element("rect");
+//   svg.write_attribute("x", &bbox_x);
+//   svg.write_attribute("y", &bbox_y);
+//   svg.write_attribute("width", &bbox_w);
+//   svg.write_attribute("height", &bbox_h);
+//   svg.write_attribute("fill", "none");
+//   svg.write_attribute("stroke", "green");
+//   svg.end_element();
 }
 
 // ---------------------------------------------------------------------------------------------------------
+struct Builder<'a>(&'a mut svgtypes::Path);
+  /// see https://docs.rs/ttf-parser/0.11.0/ttf_parser/struct.FaceTables.html#method.outline_glyph
+
+impl ttf_parser::OutlineBuilder for Builder<'_> {
+  fn move_to(&mut self, x: f32, y: f32) {
+    self.0.push_move_to(x as f64, -y as f64); }
+
+  fn line_to(&mut self, x: f32, y: f32) {
+    self.0.push_line_to(x as f64, -y as f64); }
+
+  fn quad_to(&mut self, x1: f32, y1: f32, x: f32, y: f32) {
+    self.0.push_quad_to(x1 as f64, -y1 as f64, x as f64, -y as f64); }
+
+  fn curve_to(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, x: f32, y: f32) {
+    self.0.push_curve_to(x1 as f64, -y1 as f64, x2 as f64, -y2 as f64, x as f64, -y as f64); }
+
+  fn close(&mut self) {
+    self.0.push_close_path(); }
+  }
+
+// ---------------------------------------------------------------------------------------------------------
 fn scale_segment(d: &mut PathSegment, scale: f64 ) {
-    match *d {
-        PathSegment::MoveTo { ref mut x, ref mut y, .. } => {
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::LineTo { ref mut x, ref mut y, .. } => {
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::HorizontalLineTo { ref mut x, .. } => {
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::VerticalLineTo { ref mut y, .. } => {
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::CurveTo { ref mut x1, ref mut y1, ref mut x2, ref mut y2, ref mut x, ref mut y, .. } => {
-            *x1 = ( *x1 * scale * PRECISION ).round() / PRECISION;
-            *y1 = ( *y1 * scale * PRECISION ).round() / PRECISION;
-            *x2 = ( *x2 * scale * PRECISION ).round() / PRECISION;
-            *y2 = ( *y2 * scale * PRECISION ).round() / PRECISION;
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::SmoothCurveTo { ref mut x2, ref mut y2, ref mut x, ref mut y, .. } => {
-            *x2 = ( *x2 * scale * PRECISION ).round() / PRECISION;
-            *y2 = ( *y2 * scale * PRECISION ).round() / PRECISION;
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::Quadratic { ref mut x1, ref mut y1, ref mut x, ref mut y, .. } => {
-            *x1 = ( *x1 * scale * PRECISION ).round() / PRECISION;
-            *y1 = ( *y1 * scale * PRECISION ).round() / PRECISION;
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::SmoothQuadratic { ref mut x, ref mut y, .. } => {
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::EllipticalArc { ref mut x, ref mut y, .. } => {
-            *x  = ( *x * scale * PRECISION ).round() / PRECISION;
-            *y  = ( *y * scale * PRECISION ).round() / PRECISION;
-        }
-        PathSegment::ClosePath { .. } => {}
+  match *d {
+    PathSegment::MoveTo { ref mut x, ref mut y, .. } => {
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION;
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::LineTo { ref mut x, ref mut y, .. } => {
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION;
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::HorizontalLineTo { ref mut x, .. } => {
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::VerticalLineTo { ref mut y, .. } => {
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::CurveTo { ref mut x1, ref mut y1, ref mut x2, ref mut y2, ref mut x, ref mut y, .. } => {
+      *x1 = ( *x1 * scale * PRECISION ).round() / PRECISION;
+      *y1 = ( *y1 * scale * PRECISION ).round() / PRECISION;
+      *x2 = ( *x2 * scale * PRECISION ).round() / PRECISION;
+      *y2 = ( *y2 * scale * PRECISION ).round() / PRECISION;
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION;
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::SmoothCurveTo { ref mut x2, ref mut y2, ref mut x, ref mut y, .. } => {
+      *x2 = ( *x2 * scale * PRECISION ).round() / PRECISION;
+      *y2 = ( *y2 * scale * PRECISION ).round() / PRECISION;
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION;
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::Quadratic { ref mut x1, ref mut y1, ref mut x, ref mut y, .. } => {
+      *x1 = ( *x1 * scale * PRECISION ).round() / PRECISION;
+      *y1 = ( *y1 * scale * PRECISION ).round() / PRECISION;
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION;
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::SmoothQuadratic { ref mut x, ref mut y, .. } => {
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION;
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::EllipticalArc { ref mut x, ref mut y, .. } => {
+      *x  = ( *x  * scale * PRECISION ).round() / PRECISION;
+      *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
+    PathSegment::ClosePath { .. } => {} }
     }
-}
-
-
 
