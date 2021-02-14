@@ -57,6 +57,7 @@ if module is require.main then do =>
     text  = text.replace /#/g, shy
     cfg   = { format, text, }
     info '^223^', RBW.shape_text cfg
+  urge '^690^', RBW.glyph_to_svg_pathdata 42
   return null
 
 
