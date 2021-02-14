@@ -15,6 +15,7 @@
 - [Publish Compiled WASM Code](#publish-compiled-wasm-code)
 - [Command Lines](#command-lines)
 - [To Do](#to-do)
+- [Rendering](#rendering)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
