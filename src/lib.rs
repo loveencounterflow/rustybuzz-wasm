@@ -1,4 +1,4 @@
-// #![allow(dead_code)]
+#![allow(dead_code)]
 #![allow(unused_variables)]
 
 extern crate serde_json;
@@ -22,6 +22,8 @@ use rustybuzz;
 use ttf_parser;
 // use svgtypes::WriteBuffer;
 use svgtypes::PathSegment;
+use serde_json::json;
+
 
 //==========================================================================================================
 // PERSISTENT STATE
@@ -241,45 +243,37 @@ pub fn glyph_to_svg_pathdata( js_glyph_id: &JsValue ) -> String {
   let mut path_buf  = svgtypes::Path::with_capacity(64);
   let mut builder   = Builder( &mut path_buf );
   let bbox          = face.outline_glyph( glyph_id, &mut builder );
-  // match bbox { Some(v) => v, None => return, };
   for seg in path_buf.iter_mut() { scale_segment( seg, scale ); };
-  // let bbox_rect     = rectangle_from_bbox( bbox, scale, );
   let bbox_svg     = rectangle_from_bbox( match bbox {
     None      => ttf_parser::Rect { x_min: 0, y_min: 0, x_max: 0, y_max: 0, },
     Some( x ) => x, },
     scale );
   //........................................................................................................
-  return String::from(
-    &format!(
-      "units_per_em: {:#?},
-      scale: {:#?},
-      bbox: {:#?},
-      bbox_svg: {:#?}
-      segment: {:#?},
-      path_buf: {:#?}",
-        units_per_em,
-        scale,
-        bbox,
-        bbox_svg,
-        path_buf[ 0 ],
-        path_buf.to_string() ) ); }
+  return json!({
+    "pd": path_buf.to_string(),
+    "br": bbox_svg,
+  }).to_string();
+}
+  // return String::from(
+  //   &format!(
+  //     "units_per_em: {:#?},
+  //     scale: {:#?},
+  //     bbox_svg: {:?}
+  //     segment: {:#?},
+  //     path_buf: {:#?}",
+  //       units_per_em,
+  //       scale,
+  //       bbox_svg,
+  //       path_buf[ 0 ],
+  //       path_buf.to_string() ) );
 
 // ---------------------------------------------------------------------------------------------------------
 fn rectangle_from_bbox( bbox: ttf_parser::Rect, scale: f64, ) -> String {
-  return format!( "width=\"{}\"", bbox.width() as f64 * scale )
-//   let bbox_h = (bbox.y_max as f64 - bbox.y_min as f64) * scale;
-//   let bbox_x = x + dx + bbox.x_min as f64 * scale;
-//   let bbox_y = y - bbox.y_max as f64 * scale;
-
-//   svg.start_element("rect");
-//   svg.write_attribute("x", &bbox_x);
-//   svg.write_attribute("y", &bbox_y);
-//   svg.write_attribute("width", &bbox_w);
-//   svg.write_attribute("height", &bbox_h);
-//   svg.write_attribute("fill", "none");
-//   svg.write_attribute("stroke", "green");
-//   svg.end_element();
-}
+  return format!( "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\"/>",
+    scale_coordinate(  bbox.x_min    as f64, scale ),
+    scale_coordinate( -bbox.y_min    as f64, scale ),
+    scale_coordinate(  bbox.width()  as f64, scale ),
+    scale_coordinate(  bbox.height() as f64, scale ), ) }
 
 // ---------------------------------------------------------------------------------------------------------
 struct Builder<'a>(&'a mut svgtypes::Path);
@@ -301,6 +295,9 @@ impl ttf_parser::OutlineBuilder for Builder<'_> {
   fn close(&mut self) {
     self.0.push_close_path(); }
   }
+
+// ---------------------------------------------------------------------------------------------------------
+fn scale_coordinate( a: f64, scale: f64 ) -> f64 { ( a  * scale * PRECISION ).round() / PRECISION }
 
 // ---------------------------------------------------------------------------------------------------------
 fn scale_segment(d: &mut PathSegment, scale: f64 ) {
