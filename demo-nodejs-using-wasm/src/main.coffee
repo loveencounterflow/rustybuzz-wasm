@@ -40,19 +40,23 @@ if module is require.main then do =>
   # font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
   font_bytes          = FS.readFileSync font_path
   font_bytes_hex      = font_bytes.toString 'hex'
+  RBW.set_font_bytes font_bytes_hex unless RBW.has_font_bytes()
   # font_bytes_hex      = 'abcdefgh'
-  text                = "affix"
-  cfg                 = { font_bytes_hex, text, }
-  # delete cfg.font_path
-  # delete cfg.font_bytes
-  info '^223^', RBW.has_font_bytes()
-  info '^223^', RBW.set_font_bytes font_bytes_hex
-  info '^223^', RBW.has_font_bytes()
-  info '^223^', RBW.shape_text cfg
-  cfg.format = 'short'
-  info '^223^', RBW.shape_text cfg
-  cfg.format = 'rusty'
-  info '^223^', RBW.shape_text cfg
+  # format              = 'short'
+  # format              = 'json'
+  format              = 'rusty'
+  shy                 = '\xad'
+  texts               = [
+    "affix"
+    "af#fix"
+    " "
+    "#"
+    "-"
+    ]
+  for text in texts
+    text  = text.replace /#/g, shy
+    cfg   = { format, text, }
+    info '^223^', RBW.shape_text cfg
   return null
 
 
