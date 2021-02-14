@@ -49,6 +49,7 @@
       };
       RBW = require('../../pkg');
       font_path = 'EBGaramond08-Italic.otf';
+      font_path = 'arabic/Amiri-0.113/Amiri-Bold.ttf';
       font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
       // font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
       font_bytes = FS.readFileSync(font_path);
@@ -62,7 +63,8 @@
       // format              = 'rusty'
       shy = '\xad';
       // "a"
-      texts = ["affix"];
+      // "affix"
+      texts = [([..."الخط الأمیری"].reverse()).join('')];
       // "af#fix"
       // " "
       // "#"
@@ -89,9 +91,10 @@
 path {
   stroke:                 red;
   stroke-width:           3px;
-  fill:                   grey; }
+  opacity:                75%;
+  fill:                   red; }
 rect {
-  stroke:                 green;
+  stroke:                 black;
   stroke-width:           3px;
   fill:                   transparent; }
   </style>`);
