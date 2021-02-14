@@ -49,6 +49,9 @@ which is what I did.
 
 ![An Arabic Sample](artwork/sample-amiri.png)
 
+*Sample in Arabic, using the [Amiri Typeface](https://www.amirifont.org/)* to type out "الخط الأمیری".
+Notice visible overlaps and tasteful placement of complex ligatures.
+
 
 ## What it Is
 
