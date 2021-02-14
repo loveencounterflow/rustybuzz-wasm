@@ -85,21 +85,32 @@
       })());
       debug('^3344^', gids);
       //.........................................................................................................
+      echo(`<style>
+path {
+  stroke:                 red;
+  stroke-width:           3px;
+  fill:                   grey; }
+rect {
+  stroke:                 green;
+  stroke-width:           3px;
+  fill:                   transparent; }
+  </style>`);
+      //.........................................................................................................
       echo("<defs>");
       ref = gids.values();
       for (gid of ref) {
         outline = JSON.parse(RBW.glyph_to_svg_pathdata(gid));
         debug('^3344^', gid, outline);
         // continue if outline.pd is ''
-        echo(`<symbol overflow='visible' id='g${gid}'>`);
-        echo(`<path d='${outline.pd}' transform='move(${d.x},${d.y + 1000})'/>`);
-        echo("</symbol>");
+        echo(`<symbol overflow='visible' id='g${gid}'><path d='${outline.pd}'/></symbol>`);
+        echo(`<symbol overflow='visible' id='b${gid}'>${outline.br}</symbol>`);
       }
       echo("</defs>");
 //.........................................................................................................
       for (i = 0, len = arrangement.length; i < len; i++) {
         d = arrangement[i];
         echo(`<use href='#g${d.gid}' x='${d.x}' y='${d.y}'/>`);
+        echo(`<use href='#b${d.gid}' x='${d.x}' y='${d.y}'/>`);
       }
       // echo "<g x='#{d.x}' y='#{d.y + 1000}'>"
       // echo "#{outline.br}"
