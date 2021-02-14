@@ -7,6 +7,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [What it Does](#what-it-does)
+- [Samples](#samples)
 - [What it Is](#what-it-is)
 - [How Does it Compare](#how-does-it-compare)
 - [Caveats](#caveats)
@@ -47,6 +48,9 @@ here](https://github.com/harfbuzz/harfbuzz)), which is written in C++.
 to Rust", and since it's written in Rust, we can compile it to WASM and write a nice API surface for it,
 which is what I did.
 
+
+## Samples
+
 ![An Arabic Sample](artwork/sample-amiri.png)
 
 *Sample in Arabic, using the [Amiri Typeface](https://www.amirifont.org/) to type out* "الخط الأمیری".
@@ -63,7 +67,7 @@ paths are set to `0` (i.e. all glyfs are still nominally sitting on the baseline
 *Sample in Tibetan, using the [Tibetan Machine Uni
 Typeface](https://collab.its.virginia.edu/access/wiki/site/26a34146-33a6-48ce-001e-f16ce7908a6a/tibetan%20machine%20uni.html).
 Again, a complex composition is made from a linear string of codepoints ` ཨ`, ` ོ`, ` ཾ`, ` ་`, ` མ`, ` ་`,
-` ཎ`, ` ི`, ` ་`, ` པ`, ` ད`, ` ྨ`, ` ེ`, ` ་`, ` ཧ`, ` ཱ`, ` ུ`*
+` ཎ`, ` ི`, ` ་`, ` པ`, ` ད`, ` ྨ`, ` ེ`, ` ་`, ` ཧ`, ` ཱ`, ` ུ`.*
 
 
 
