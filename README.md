@@ -52,8 +52,8 @@ which is what I did.
 *Sample in Arabic, using the [Amiri Typeface](https://www.amirifont.org/) to type out* "الخط الأمیری".
 *Notice visible overlaps and tasteful placement of complex ligatures (which will for the most part not
 present in the browser rendering of the same text unless you happen to configured a suitable font). Both
-texts generated from the exact same sequence of Unicode codepoints,* <ltr>`ا`&nbsp;`ل`, `خ`, `ط`, `␣`, `ا`, `ل`, `أ`, `م`, `ی`
-`ر`, `ی`.</ltr>
+texts generated from the exact same sequence of Unicode codepoints,* `ا`, `ل`, `خ`, `ط`, `␣`, `ا`, `ل`, `أ`,
+`م`, `ی` `ر`, `ی` (which starts with `ا` and ends with `ی`, notice RTL re-ordering by the browser).
 
 
 ## What it Is
