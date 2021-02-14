@@ -138,7 +138,12 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   let glyph_buffer = rustybuzz::shape( &face, &cfg.features, buffer );
   //........................................................................................................
   if cfg.format == "json" { return glyfs_as_json( &glyph_buffer, ); }
-  else if cfg.format == "rusty" { return glyph_buffer.serialize( &face, FORMAT_FLAGS ); }
+  else if cfg.format == "rusty" {
+    let format_flags: rustybuzz::SerializeFlags =
+      // rustybuzz::SerializeFlags::NO_GLYPH_NAMES |
+      // rustybuzz::SerializeFlags::GLYPH_EXTENTS |
+      rustybuzz::SerializeFlags::GLYPH_FLAGS;
+    return glyph_buffer.serialize( &face, format_flags ); }
   // urge( &format!( "^33321^ {}", glyfs_as_short( &glyph_buffer, ) ) );
   return glyfs_as_short( &glyph_buffer, ); }
 
