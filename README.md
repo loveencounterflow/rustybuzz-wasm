@@ -56,7 +56,7 @@ texts generated from the exact same sequence of Unicode codepoints,* `ا`, `ل`,
 `م`, `ی` `ر`, `ی` *(which starts with `ا` and ends with `ی`, notice RTL re-ordering by the browser). Also
 note that while the bounding boxes of the glyfs differ in their vertical placements, in this case that only
 reflects tthe different areas covered by the outlines; in the underlying SVG, the `y` attributes of all
-paths are set to `0`.*
+paths are set to `0` (i.e. all glyfs are still nominally sitting on the baseline).*
 
 
 ## What it Is
