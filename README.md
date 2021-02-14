@@ -47,6 +47,8 @@ here](https://github.com/harfbuzz/harfbuzz)), which is written in C++.
 to Rust", and since it's written in Rust, we can compile it to WASM and write a nice API surface for it,
 which is what I did.
 
+![An Arabic Sample](artwork/sample-amiri.png)
+
 
 ## What it Is
 
