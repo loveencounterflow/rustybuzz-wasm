@@ -53,7 +53,10 @@ which is what I did.
 *Notice visible overlaps and tasteful placement of complex ligatures (which will for the most part not
 present in the browser rendering of the same text unless you happen to configured a suitable font). Both
 texts generated from the exact same sequence of Unicode codepoints,* `ا`, `ل`, `خ`, `ط`, `␣`, `ا`, `ل`, `أ`,
-`م`, `ی` `ر`, `ی` (which starts with `ا` and ends with `ی`, notice RTL re-ordering by the browser).
+`م`, `ی` `ر`, `ی` *(which starts with `ا` and ends with `ی`, notice RTL re-ordering by the browser). Also
+note that while the bounding boxes of the glyfs differ in their vertical placements, in this case that only
+reflects tthe different areas covered by the outlines; in the underlying SVG, the `y` attributes of all
+paths are set to `0`.*
 
 
 ## What it Is
