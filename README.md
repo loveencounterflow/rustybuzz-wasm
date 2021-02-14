@@ -53,7 +53,7 @@ which is what I did.
 
 ![An Arabic Sample](artwork/sample-amiri.png)
 
-*Sample in Arabic, using the [Amiri Typeface](https://www.amirifont.org/) to type out* "الخط الأمیری".
+*Sample in Arabic, using the [Amiri Typeface](https://www.amirifont.org/) to typeset* "الخط الأمیری".
 *Notice visible overlaps and tasteful placement of complex ligatures (which will for the most part not
 present in the browser rendering of the same text unless you happen to configured a suitable font). Both
 texts generated from the exact same sequence of Unicode codepoints,* `ا`, `ل`, `خ`, `ط`, `␣`, `ا`, `ل`, `أ`,
@@ -65,8 +65,8 @@ paths are set to `0` (i.e. all glyfs are still nominally sitting on the baseline
 ![A Tibetan Sample](artwork/sample-tibetan.png)
 
 *Sample in Tibetan, using the [Tibetan Machine Uni
-Typeface](https://collab.its.virginia.edu/access/wiki/site/26a34146-33a6-48ce-001e-f16ce7908a6a/tibetan%20machine%20uni.html).
-to type out* ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ *(there is a certain chance even in 2021 that this piece of text will not be
+Typeface](https://collab.its.virginia.edu/access/wiki/site/26a34146-33a6-48ce-001e-f16ce7908a6a/tibetan%20machine%20uni.html),
+to typeset* ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ *(there is a certain chance even in 2021 that this piece of text will not be
 rendered correctly across systems and browsers). Again, a complex composition is made from a linear string
 of codepoints `ཨ`, ` ོ`, ` ཾ`, ` ་`, ` མ`, ` ་`, ` ཎ`, ` ི`, ` ་`, ` པ`, ` ད`, ` ྨ`, ` ེ`, ` ་`, ` ཧ`, ` ཱ`,
 ` ུ`. Notice that in this font, a choice has been made to precompose the stacked clusters* ` ད`, ` ྨ` *and*
