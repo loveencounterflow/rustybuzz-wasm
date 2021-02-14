@@ -168,8 +168,8 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 * [ ] implement language selection?
 * [ ] implement script selection?
 * [ ] implement clustering selection?
-* [ ] <strike>add https://github.com/nasser/node-harfbuzz/tree/remove-freetype to benchmarks</strike>
-  (compilation on Linux Mint fails although `libharfbuzz-dev` v1.7.2 is installed)
+* [ ] <strike>add https://github.com/nasser/node-harfbuzz to benchmarks</strike> (compilation on Linux Mint
+  fails although `libharfbuzz-dev` v1.7.2 is installed)
 
 
 
