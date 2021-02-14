@@ -43,21 +43,44 @@ if module is require.main then do =>
   RBW.set_font_bytes font_bytes_hex unless RBW.has_font_bytes()
   # font_bytes_hex      = 'abcdefgh'
   # format              = 'short'
-  # format              = 'json'
-  format              = 'rusty'
+  format              = 'json'
+  # format              = 'rusty'
   shy                 = '\xad'
   texts               = [
+    # "a"
     "affix"
-    "af#fix"
-    " "
-    "#"
-    "-"
+    # "af#fix"
+    # " "
+    # "#"
+    # "-"
     ]
-  for text in texts
-    text  = text.replace /#/g, shy
-    cfg   = { format, text, }
-    info '^223^', RBW.shape_text cfg
-  urge '^690^', RBW.glyph_to_svg_pathdata 42
+  echo """<?xml version='1.0' encoding='UTF-8'?>
+    <svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 5900 1500' version='2'>"""
+  # for text in texts
+  text        = texts[ 0 ]
+  text        = text.replace /#/g, shy
+  cfg         = { format, text, }
+  arrangement = JSON.parse RBW.shape_text cfg
+  gids        = new Set ( d.gid for d in arrangement )
+  debug '^3344^', gids
+  #.........................................................................................................
+  echo "<defs>"
+  for gid from gids.values()
+    outline = JSON.parse RBW.glyph_to_svg_pathdata gid
+    debug '^3344^', gid, outline
+    # continue if outline.pd is ''
+    echo "<symbol overflow='visible' id='g#{gid}'>"
+    echo "<path d='#{outline.pd}' transform='move(#{d.x},#{d.y + 1000})'/>"
+    echo "</symbol>"
+  echo "</defs>"
+  #.........................................................................................................
+  for d in arrangement
+    echo "<use href='#g#{d.gid}' x='#{d.x}' y='#{d.y}'/>"
+    # echo "<g x='#{d.x}' y='#{d.y + 1000}'>"
+    # echo "#{outline.br}"
+    # echo "</g>"
+  #.........................................................................................................
+  echo "</svg>"
   return null
 
 
