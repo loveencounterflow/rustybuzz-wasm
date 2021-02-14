@@ -19,6 +19,8 @@ serde_derive = "1.0.80"
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 rustybuzz = "0.3"
 ttf-parser = "0.11"
+svgtypes = "0.5"
+xmlwriter = "0.1" ### TAINT really needed?
 
 # [dev-dependencies]
 pico-args = "0.3"
