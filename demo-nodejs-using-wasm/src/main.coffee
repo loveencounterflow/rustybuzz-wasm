@@ -68,14 +68,13 @@ if module is require.main then do =>
   #.........................................................................................................
   echo """<style>
     path {
-      stroke:                 red;
-      stroke-width:           3px;
-      opacity:                75%;
-      fill:                   red; }
+      stroke:                 black;
+      stroke-width:           8px;
+      fill:                   #880000bd;; }
     rect {
       stroke:                 black;
       stroke-width:           3px;
-      fill:                   transparent; }
+      fill:                   #ffeb3b42; }
       </style>"""
   #.........................................................................................................
   echo "<defs>"
@@ -83,8 +82,8 @@ if module is require.main then do =>
     outline = JSON.parse RBW.glyph_to_svg_pathdata gid
     debug '^3344^', gid, outline
     # continue if outline.pd is ''
-    echo "<symbol overflow='visible' id='g#{gid}'><path d='#{outline.pd}'/></symbol>"
     echo "<symbol overflow='visible' id='b#{gid}'>#{outline.br}</symbol>"
+    echo "<symbol overflow='visible' id='g#{gid}'><path d='#{outline.pd}'/></symbol>"
   echo "</defs>"
   #.........................................................................................................
   for d in arrangement
