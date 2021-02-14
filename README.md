@@ -15,6 +15,7 @@
 - [Publish Compiled WASM Code](#publish-compiled-wasm-code)
 - [Command Lines](#command-lines)
 - [To Do](#to-do)
+- [Rendering](#rendering)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -170,6 +171,19 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 * [ ] implement clustering selection?
 * [ ] <strike>add https://github.com/nasser/node-harfbuzz to benchmarks</strike> (compilation on Linux Mint
   fails although `libharfbuzz-dev` v1.7.2 is installed)
+
+## Rendering
+
+* [`ab-glyph`](https://github.com/alexheretic/ab-glyph)—"When laying out glyphs into paragraph, ab_glyph is
+  faster than rusttype using .ttf fonts & much faster for .otf fonts."
+* [`rusttype`](https://gitlab.redox-os.org/redox-os/rusttype)—A pure Rust alternative to libraries like
+  FreeType
+* [Fontdue](https://github.com/mooman219/fontdue)—Fontdue is a simple, `no_std` (does not use the standard
+  library for portability), pure Rust, TrueType (`.ttf/.ttc`) & OpenType (`.otf`) font rasterizer and layout
+  tool. It strives to make interacting with fonts as fast as possible, and currently has the lowest end to
+  end latency for a font rasterizer.
+
+
 
 
 
