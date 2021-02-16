@@ -52,6 +52,12 @@
       // font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
       font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
       // font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
+      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmroman10-bolditalic.otf';
+      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmromanslant17-regular.otf';
+      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmromanunsl10-regular.otf';
+      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmromandunh10-oblique.otf';
+      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmroman17-regular.otf';
+      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmroman7-regular.otf';
       font_bytes = FS.readFileSync(font_path);
       font_bytes_hex = font_bytes.toString('hex');
       if (!RBW.has_font_bytes()) {
@@ -65,13 +71,13 @@
       // "affix"
       // "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
       // ( [ "الخط الأمیری"... ].reverse() ).join ''
-      texts = ["af#fix#"];
+      texts = ["a certain minimum"];
       // "af#fix-"
       // " "
       // "#"
       // "-"
       echo(`<?xml version='1.0' encoding='UTF-8'?>
-<svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 5900 1500' version='2'>`);
+<svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 10500 1500' version='2'>`);
       // for text in texts
       text = texts[0];
       text = text.replace(/#/g, shy);
@@ -90,14 +96,24 @@
       //.........................................................................................................
       echo(`<style>
 path {
-  stroke:                 black;
-  stroke-width:           8px;
-  fill:                   #880000bd;; }
+  stroke:                 transparent;
+  stroke-width:           0mm;
+  fill:                   black;; }
 rect {
-  stroke:                 black;
-  stroke-width:           3px;
-  fill:                   #ffeb3b42; }
+  stroke:                 transparent;
+  stroke-width:           0;
+  fill:                   transparent; }
   </style>`);
+      // echo """<style>
+      //   path {
+      //     stroke:                 black;
+      //     stroke-width:           8px;
+      //     fill:                   #880000bd;; }
+      //   rect {
+      //     stroke:                 black;
+      //     stroke-width:           3px;
+      //     fill:                   #ffeb3b42; }
+      //     </style>"""
       //.........................................................................................................
       echo("<defs>");
       ref = gids.values();
