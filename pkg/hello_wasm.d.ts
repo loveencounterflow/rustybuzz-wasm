@@ -26,3 +26,9 @@ export function shape_text(user_cfg: any): string;
 * @returns {string}
 */
 export function glyph_to_svg_pathdata(js_glyph_id: any): string;
+/**
+* @param {string} text
+* @param {number} width
+* @returns {string}
+*/
+export function wrap_text(text: string, width: number): string;

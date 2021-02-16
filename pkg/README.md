@@ -7,6 +7,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [What it Does](#what-it-does)
+- [Samples](#samples)
 - [What it Is](#what-it-is)
 - [How Does it Compare](#how-does-it-compare)
 - [Caveats](#caveats)
@@ -16,6 +17,9 @@
 - [Command Lines](#command-lines)
 - [To Do](#to-do)
 - [Rendering](#rendering)
+- [Also See](#also-see)
+  - [Text Shaping](#text-shaping)
+  - [Line Breaking](#line-breaking)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -46,6 +50,33 @@ here](https://github.com/harfbuzz/harfbuzz)), which is written in C++.
 [`rustybuzz`](https://github.com/RazrFalcon/rustybuzz) is "is a complete harfbuzz's shaping algorithm port
 to Rust", and since it's written in Rust, we can compile it to WASM and write a nice API surface for it,
 which is what I did.
+
+
+## Samples
+
+![An Arabic Sample](artwork/sample-amiri.png)
+
+*Sample in Arabic, using the [Amiri Typeface](https://www.amirifont.org/) to typeset* "الخط الأمیری".
+*Notice visible overlaps and tasteful placement of complex ligatures (which will for the most part not be
+present in the browser rendering of the same text unless you happen to configured a suitable font). Both
+texts generated from the exact same sequence of Unicode codepoints,* `ا`, `ل`, `خ`, `ط`, `␣`, `ا`, `ل`, `أ`,
+`م`, `ی` `ر`, `ی` *(which starts with `ا` and ends with `ی`, notice RTL re-ordering by the browser). Also
+note that while the bounding boxes of the glyfs differ in their vertical placements, in this case that only
+reflects tthe different areas covered by the outlines; in the underlying SVG, the `y` attributes of all
+paths are set to `0` (i.e. all glyfs are still nominally sitting on the baseline).*
+
+![A Tibetan Sample](artwork/sample-tibetan.png)
+
+*Sample in Tibetan, using the [Tibetan Machine Uni
+Typeface](https://collab.its.virginia.edu/access/wiki/site/26a34146-33a6-48ce-001e-f16ce7908a6a/tibetan%20machine%20uni.html),
+to typeset* ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ *(there is a certain chance even in 2021 that this piece of text will not be
+rendered correctly across systems and browsers). Again, a complex composition is made from a linear string
+of codepoints* `ཨ`, ` ོ`, ` ཾ`, ` ་`, ` མ`, ` ་`, ` ཎ`, ` ི`, ` ་`, ` པ`, ` ད`, ` ྨ`, ` ེ`, ` ་`, ` ཧ`, ` ཱ`,
+` ུ`. *Notice that in this font, a choice has been made to precompose the stacked clusters* ` ད`, ` ྨ` *and*
+` ཧ`, ` ཱ`, ` ུ`*; this is a design choice which, were it not for a text shaper like `rustybuzz`, would
+cause a considerable amount of work for anyone striving to display Tibetan script correctly with this font
+and others whose choice of ligatures may be completely different.*
+
 
 
 ## What it Is
@@ -105,8 +136,18 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 
 ## Caveats
 
-Rust Newbie here so probably the code is not ideal in some respects.
-
+* Rust Newbie here so probably the code is not ideal in some respects.
+* FTTB I have commited the WASM artefacts to the repo; since I'm still working on this you may happen to
+  download some **unoptimized code which is orders of magnitude slower than WASM resulting from optimized
+  compilation**
+* Always re-build before trying out:
+  * for faster compilation, do `wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node
+    demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
+  * for faster execution, do `wasm-pack build         --target nodejs && trash pkg/.gitignore && node
+    demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
+* Values are currently communicated as JSON and hex-encoded binary strings; this is probably not terribly
+  efficient and may change in the future; see https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
+  and https://docs.rs/serde-wasm-bindgen/0.1.3/serde_wasm_bindgen/.
 
 ## Steps to Follow
 
@@ -114,6 +155,32 @@ Rust Newbie here so probably the code is not ideal in some respects.
 
 ## Installation
 
+
+<strike>```` * create project ````</strike><br>
+
+<strike>```` ```sh ````</strike><br>
+<strike>```` cargo new --lib hello-wasm && cd hello-wasm ````</strike><br>
+<strike>```` ``` ````</strike><br>
+
+<strike>```` * edit `Cargo.toml`: ````</strike><br>
+
+<strike>```` ```toml ````</strike><br>
+<strike>```` [lib] ````</strike><br>
+<strike>```` crate-type = ["cdylib"] ````</strike><br>
+
+<strike>```` [dependencies] ````</strike><br>
+<strike>```` wasm-bindgen = "0.2" ````</strike><br>
+<strike>```` pico-args = "0.3" ````</strike><br>
+<strike>```` libc = "0.2" ````</strike><br>
+<strike>```` ``` ````</strike><br>
+
+<strike>```` * install `wasm-pack`: ````</strike><br>
+
+<strike>```` ```sh ````</strike><br>
+<strike>```` cargo install wasm-pack ````</strike><br>
+<strike>```` ``` ````</strike><br>
+
+<!--
 * create project
 
 ```sh
@@ -137,6 +204,7 @@ libc = "0.2"
 ```sh
 cargo install wasm-pack
 ```
+-->
 
 ## Publish Compiled WASM Code
 
@@ -169,8 +237,6 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 * [ ] implement language selection?
 * [ ] implement script selection?
 * [ ] implement clustering selection?
-* [ ] <strike>add https://github.com/nasser/node-harfbuzz to benchmarks</strike> (compilation on Linux Mint
-  fails although `libharfbuzz-dev` v1.7.2 is installed)
 
 ## Rendering
 
@@ -183,7 +249,29 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
   tool. It strives to make interacting with fonts as fast as possible, and currently has the lowest end to
   end latency for a font rasterizer.
 
+## Also See
 
+### Text Shaping
 
+* [Allsorts](https://github.com/yeslogic/allsorts)—Allsorts is a font parser, shaping engine, and subsetter
+  for OpenType, WOFF, and WOFF2 written entirely in Rust. It was extracted from
+  [Prince](https://www.princexml.com/), a tool that typesets and lays out HTML and CSS documents into PDF.
 
+  The Allsorts shaping engine was developed in conjunction with [a specification for OpenType
+  shaping](https://github.com/n8willis/opentype-shaping-documents/), which aims to specify OpenType font
+  shaping behaviour.
+
+* [OpenType shaping documents](https://github.com/n8willis/opentype-shaping-documents/)
+
+### Line Breaking
+
+* [newbreak](https://github.com/simoncozens/newbreak)—written in JS/TS, has tentative Rust implementation;
+  TS fails to compile to JS; last commits in Summer 2020 so maybe abandoned.
+* [fontdue](https://github.com/mooman219/fontdue)—written in Rust, aims to be font rasterizer *including*
+  text wrapping, but sadly [fails to compile although I could hotfix
+  that](https://github.com/mooman219/fontdue/issues/57).
+* Repeating links from [a StackOverflow answer](https://cs.stackexchange.com/a/123303):
+* [kas-text](https://github.com/kas-gui/kas-text) looks enticing but is a huge thing geared towards building
+  GUI apps. It uses the original HarfBuzz C libraries so I rather not touch this thing as C dependencies
+  will always be cans of worms.
 
