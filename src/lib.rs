@@ -23,6 +23,7 @@ use ttf_parser;
 // use svgtypes::WriteBuffer;
 use svgtypes::PathSegment;
 use serde_json::json;
+use textwrap;
 
 
 //==========================================================================================================
@@ -255,7 +256,7 @@ pub fn glyph_to_svg_pathdata( js_glyph_id: &JsValue ) -> String {
   }).to_string();
 }
 
-// ---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 fn rectangle_from_bbox( bbox: ttf_parser::Rect, scale: f64, ) -> String {
   return format!( "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\"/>",
     scale_coordinate(  bbox.x_min    as f64, scale ),
@@ -263,7 +264,7 @@ fn rectangle_from_bbox( bbox: ttf_parser::Rect, scale: f64, ) -> String {
     scale_coordinate(  bbox.width()  as f64, scale ),
     scale_coordinate(  bbox.height() as f64, scale ), ) }
 
-// ---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 struct Builder<'a>(&'a mut svgtypes::Path);
   /// see https://docs.rs/ttf-parser/0.11.0/ttf_parser/struct.FaceTables.html#method.outline_glyph
 
@@ -284,10 +285,10 @@ impl ttf_parser::OutlineBuilder for Builder<'_> {
     self.0.push_close_path(); }
   }
 
-// ---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 fn scale_coordinate( a: f64, scale: f64 ) -> f64 { ( a  * scale * PRECISION ).round() / PRECISION }
 
-// ---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 fn scale_segment(d: &mut PathSegment, scale: f64 ) {
   match *d {
     PathSegment::MoveTo { ref mut x, ref mut y, .. } => {
@@ -325,4 +326,24 @@ fn scale_segment(d: &mut PathSegment, scale: f64 ) {
       *y  = ( *y  * scale * PRECISION ).round() / PRECISION; }
     PathSegment::ClosePath { .. } => {} }
     }
+
+
+//==========================================================================================================
+// TEXT WRAPPING
+//----------------------------------------------------------------------------------------------------------
+use hyphenation::{Language, Load, Standard};
+use textwrap::{fill, Options};
+
+//----------------------------------------------------------------------------------------------------------
+#[wasm_bindgen]
+pub fn wrap_text( text: String, width: usize ) -> String {
+  // let text = "textwrap: a small library for wrapping text.";
+  let dictionary  = Standard::from_embedded( Language::EnglishUS ).unwrap();
+  let options     = Options::new( width ).splitter( dictionary );
+  // return String::from( "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX!");
+  return format!( "{}", fill( &text, &options ) );
+}
+
+
+
 

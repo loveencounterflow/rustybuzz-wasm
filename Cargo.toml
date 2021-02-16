@@ -21,7 +21,8 @@ rustybuzz = "0.3"
 ttf-parser = "0.11"
 svgtypes = "0.5"
 # xmlwriter = "0.1" ### TAINT really needed?
-textwrap = "0.13"
+textwrap = { version = "0.13", features = [ "smawk", "hyphenation", "unicode-width", ] }
+hyphenation = "0.8"
 
 # [dev-dependencies]
 pico-args = "0.3"

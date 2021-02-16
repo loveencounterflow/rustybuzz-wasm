@@ -18,11 +18,10 @@ info                      = CND.get_logger 'info',      badge
 echo                      = CND.echo.bind CND
 FS                        = require 'fs'
 PATH                      = require 'path'
-# { promisify }
+RBW                       = require '../../pkg'
 
-
-############################################################################################################
-if module is require.main then do =>
+#-----------------------------------------------------------------------------------------------------------
+@demo_text_shaping = ->
   globalThis.alert          = alert
   globalThis.help           = help
   globalThis.urge           = urge
@@ -33,8 +32,6 @@ if module is require.main then do =>
     urge '^44877^', rpr path
     # return FS.readFileSync path
     return true
-  ### NOTE only works with `wasm-pack build --target nodejs` ###
-  RBW                 = require '../../pkg'
   font_path           = 'EBGaramond08-Italic.otf'
   # font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
   font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
@@ -107,9 +104,50 @@ if module is require.main then do =>
   echo "</svg>"
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+@demo_text_wrapping = ->
+
+  text = """Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
+  to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
+  from their respective alphabets, but some also accept punctuation marks such as hyphens and apostrophes,
+  and are thus capable of handling hyphen-joined compound words or elisions. Even so, it's generally
+  preferable to handle punctuation at the level of segmentation, as it affords greater control over the
+  final result (such as where to break hyphen-joined compounds, or whether to set a leading hyphen on new
+  lines).
+  在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word
+  wrap）是大多数文字編輯器、文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。
+  """
+
+  text          = text.replace /\s+/g, ' '
+  width         = 50
+  lines         = RBW.wrap_text text, width
+  lines         = lines.split '\n'
+  last_line_idx = lines.length - 1
+  debug '^449^', lines
+  for line, line_idx in lines
+    # debug '^499^', words
+    if line_idx < last_line_idx
+      line_length   = line.length
+      words         = line.split /\s+/
+      last_word_idx = words.length - 1
+      loop
+        break if last_word_idx < 1
+        break if line_length >= width
+        for word_idx in [ 0 ... last_word_idx ]
+          # debug word_idx
+          break if line_length >= width
+          continue unless Math.random() > 0.5
+          line_length++
+          words[ word_idx ] += ' '
+      info words.join ' '
+    else
+      info line
+  return null
 
 
 
 
-
+############################################################################################################
+if module is require.main then do =>
+  @demo_text_wrapping()
 
