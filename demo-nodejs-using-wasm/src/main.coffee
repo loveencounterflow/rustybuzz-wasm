@@ -51,14 +51,14 @@ if module is require.main then do =>
     # "affix"
     # "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
     # ( [ "الخط الأمیری"... ].reverse() ).join ''
-    "af#fix#"
+    "a certain minimum"
     # "af#fix-"
     # " "
     # "#"
     # "-"
     ]
   echo """<?xml version='1.0' encoding='UTF-8'?>
-    <svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 5900 1500' version='2'>"""
+    <svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 10500 1500' version='2'>"""
   # for text in texts
   text        = texts[ 0 ]
   text        = text.replace /#/g, shy
@@ -69,14 +69,24 @@ if module is require.main then do =>
   #.........................................................................................................
   echo """<style>
     path {
-      stroke:                 black;
-      stroke-width:           8px;
-      fill:                   #880000bd;; }
+      stroke:                 transparent;
+      stroke-width:           0mm;
+      fill:                   black;; }
     rect {
-      stroke:                 black;
-      stroke-width:           3px;
-      fill:                   #ffeb3b42; }
+      stroke:                 transparent;
+      stroke-width:           0;
+      fill:                   transparent; }
       </style>"""
+  # echo """<style>
+  #   path {
+  #     stroke:                 black;
+  #     stroke-width:           8px;
+  #     fill:                   #880000bd;; }
+  #   rect {
+  #     stroke:                 black;
+  #     stroke-width:           3px;
+  #     fill:                   #ffeb3b42; }
+  #     </style>"""
   #.........................................................................................................
   echo "<defs>"
   for gid from gids.values()
