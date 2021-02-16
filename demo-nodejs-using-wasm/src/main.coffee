@@ -36,14 +36,12 @@ if module is require.main then do =>
   ### NOTE only works with `wasm-pack build --target nodejs` ###
   RBW                 = require '../../pkg'
   font_path           = 'EBGaramond08-Italic.otf'
-  font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
+  # font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
   font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
-  font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
-  # font_path           = '/home/flow/io/mingkwai-rack/jizura-fonts/fonts/EBGaramond08-Italic.otf'
+  # font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
   font_bytes          = FS.readFileSync font_path
   font_bytes_hex      = font_bytes.toString 'hex'
   RBW.set_font_bytes font_bytes_hex unless RBW.has_font_bytes()
-  # font_bytes_hex      = 'abcdefgh'
   # format              = 'short'
   format              = 'json'
   # format              = 'rusty'
@@ -51,9 +49,10 @@ if module is require.main then do =>
   texts               = [
     # "a"
     # "affix"
-    "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
-    ( [ "الخط الأمیری"... ].reverse() ).join ''
-    # "af#fix"
+    # "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
+    # ( [ "الخط الأمیری"... ].reverse() ).join ''
+    "af#fix#"
+    # "af#fix-"
     # " "
     # "#"
     # "-"
@@ -82,7 +81,7 @@ if module is require.main then do =>
   echo "<defs>"
   for gid from gids.values()
     outline = JSON.parse RBW.glyph_to_svg_pathdata gid
-    debug '^3344^', gid, outline
+    debug '^3344^', gid, outline.pd[ .. 100 ]
     # continue if outline.pd is ''
     echo "<symbol overflow='visible' id='b#{gid}'>#{outline.br}</symbol>"
     echo "<symbol overflow='visible' id='g#{gid}'><path d='#{outline.pd}'/></symbol>"

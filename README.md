@@ -133,7 +133,15 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 
 ## Caveats
 
-Rust Newbie here so probably the code is not ideal in some respects.
+* Rust Newbie here so probably the code is not ideal in some respects.
+* FTTB I have commited the WASM artefacts to the repo; since I'm still working on this you may happen to
+  download some **unoptimized code which is orders of magnitude slower than WASM resulting from optimized
+  compilation**
+* Always re-build before trying out:
+  * for faster compilation, do `wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node
+    demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
+  * for faster execution, do `wasm-pack build         --target nodejs && trash pkg/.gitignore && node
+    demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
 
 
 ## Steps to Follow
@@ -142,6 +150,32 @@ Rust Newbie here so probably the code is not ideal in some respects.
 
 ## Installation
 
+
+<strike>```` * create project ````</strike><br>
+
+<strike>```` ```sh ````</strike><br>
+<strike>```` cargo new --lib hello-wasm && cd hello-wasm ````</strike><br>
+<strike>```` ``` ````</strike><br>
+
+<strike>```` * edit `Cargo.toml`: ````</strike><br>
+
+<strike>```` ```toml ````</strike><br>
+<strike>```` [lib] ````</strike><br>
+<strike>```` crate-type = ["cdylib"] ````</strike><br>
+
+<strike>```` [dependencies] ````</strike><br>
+<strike>```` wasm-bindgen = "0.2" ````</strike><br>
+<strike>```` pico-args = "0.3" ````</strike><br>
+<strike>```` libc = "0.2" ````</strike><br>
+<strike>```` ``` ````</strike><br>
+
+<strike>```` * install `wasm-pack`: ````</strike><br>
+
+<strike>```` ```sh ````</strike><br>
+<strike>```` cargo install wasm-pack ````</strike><br>
+<strike>```` ``` ````</strike><br>
+
+<!--
 * create project
 
 ```sh
@@ -165,6 +199,7 @@ libc = "0.2"
 ```sh
 cargo install wasm-pack
 ```
+-->
 
 ## Publish Compiled WASM Code
 
