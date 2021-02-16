@@ -17,6 +17,9 @@
 - [Command Lines](#command-lines)
 - [To Do](#to-do)
 - [Rendering](#rendering)
+- [Also See](#also-see)
+  - [Text Shaping](#text-shaping)
+  - [Line Breaking](#line-breaking)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -142,7 +145,9 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
     demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
   * for faster execution, do `wasm-pack build         --target nodejs && trash pkg/.gitignore && node
     demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
-
+* Values are currently communicated as JSON and hex-encoded binary strings; this is probably not terribly
+  efficient and may change in the future; see https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
+  and https://docs.rs/serde-wasm-bindgen/0.1.3/serde_wasm_bindgen/.
 
 ## Steps to Follow
 
@@ -244,7 +249,29 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
   tool. It strives to make interacting with fonts as fast as possible, and currently has the lowest end to
   end latency for a font rasterizer.
 
+## Also See
 
+### Text Shaping
 
+* [Allsorts](https://github.com/yeslogic/allsorts)—Allsorts is a font parser, shaping engine, and subsetter
+  for OpenType, WOFF, and WOFF2 written entirely in Rust. It was extracted from
+  [Prince](https://www.princexml.com/), a tool that typesets and lays out HTML and CSS documents into PDF.
 
+  The Allsorts shaping engine was developed in conjunction with [a specification for OpenType
+  shaping](https://github.com/n8willis/opentype-shaping-documents/), which aims to specify OpenType font
+  shaping behaviour.
+
+* [OpenType shaping documents](https://github.com/n8willis/opentype-shaping-documents/)
+
+### Line Breaking
+
+* [newbreak](https://github.com/simoncozens/newbreak)—written in JS/TS, has tentative Rust implementation;
+  TS fails to compile to JS; last commits in Summer 2020 so maybe abandoned.
+* [fontdue](https://github.com/mooman219/fontdue)—written in Rust, aims to be font rasterizer *including*
+  text wrapping, but sadly [fails to compile although I could hotfix
+  that](https://github.com/mooman219/fontdue/issues/57).
+* Repeating links from [a StackOverflow answer](https://cs.stackexchange.com/a/123303):
+* [kas-text](https://github.com/kas-gui/kas-text) looks enticing but is a huge thing geared towards building
+  GUI apps. It uses the original HarfBuzz C libraries so I rather not touch this thing as C dependencies
+  will always be cans of worms.
 
