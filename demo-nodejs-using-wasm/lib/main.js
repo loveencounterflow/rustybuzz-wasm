@@ -52,12 +52,6 @@
       // font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
       font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
       // font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
-      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmroman10-bolditalic.otf';
-      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmromanslant17-regular.otf';
-      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmromanunsl10-regular.otf';
-      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmromandunh10-oblique.otf';
-      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmroman17-regular.otf';
-      font_path = '/home/flow/jzr/modern-latin-fork-fakebold/otf/lmroman7-regular.otf';
       font_bytes = FS.readFileSync(font_path);
       font_bytes_hex = font_bytes.toString('hex');
       if (!RBW.has_font_bytes()) {
