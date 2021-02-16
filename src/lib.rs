@@ -331,19 +331,49 @@ fn scale_segment(d: &mut PathSegment, scale: f64 ) {
 //==========================================================================================================
 // TEXT WRAPPING
 //----------------------------------------------------------------------------------------------------------
-use hyphenation::{Language, Load, Standard};
-use textwrap::{fill, Options};
+// use hyphenation::{Language, Load, Standard};
+
+// //----------------------------------------------------------------------------------------------------------
+// impl serde::Serialize for textwrap::core::Word {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+//     where
+//         S: serde::Serializer,
+//     {
+//         serializer.serialize_i32(*self)
+//     }
+// }
+
+// //----------------------------------------------------------------------------------------------------------
+// struct Slab {
+//   pub word:             String,
+//   pub width:            u16,
+//   pub whitespace:       String,
+//   pub penalty:          String, }
+
+  // let text = "textwrap: a small library for wrapping text.";
+  // let dictionary  = Standard::from_embedded( Language::EnglishUS ).unwrap();
+  // let options     = textwrap::Options::new( width ).splitter( dictionary );
+  // return format!( "{}", fill( &text, &options ) );
+  // return format!( "{:#?}", textwrap::wrap( &text, &options ) );
 
 //----------------------------------------------------------------------------------------------------------
+/// return JSON `list<number>` with one wordcount per line
+/// TODO: return list of slab indices
 #[wasm_bindgen]
 pub fn wrap_text( text: String, width: usize ) -> String {
-  // let text = "textwrap: a small library for wrapping text.";
-  let dictionary  = Standard::from_embedded( Language::EnglishUS ).unwrap();
-  let options     = Options::new( width ).splitter( dictionary );
-  // return String::from( "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX!");
-  return format!( "{}", fill( &text, &options ) );
+  let words           = textwrap::core::find_words( &text ).collect::<Vec<_>>();
+  urge( &format!( "^827^ words: {:#?}", words ) );
+  let lines           = textwrap::core::wrap_optimal_fit( &words, |_| width );
+  let mut r: Vec<u16> = Vec::new();
+  for line in lines {
+    r.push( line.len() as u16 );
+    //   let slab = Slab {
+    //     word:             tw_word.word,
+    //     width:            tw_word.width,
+    //     whitespace:       tw_word.whitespace,
+    //     penalty:          tw_word.penalty, };
+    //   r.push( slab );
+  }
+  return json!( r ).to_string();
 }
-
-
-
 

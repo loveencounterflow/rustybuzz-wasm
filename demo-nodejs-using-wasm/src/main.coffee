@@ -21,12 +21,17 @@ PATH                      = require 'path'
 RBW                       = require '../../pkg'
 
 #-----------------------------------------------------------------------------------------------------------
-@demo_text_shaping = ->
+@_set_globals = ->
   globalThis.alert          = alert
   globalThis.help           = help
   globalThis.urge           = urge
   globalThis.info           = info
   globalThis.debug          = debug
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@demo_text_shaping = ->
+  @_set_globals()
   # globalThis.read_file      = FS.readFileSync
   globalThis.read_file      = ( path ) ->
     urge '^44877^', rpr path
@@ -106,7 +111,8 @@ RBW                       = require '../../pkg'
 
 #-----------------------------------------------------------------------------------------------------------
 @demo_text_wrapping = ->
-
+  @_set_globals()
+  shy           = '\xad'
   text = """Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
   to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
   from their respective alphabets, but some also accept punctuation marks such as hyphens and apostrophes,
@@ -114,13 +120,17 @@ RBW                       = require '../../pkg'
   preferable to handle punctuation at the level of segmentation, as it affords greater control over the
   final result (such as where to break hyphen-joined compounds, or whether to set a leading hyphen on new
   lines).
-  在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word
-  wrap）是大多数文字編輯器、文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。
+  在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。
   """
-
+  text          = "The ela#bo#ra#te sphinx told me a rid#dle."
+  text          = "The elaborate sphinx told me a riddle."
+  #.........................................................................................................
+  text          = text.replace /#/g, shy
   text          = text.replace /\s+/g, ' '
-  width         = 50
+  width         = 10
   lines         = RBW.wrap_text text, width
+  debug '^3383^', lines
+  return null
   lines         = lines.split '\n'
   last_line_idx = lines.length - 1
   debug '^449^', lines
