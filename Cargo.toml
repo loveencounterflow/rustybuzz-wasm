@@ -20,7 +20,8 @@ wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 rustybuzz = "0.3"
 ttf-parser = "0.11"
 svgtypes = "0.5"
-xmlwriter = "0.1" ### TAINT really needed?
+# xmlwriter = "0.1" ### TAINT really needed?
+textwrap = "0.13"
 
 # [dev-dependencies]
 pico-args = "0.3"
