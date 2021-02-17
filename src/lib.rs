@@ -24,24 +24,102 @@ use ttf_parser;
 use svgtypes::PathSegment;
 use serde_json::json;
 use textwrap;
+// use std::collections::HashMap;
+// #[macro_use]
+// extern crate lazy_static;
 
 
 //==========================================================================================================
 // PERSISTENT STATE
-//----------------------------------------------------------------------------------------------------------
-// thx to https://stackoverflow.com/a/19608953/256361
-static mut FONT_BYTES: Vec<u8> = vec![];
+// //----------------------------------------------------------------------------------------------------------
+// // thx to https://stackoverflow.com/a/19608953/256361
+// //----------------------------------------------------------------------------------------------------------
+// lazy_static! {
+//   // thx to https://docs.rs/lazy_static/1.4.0/lazy_static/ and Rust error messages
+//   static ref CACHE: Vec<&'static CacheEntry<'static>> = {
+//     #![allow(unused_mut)]
+//     let mut m = Vec::new();
+//     // m.insert(0, "foo");
+//     m
+// }; }
 
+// thx to https://stackoverflow.com/a/27826181/256361
+// use lazy_static::lazy_static; // 1.4.0
+// use std::sync::Mutex;
+
+// lazy_static! {
+//     static ref CACHE: Mutex<Vec<CacheEntry<'static>>> = Mutex::new(vec![]);
+// }
+
+// fn do_a_call() { CACHE.lock().unwrap().push(1);}
+// fn main() {
+//     do_a_call();
+//     do_a_call();
+//     do_a_call();
+//     println!("called {}", CACHE.lock().unwrap().len());}
+
+// //----------------------------------------------------------------------------------------------------------
+// pub struct CacheEntry<'a> {
+//   rustybuzz_face:    rustybuzz::Face<'a>,
+//   ttfparser_face:   ttf_parser::Face<'a>,
+//   // scale: ...,
+// }
+
+static mut FONTBYTES_1: Vec<u8> = vec![];
+static mut FONTBYTES_2: Vec<u8> = vec![];
+static mut FONTBYTES_3: Vec<u8> = vec![];
+
+
+static mut FONT_BYTES: Vec<u8> = vec![];
+//----------------------------------------------------------------------------------------------------------
 #[wasm_bindgen]
 pub fn set_font_bytes( font_bytes_hex: String ) {
   unsafe { FONT_BYTES = match hex::decode( font_bytes_hex ) {
-      Ok( v ) => v,
-      Err( error ) => {
-        alert( &format!( "^895734^ error decoding hexadecimal: {}", error ) );
-        std::process::exit( 1 ); }, }; }; }
-
+    Ok( v ) => v,
+    Err( error ) => {
+      alert( &format!( "^895734^ error decoding hexadecimal: {}", error ) );
+      std::process::exit( 1 ); }, }; }; }
+//----------------------------------------------------------------------------------------------------------
 #[wasm_bindgen]
 pub fn has_font_bytes() -> bool { unsafe { !FONT_BYTES.is_empty() } }
+
+//----------------------------------------------------------------------------------------------------------
+// #![allow(unused_mut)]
+#[wasm_bindgen]
+pub fn register_font( fontnr: u16, font_bytes_hex: String ) {
+  if fontnr > 4 {
+    alert( &format!( "^895455^ fontnr must be between 1 and 3, got {}", fontnr ) );
+    std::process::exit( 1 ); };
+  let face_index = 0;
+  let font_bytes = match hex::decode( font_bytes_hex ) {
+    Ok( v ) => v,
+    Err( error ) => {
+      alert( &format!( "^895734^ error decoding hexadecimal: {}", error ) );
+      std::process::exit( 1 ); }, };
+  unsafe {
+    match fontnr {
+      1 => FONTBYTES_1 = font_bytes,
+      2 => FONTBYTES_2 = font_bytes,
+      3 => FONTBYTES_3 = font_bytes,
+      0u16 | 4u16..=std::u16::MAX => {
+        alert( &format!( "^895433^ fontnr must be between 1 and 3, got {}", fontnr ) );
+        std::process::exit( 1 ); }
+
+      }
+    }
+  // let rustybuzz_face =  rustybuzz::Face::from_slice( &font_bytes, face_index ).unwrap();
+  // let     ttfparser_face = ttf_parser::Face::from_slice( &font_bytes, face_index ).unwrap();
+  // let entry = CacheEntry {
+  //   rustybuzz_face: rustybuzz_face,
+  //   ttfparser_face: ttfparser_face,
+
+  // };
+  // // CACHE.push( &entry );
+  // CACHE.lock().unwrap().push( entry );
+  // CACHE.push( 42 );
+  // (&mut *HASHMAP.borrow_mut())(); // see https://stackoverflow.com/a/59835163/256361
+  // (&mut HASHMAP).insert( name, &entry );
+}
 
 
 //==========================================================================================================

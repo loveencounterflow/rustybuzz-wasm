@@ -109,22 +109,6 @@ function logError(f) {
     };
 }
 /**
-* @returns {number}
-*/
-module.exports.inc = function() {
-    var ret = wasm.inc();
-    return ret;
-};
-
-/**
-* @returns {number}
-*/
-module.exports.dec = function() {
-    var ret = wasm.dec();
-    return ret;
-};
-
-/**
 * @param {string} font_bytes_hex
 */
 module.exports.set_font_bytes = function(font_bytes_hex) {
@@ -139,6 +123,18 @@ module.exports.set_font_bytes = function(font_bytes_hex) {
 module.exports.has_font_bytes = function() {
     var ret = wasm.has_font_bytes();
     return ret !== 0;
+};
+
+/**
+* @param {string} name
+* @param {string} font_bytes_hex
+*/
+module.exports.register_font = function(name, font_bytes_hex) {
+    var ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len0 = WASM_VECTOR_LEN;
+    var ptr1 = passStringToWasm0(font_bytes_hex, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len1 = WASM_VECTOR_LEN;
+    wasm.register_font(ptr0, len0, ptr1, len1);
 };
 
 let stack_pointer = 32;

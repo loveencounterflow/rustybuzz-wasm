@@ -28,3 +28,5 @@ hyphenation = "0.8"
 pico-args = "0.3"
 libc = "0.2"
 hex = "0.4"
+lazy_static = "1.4"
+

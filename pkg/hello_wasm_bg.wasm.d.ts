@@ -1,10 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export function inc(): number;
-export function dec(): number;
 export function set_font_bytes(a: number, b: number): void;
 export function has_font_bytes(): number;
+export function register_font(a: number, b: number, c: number, d: number): void;
 export function shape_text(a: number, b: number): void;
 export function glyph_to_svg_pathdata(a: number, b: number): void;
 export function wrap_text(a: number, b: number, c: number, d: number): void;

@@ -1,14 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @returns {number}
-*/
-export function inc(): number;
-/**
-* @returns {number}
-*/
-export function dec(): number;
-/**
 * @param {string} font_bytes_hex
 */
 export function set_font_bytes(font_bytes_hex: string): void;
@@ -16,6 +8,11 @@ export function set_font_bytes(font_bytes_hex: string): void;
 * @returns {boolean}
 */
 export function has_font_bytes(): boolean;
+/**
+* @param {string} name
+* @param {string} font_bytes_hex
+*/
+export function register_font(name: string, font_bytes_hex: string): void;
 /**
 * @param {any} user_cfg
 * @returns {string}
