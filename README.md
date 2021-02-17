@@ -15,6 +15,12 @@
 - [Installation](#installation)
 - [Publish Compiled WASM Code](#publish-compiled-wasm-code)
 - [Command Lines](#command-lines)
+- [API](#api)
+  - [1.) Persistent State](#1-persistent-state)
+  - [2.) Text Preparation](#2-text-preparation)
+  - [3.) Text Shaping](#3-text-shaping)
+  - [4.) Text Rendering](#4-text-rendering)
+  - [5.) Line Breaking](#5-line-breaking)
 - [To Do](#to-do)
 - [Rendering](#rendering)
 - [Also See](#also-see)
@@ -226,7 +232,28 @@ To build and test production:
 wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/nodexh ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
 ```
 
+## API
 
+### 1.) Persistent State
+
+* **`pub fn set_font_bytes( font_bytes_hex: String ) {`**—
+* **`pub fn has_font_bytes() -> bool { unsafe { !FONT_BYTES.is_empty() } }`**—
+
+### 2.) Text Preparation
+
+### 3.) Text Shaping
+
+* **`pub fn shape_text( user_cfg: &JsValue ) -> String {`**—
+<!-- * **`pub fn glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {`**— -->
+<!-- * **`pub fn glyfs_as_short( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {`**— -->
+
+### 4.) Text Rendering
+
+* **`pub fn glyph_to_svg_pathdata( js_glyph_id: &JsValue ) -> String {`**—
+
+### 5.) Line Breaking
+
+* **`pub fn wrap_text( text: String, width: usize ) -> String {`**—
 
 ## To Do
 
