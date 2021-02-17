@@ -86,7 +86,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_svg_typesetting = function() {
-    var arrangement, cfg, d, font_bytes, font_bytes_hex, font_path, format, gid, gids, i, len, outline, ref, shy, text, texts;
+    var arrangement, cfg, d, font_bytes, font_bytes_hex, font_idx, font_path, format, gid, gids, i, len, outline, ref, shy, text, texts;
     whisper('^33443^ demo_svg_typesetting');
     this._set_globals();
     // globalThis.read_file      = FS.readFileSync
@@ -99,6 +99,8 @@
     if (!RBW.has_font_bytes()) {
       RBW.set_font_bytes(font_bytes_hex);
     }
+    font_idx = 0;
+    RBW.register_font(font_idx, font_bytes_hex);
     // format              = 'short'
     format = 'json';
     // format              = 'rusty'
