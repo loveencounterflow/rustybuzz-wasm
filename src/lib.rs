@@ -30,22 +30,6 @@ use textwrap;
 // PERSISTENT STATE
 //----------------------------------------------------------------------------------------------------------
 // thx to https://stackoverflow.com/a/19608953/256361
-static mut COUNT: i32 = 0;
-
-#[wasm_bindgen]
-pub fn inc() -> i32 {
-unsafe {
-  COUNT += 1;
-  return COUNT; }; }
-
-#[wasm_bindgen]
-pub fn dec() -> i32 {
-unsafe {
-  COUNT += -1;
-  return COUNT; }; }
-
-//----------------------------------------------------------------------------------------------------------
-// thx to https://stackoverflow.com/a/19608953/256361
 static mut FONT_BYTES: Vec<u8> = vec![];
 
 #[wasm_bindgen]
@@ -362,7 +346,7 @@ fn scale_segment(d: &mut PathSegment, scale: f64 ) {
 #[wasm_bindgen]
 pub fn wrap_text( text: String, width: usize ) -> String {
   let words           = textwrap::core::find_words( &text ).collect::<Vec<_>>();
-  urge( &format!( "^827^ words: {:#?}", words ) );
+  // urge( &format!( "^827^ words: {:#?}", words ) );
   let lines           = textwrap::core::wrap_optimal_fit( &words, |_| width );
   let mut r: Vec<u16> = Vec::new();
   for line in lines {
