@@ -171,13 +171,13 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 
 * ⚠️ Rust Newbie here so probably the code is not ideal in some respects.
 * ⚠️ FTTB I have commited the WASM artefacts to the repo; since I'm still working on this you may happen to
-  download some **unoptimized code which is orders of magnitude slower than WASM resulting from optimized
-  compilation**
-* ⚠️ Always re-build before trying out:
-  * for faster compilation, do `wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node
-    demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
-  * for faster execution, do `wasm-pack build         --target nodejs && trash pkg/.gitignore && node
-    demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
+  ⛔️ **download some unoptimized code which is orders of magnitude slower than WASM resulting from optimized
+  compilation**; therefore:
+  * Always re-build before trying out:
+    * for faster compilation, do `wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node
+      demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
+    * for faster execution, do `wasm-pack build         --target nodejs && trash pkg/.gitignore && node
+      demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
 * ⚠️ Values are currently communicated as JSON and hex-encoded binary strings; this is probably not terribly
   efficient and may change in the future; see https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
   and https://docs.rs/serde-wasm-bindgen/0.1.3/serde_wasm_bindgen/.
