@@ -49,11 +49,11 @@
     (here dubbed ['slabs'](https://github.com/loveencounterflow/intertext/blob/master/README-slabs.md),
     short for 'syllables')
 
-As it stands, this work will probably be incorporated into
+⚠️ As it stands, this work will probably be incorporated into
 [InterText](https://github.com/loveencounterflow/intertext); at any rate, seeing as the scope of the present
 module has been growing, `rustybuzz-wasm` is no longer a fully appropriate moniker.
 
-**TO BE DONE**—For some details around code compilation and installation of this software see [the
+⚠️ 🚧 **TO BE DONE**—For some details around code compilation and installation of this software see [the
 installation guide](./INSTALL.md).
 
 ## What it Does
