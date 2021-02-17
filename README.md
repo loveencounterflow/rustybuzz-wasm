@@ -6,7 +6,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Note](#note)
+- [Introductory Notes](#introductory-notes)
 - [What it Does](#what-it-does)
 - [Samples](#samples)
 - [What it Is](#what-it-is)
@@ -27,7 +27,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Note
+## Introductory Notes
 
 * this code under development
 * this README still fragmentary
@@ -43,6 +43,9 @@
   getting there):
   * hyphenation
   * [*Unicode UAX#14: Unicode Line Breaking Algorithm*](https://www.unicode.org/reports/tr14/))
+* **TO BE DONE** for some details around code compilation and installation of this software see [the
+  installation guide][./INSTALL.md]
+
 
 ## What it Does
 
