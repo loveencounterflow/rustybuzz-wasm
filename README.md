@@ -51,7 +51,7 @@
 
 As it stands, this work will probably be incorporated into
 [InterText](https://github.com/loveencounterflow/intertext); at any rate, seeing as the scope of the present
-module grew, `rustybuzz-wasm` is no longer a fully appropriate moniker.
+module has been growing, `rustybuzz-wasm` is no longer a fully appropriate moniker.
 
 **TO BE DONE**—For some details around code compilation and installation of this software see [the
 installation guide](./INSTALL.md).
