@@ -6,14 +6,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [Note](#note)
 - [What it Does](#what-it-does)
 - [Samples](#samples)
 - [What it Is](#what-it-is)
 - [How Does it Compare](#how-does-it-compare)
 - [Caveats](#caveats)
-- [Steps to Follow](#steps-to-follow)
-- [Installation](#installation)
-- [Publish Compiled WASM Code](#publish-compiled-wasm-code)
 - [Command Lines](#command-lines)
 - [API](#api)
   - [1.) Persistent State](#1-persistent-state)
@@ -28,6 +26,23 @@
   - [Line Breaking](#line-breaking)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Note
+
+* this code under development
+* this README still fragmentary
+* initial goal was to make [`rustybuzz`](https://github.com/RazrFalcon/rustybuzz) (i.e., text shaping)
+  accessible from NodeJS
+* turns out `rustybuzz` depends on [`ttf-parser`](https://docs.rs/ttf-parser/0.11.0/ttf_parser/) which
+  offers outline handling, which is when text rendering (in SVG format) was added
+* then I found [`textwrap`](https://docs.rs/textwrap/0.13.2/textwrap/) which implements optimized
+  distribution of sized 'black boxes' (i.e. rectangular areas of arbitrary content) over stretches of equal
+  length (i.e. lines of text); this solves the problem of wrapping text provided one knows where line break
+  opportunities are (e.g. around whitespace, after a hard or soft hyphen, between CJK ideographs)
+* add text preparation and you have almost full typesetting (sans combination of styles so far, but we're
+  getting there):
+  * hyphenation
+  * [*Unicode UAX#14: Unicode Line Breaking Algorithm*](https://www.unicode.org/reports/tr14/))
 
 ## What it Does
 
@@ -154,69 +169,6 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 * Values are currently communicated as JSON and hex-encoded binary strings; this is probably not terribly
   efficient and may change in the future; see https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
   and https://docs.rs/serde-wasm-bindgen/0.1.3/serde_wasm_bindgen/.
-
-## Steps to Follow
-
-* following the guide at https://developer.mozilla.org/en-US/docs/WebAssembly/Rust_to_wasm
-
-## Installation
-
-
-<strike>```` * create project ````</strike><br>
-
-<strike>```` ```sh ````</strike><br>
-<strike>```` cargo new --lib hello-wasm && cd hello-wasm ````</strike><br>
-<strike>```` ``` ````</strike><br>
-
-<strike>```` * edit `Cargo.toml`: ````</strike><br>
-
-<strike>```` ```toml ````</strike><br>
-<strike>```` [lib] ````</strike><br>
-<strike>```` crate-type = ["cdylib"] ````</strike><br>
-
-<strike>```` [dependencies] ````</strike><br>
-<strike>```` wasm-bindgen = "0.2" ````</strike><br>
-<strike>```` pico-args = "0.3" ````</strike><br>
-<strike>```` libc = "0.2" ````</strike><br>
-<strike>```` ``` ````</strike><br>
-
-<strike>```` * install `wasm-pack`: ````</strike><br>
-
-<strike>```` ```sh ````</strike><br>
-<strike>```` cargo install wasm-pack ````</strike><br>
-<strike>```` ``` ````</strike><br>
-
-<!--
-* create project
-
-```sh
-cargo new --lib hello-wasm && cd hello-wasm
-```
-
-* edit `Cargo.toml`:
-
-```toml
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-wasm-bindgen = "0.2"
-pico-args = "0.3"
-libc = "0.2"
-```
-
-* install `wasm-pack`:
-
-```sh
-cargo install wasm-pack
-```
--->
-
-## Publish Compiled WASM Code
-
-```sh
-pnpm version patch && pnpm publish --access public && git push
-```
 
 ## Command Lines
 
