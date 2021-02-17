@@ -11,7 +11,7 @@
 - [Samples](#samples)
 - [What it Is](#what-it-is)
 - [How Does it Compare](#how-does-it-compare)
-- [Caveats](#caveats)
+- [⚠️ Caveats ⚠️](#-caveats-)
 - [Command Lines](#command-lines)
 - [API](#api)
   - [1.) Persistent State](#1-persistent-state)
@@ -19,11 +19,11 @@
   - [3.) Text Shaping](#3-text-shaping)
   - [4.) Text Rendering](#4-text-rendering)
   - [5.) Line Breaking](#5-line-breaking)
-- [To Do](#to-do)
-- [Rendering](#rendering)
+- [🚧 To Do 🚧](#-to-do-)
 - [Also See](#also-see)
+  - [Rendering](#rendering)
   - [Text Shaping](#text-shaping)
-  - [Line Breaking](#line-breaking)
+  - [Line Breaking / Text Wrapping](#line-breaking--text-wrapping)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -167,18 +167,18 @@ fontkit_shaping                   29,605 Hz    13.4 % │█▋           │
 harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 ```
 
-## Caveats
+## ⚠️ Caveats ⚠️
 
-* Rust Newbie here so probably the code is not ideal in some respects.
-* FTTB I have commited the WASM artefacts to the repo; since I'm still working on this you may happen to
+* ⚠️ Rust Newbie here so probably the code is not ideal in some respects.
+* ⚠️ FTTB I have commited the WASM artefacts to the repo; since I'm still working on this you may happen to
   download some **unoptimized code which is orders of magnitude slower than WASM resulting from optimized
   compilation**
-* Always re-build before trying out:
+* ⚠️ Always re-build before trying out:
   * for faster compilation, do `wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node
     demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
   * for faster execution, do `wasm-pack build         --target nodejs && trash pkg/.gitignore && node
     demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
-* Values are currently communicated as JSON and hex-encoded binary strings; this is probably not terribly
+* ⚠️ Values are currently communicated as JSON and hex-encoded binary strings; this is probably not terribly
   efficient and may change in the future; see https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
   and https://docs.rs/serde-wasm-bindgen/0.1.3/serde_wasm_bindgen/.
 
@@ -219,7 +219,7 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 
 * **`pub fn wrap_text( text: String, width: usize ) -> String {`**—
 
-## To Do
+## 🚧 To Do 🚧
 
 * [ ] find out what makes format `rusty` (which has quite a few options) so much faster than the
   minimalistic `short` format (which has no options); to do so, modify the (constant) format flags
@@ -228,19 +228,19 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 * [ ] implement language selection?
 * [ ] implement script selection?
 * [ ] implement clustering selection?
+* [ ] write `INSTALL.md`
 
-## Rendering
+## Also See
+
+### Rendering
 
 * [`ab-glyph`](https://github.com/alexheretic/ab-glyph)—"When laying out glyphs into paragraph, ab_glyph is
   faster than rusttype using .ttf fonts & much faster for .otf fonts."
+
 * [`rusttype`](https://gitlab.redox-os.org/redox-os/rusttype)—A pure Rust alternative to libraries like
   FreeType
-* [Fontdue](https://github.com/mooman219/fontdue)—Fontdue is a simple, `no_std` (does not use the standard
-  library for portability), pure Rust, TrueType (`.ttf/.ttc`) & OpenType (`.otf`) font rasterizer and layout
-  tool. It strives to make interacting with fonts as fast as possible, and currently has the lowest end to
-  end latency for a font rasterizer.
 
-## Also See
+* [Fontdue](https://github.com/mooman219/fontdue)—See below under [Line Breaking](#line-breaking).
 
 ### Text Shaping
 
@@ -254,15 +254,19 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 
 * [OpenType shaping documents](https://github.com/n8willis/opentype-shaping-documents/)
 
-### Line Breaking
+### Line Breaking / Text Wrapping
 
 * [newbreak](https://github.com/simoncozens/newbreak)—written in JS/TS, has tentative Rust implementation;
-  TS fails to compile to JS; last commits in Summer 2020 so maybe abandoned.
-* [fontdue](https://github.com/mooman219/fontdue)—written in Rust, aims to be font rasterizer *including*
-  text wrapping, but sadly [fails to compile although I could hotfix
+  🛑 TS fails to compile to JS; last commits in Summer 2020 so maybe abandoned.
+
+* [fontdue](https://github.com/mooman219/fontdue)—"Fontdue is a simple, `no_std` (does not use the standard
+  library for portability), pure Rust, TrueType (`.ttf/.ttc`) & OpenType (`.otf`) font rasterizer and layout
+  tool. It strives to make interacting with fonts as fast as possible, and currently has the lowest end to
+  end latency for a font rasterizer".—Written in Rust, aims to be font rasterizer *including* text wrapping,
+  but sadly 🛑 [fails to compile although I could hotfix
   that](https://github.com/mooman219/fontdue/issues/57).
-* Repeating links from [a StackOverflow answer](https://cs.stackexchange.com/a/123303):
+
 * [kas-text](https://github.com/kas-gui/kas-text) looks enticing but is a huge thing geared towards building
-  GUI apps. It uses the original HarfBuzz C libraries so I rather not touch this thing as C dependencies
+  GUI apps. 🛑 It uses the original HarfBuzz C libraries so I rather not touch this thing as C dependencies
   will always be cans of worms.
 
