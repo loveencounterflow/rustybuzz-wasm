@@ -46,10 +46,13 @@
     Hyphen)](https://en.wikipedia.org/wiki/Soft_hyphen) inserted at appropriate positions;
   * next, apply [*Unicode UAX#14: Unicode Line Breaking Algorithm*](https://www.unicode.org/reports/tr14/)
     to the text; this will identify all the stretches of text that must be kept together in typesetting
-    (here dubbed 'slabs', short for 'syllables')
+    (here dubbed ['slabs'](https://github.com/loveencounterflow/intertext/blob/master/README-slabs.md),
+    short for 'syllables')
 * **TO BE DONE** for some details around code compilation and installation of this software see [the
   installation guide][./INSTALL.md]
-
+* as it stands, this work will probably be incorporated into
+  [InterText](https://github.com/loveencounterflow/intertext); at any rate, seeing as the scope of the
+  present module grew, `rustybuzz-wasm` is no longer a fully appropriate moniker.
 
 ## What it Does
 
