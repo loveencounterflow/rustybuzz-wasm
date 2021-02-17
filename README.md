@@ -171,8 +171,8 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 
 * ⚠️ Rust Newbie here so probably the code is not ideal in some respects.
 * ⚠️ FTTB I have commited the WASM artefacts to the repo; since I'm still working on this you may happen to
-  ⛔️ **download some unoptimized code which is orders of magnitude slower than WASM resulting from optimized
-  compilation**; therefore:
+  have ⛔️ **downloaded some unoptimized code which is orders of magnitude slower than WASM resulting from
+  optimized compilation** ⛔️; therefore:
   * Always re-build before trying out:
     * for faster compilation, do `wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node
       demo-nodejs-using-wasm/lib/main.js > /tmp/foo.svg`
