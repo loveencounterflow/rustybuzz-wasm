@@ -70,6 +70,8 @@ RBW                       = require '../../pkg'
   font_bytes          = FS.readFileSync font_path
   font_bytes_hex      = font_bytes.toString 'hex'
   RBW.set_font_bytes font_bytes_hex unless RBW.has_font_bytes()
+  font_idx            = 0
+  RBW.register_font font_idx, font_bytes_hex
   # format              = 'short'
   format              = 'json'
   # format              = 'rusty'

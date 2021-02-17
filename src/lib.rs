@@ -65,6 +65,7 @@ use textwrap;
 //   // scale: ...,
 // }
 
+static mut FONTBYTES_0: Vec<u8> = vec![];
 static mut FONTBYTES_1: Vec<u8> = vec![];
 static mut FONTBYTES_2: Vec<u8> = vec![];
 static mut FONTBYTES_3: Vec<u8> = vec![];
@@ -86,10 +87,10 @@ pub fn has_font_bytes() -> bool { unsafe { !FONT_BYTES.is_empty() } }
 //----------------------------------------------------------------------------------------------------------
 // #![allow(unused_mut)]
 #[wasm_bindgen]
-pub fn register_font( fontnr: u16, font_bytes_hex: String ) {
-  if fontnr > 4 {
-    alert( &format!( "^895455^ fontnr must be between 1 and 3, got {}", fontnr ) );
-    std::process::exit( 1 ); };
+pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
+  // if font_idx > 4 {
+  //   alert( &format!( "^895455^ font_idx must be between 1 and 3, got {}", font_idx ) );
+  //   std::process::exit( 1 ); };
   let face_index = 0;
   let font_bytes = match hex::decode( font_bytes_hex ) {
     Ok( v ) => v,
@@ -97,12 +98,13 @@ pub fn register_font( fontnr: u16, font_bytes_hex: String ) {
       alert( &format!( "^895734^ error decoding hexadecimal: {}", error ) );
       std::process::exit( 1 ); }, };
   unsafe {
-    match fontnr {
+    match font_idx {
+      0 => FONTBYTES_0 = font_bytes,
       1 => FONTBYTES_1 = font_bytes,
       2 => FONTBYTES_2 = font_bytes,
       3 => FONTBYTES_3 = font_bytes,
-      0u16 | 4u16..=std::u16::MAX => {
-        alert( &format!( "^895433^ fontnr must be between 1 and 3, got {}", fontnr ) );
+      4u16..=std::u16::MAX => {
+        alert( &format!( "^895433^ font_idx must be between 0 and 3, got {}", font_idx ) );
         std::process::exit( 1 ); }
 
       }
