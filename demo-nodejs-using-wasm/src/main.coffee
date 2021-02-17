@@ -27,16 +27,42 @@ RBW                       = require '../../pkg'
   globalThis.urge           = urge
   globalThis.info           = info
   globalThis.debug          = debug
+  # globalThis.read_file      = ( path ) ->
+  #   urge '^44877^', rpr path
+  #   # return FS.readFileSync path
+  #   return true
   return null
 
 #-----------------------------------------------------------------------------------------------------------
 @demo_text_shaping = ->
+  whisper '^33443^ demo_text_shaping'
+  @_set_globals()
+  font_path           = 'EBGaramond08-Italic.otf'
+  font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
+  font_bytes          = FS.readFileSync font_path
+  font_bytes_hex      = font_bytes.toString 'hex'
+  RBW.set_font_bytes font_bytes_hex unless RBW.has_font_bytes()
+  shy                 = '\xad'
+  # format              = 'short'
+  format              = 'json'
+  # format              = 'rusty'
+  text                = "a certain minimum"
+  text                = text.replace /#/g, shy
+  cfg                 = { format, text, }
+  arrangement         = JSON.parse RBW.shape_text cfg
+  #.........................................................................................................
+  for d in arrangement
+    info '^223^', d
+  #.........................................................................................................
+  gids                = new Set ( d.gid for d in arrangement )
+  debug '^3344^', gids
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@demo_svg_typesetting = ->
+  whisper '^33443^ demo_svg_typesetting'
   @_set_globals()
   # globalThis.read_file      = FS.readFileSync
-  globalThis.read_file      = ( path ) ->
-    urge '^44877^', rpr path
-    # return FS.readFileSync path
-    return true
   font_path           = 'EBGaramond08-Italic.otf'
   # font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
   font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
@@ -111,6 +137,7 @@ RBW                       = require '../../pkg'
 
 #-----------------------------------------------------------------------------------------------------------
 @demo_text_wrapping = ->
+  whisper '^33443^ demo_text_wrapping'
   @_set_globals()
   shy           = '\xad'
   text = """Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
@@ -123,7 +150,7 @@ RBW                       = require '../../pkg'
   在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。
   """
   text          = "The ela#bo#ra#te sphinx told me a rid#dle."
-  text          = "The elaborate sphinx told me a riddle."
+  # text          = "The elaborate sphinx told me a riddle."
   #.........................................................................................................
   text          = text.replace /#/g, shy
   text          = text.replace /\s+/g, ' '
@@ -159,5 +186,6 @@ RBW                       = require '../../pkg'
 
 ############################################################################################################
 if module is require.main then do =>
+  @demo_text_shaping()
   @demo_text_wrapping()
 
