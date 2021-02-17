@@ -188,6 +188,8 @@ function _assertNum(n) {
     if (typeof(n) !== 'number') throw new Error('expected a number argument');
 }
 /**
+* return JSON `list<number>` with one wordcount per line
+* TODO: return list of slab indices
 * @param {string} text
 * @param {number} width
 * @returns {string}
@@ -219,10 +221,6 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
 
 module.exports.__wbg_alert_a5a2f68cc09adc6e = logError(function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
-});
-
-module.exports.__wbg_urge_ae2692d82ada4bf1 = logError(function(arg0, arg1) {
-    urge(getStringFromWasm0(arg0, arg1));
 });
 
 module.exports.__wbindgen_throw = function(arg0, arg1) {

@@ -38,19 +38,58 @@
     globalThis.urge = urge;
     globalThis.info = info;
     globalThis.debug = debug;
+    // globalThis.read_file      = ( path ) ->
+    //   urge '^44877^', rpr path
+    //   # return FS.readFileSync path
+    //   return true
     return null;
   };
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_text_shaping = function() {
+    var arrangement, cfg, d, font_bytes, font_bytes_hex, font_path, format, gids, i, len, shy, text;
+    whisper('^33443^ demo_text_shaping');
+    this._set_globals();
+    font_path = 'EBGaramond08-Italic.otf';
+    font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
+    font_bytes = FS.readFileSync(font_path);
+    font_bytes_hex = font_bytes.toString('hex');
+    if (!RBW.has_font_bytes()) {
+      RBW.set_font_bytes(font_bytes_hex);
+    }
+    shy = '\xad';
+    // format              = 'short'
+    format = 'json';
+    // format              = 'rusty'
+    text = "a certain minimum";
+    text = text.replace(/#/g, shy);
+    cfg = {format, text};
+    arrangement = JSON.parse(RBW.shape_text(cfg));
+//.........................................................................................................
+    for (i = 0, len = arrangement.length; i < len; i++) {
+      d = arrangement[i];
+      info('^223^', d);
+    }
+    //.........................................................................................................
+    gids = new Set((function() {
+      var j, len1, results;
+      results = [];
+      for (j = 0, len1 = arrangement.length; j < len1; j++) {
+        d = arrangement[j];
+        results.push(d.gid);
+      }
+      return results;
+    })());
+    debug('^3344^', gids);
+    return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  this.demo_svg_typesetting = function() {
     var arrangement, cfg, d, font_bytes, font_bytes_hex, font_path, format, gid, gids, i, len, outline, ref, shy, text, texts;
+    whisper('^33443^ demo_svg_typesetting');
     this._set_globals();
     // globalThis.read_file      = FS.readFileSync
-    globalThis.read_file = function(path) {
-      urge('^44877^', rpr(path));
-      // return FS.readFileSync path
-      return true;
-    };
     font_path = 'EBGaramond08-Italic.otf';
     // font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
     font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
@@ -139,6 +178,7 @@ rect {
   //-----------------------------------------------------------------------------------------------------------
   this.demo_text_wrapping = function() {
     var i, j, last_line_idx, last_word_idx, len, line, line_idx, line_length, lines, ref, shy, text, width, word_idx, words;
+    whisper('^33443^ demo_text_wrapping');
     this._set_globals();
     shy = '\xad';
     text = `Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
@@ -150,7 +190,7 @@ final result (such as where to break hyphen-joined compounds, or whether to set 
 lines).
 在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。`;
     text = "The ela#bo#ra#te sphinx told me a rid#dle.";
-    text = "The elaborate sphinx told me a riddle.";
+    // text          = "The elaborate sphinx told me a riddle."
     //.........................................................................................................
     text = text.replace(/#/g, shy);
     text = text.replace(/\s+/g, ' ');
@@ -198,6 +238,7 @@ lines).
   //###########################################################################################################
   if (module === require.main) {
     (() => {
+      this.demo_text_shaping();
       return this.demo_text_wrapping();
     })();
   }

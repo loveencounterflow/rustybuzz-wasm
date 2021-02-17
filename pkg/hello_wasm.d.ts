@@ -27,6 +27,8 @@ export function shape_text(user_cfg: any): string;
 */
 export function glyph_to_svg_pathdata(js_glyph_id: any): string;
 /**
+* return JSON `list<number>` with one wordcount per line
+* TODO: return list of slab indices
 * @param {string} text
 * @param {number} width
 * @returns {string}
