@@ -240,7 +240,8 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 * [`rusttype`](https://gitlab.redox-os.org/redox-os/rusttype)—A pure Rust alternative to libraries like
   FreeType
 
-* [Fontdue](https://github.com/mooman219/fontdue)—See below under [Line Breaking](#line-breaking).
+* [Fontdue](https://github.com/mooman219/fontdue)—See below under [Line Breaking / Text
+  Wrapping](#line-breaking--text-wrapping).
 
 ### Text Shaping
 
