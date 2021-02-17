@@ -31,18 +31,22 @@
 
 * this code under development
 * this README still fragmentary
-* initial goal was to make [`rustybuzz`](https://github.com/RazrFalcon/rustybuzz) (i.e., text shaping)
-  accessible from NodeJS
+* initial goal was to make text shaping as implemented by
+  [`rustybuzz`](https://github.com/RazrFalcon/rustybuzz) accessible from NodeJS
 * turns out `rustybuzz` depends on [`ttf-parser`](https://docs.rs/ttf-parser/0.11.0/ttf_parser/) which
-  offers outline handling, which is when text rendering (in SVG format) was added
+  offers access to glyf outlines, which is when text rendering (in SVG format) was added
 * then I found [`textwrap`](https://docs.rs/textwrap/0.13.2/textwrap/) which implements optimized
   distribution of sized 'black boxes' (i.e. rectangular areas of arbitrary content) over stretches of equal
   length (i.e. lines of text); this solves the problem of wrapping text provided one knows where line break
   opportunities are (e.g. around whitespace, after a hard or soft hyphen, between CJK ideographs)
 * add text preparation and you have almost full typesetting (sans combination of styles so far, but we're
   getting there):
-  * hyphenation
-  * [*Unicode UAX#14: Unicode Line Breaking Algorithm*](https://www.unicode.org/reports/tr14/))
+  * first do hyphenation for each paragraph of text, which takes some text and some language settings and
+    returns the same text with [soft (a.k.a. discretionary, optional) hyphens (`U+00AD` Soft
+    Hyphen)](https://en.wikipedia.org/wiki/Soft_hyphen) inserted at appropriate positions;
+  * next, apply [*Unicode UAX#14: Unicode Line Breaking Algorithm*](https://www.unicode.org/reports/tr14/)
+    to the text; this will identify all the stretches of text that must be kept together in typesetting
+    (here dubbed 'slabs', short for 'syllables')
 * **TO BE DONE** for some details around code compilation and installation of this software see [the
   installation guide][./INSTALL.md]
 
