@@ -46,30 +46,93 @@
   };
 
   //-----------------------------------------------------------------------------------------------------------
-  this.demo_text_shaping = function() {
-    var arrangement, cfg, d, font_bytes, font_bytes_hex, font_idx, font_path, format, gids, i, len, shy, text;
-    whisper('^33443^ demo_text_shaping');
+  this._resolve_font_path = function(me, font_path) {
+    if (font_path.startsWith('/')) {
+      return font_path;
+    }
+    return PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  this._get_font_bytes = function(me, font_path) {
+    return (FS.readFileSync(font_path)).toString('hex');
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  this.register_font = function(me, fontnick) {
+    var R, font_entry;
+    //.........................................................................................................
+    if ((font_entry = me.fonts[fontnick]) == null) {
+      throw new Error(`^1w37^ unknown fontnick ${rpr(fontnick)}`);
+    }
+    //.........................................................................................................
+    if (!(me._prv_fontidx < me._last_fontidx)) {
+      throw new Error(`^1w37^ capacity of ${me._last_fontidx + 1} fonts exceeded`);
+    }
+    if ((R = font_entry.font_idx) != null) {
+      //.........................................................................................................
+      return R;
+    }
+    //.........................................................................................................
+    R = me._prv_fontidx += 1;
+    RBW.register_font(R, this._get_font_bytes(me, font_entry.path));
+    font_entry.font_idx = R;
+    return R;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  this.new_demo = function() {
+    var R, entry, fontname, ref;
     this._set_globals();
-    font_path = 'EBGaramond08-Italic.otf';
-    font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
-    font_bytes = FS.readFileSync(font_path);
-    font_bytes_hex = font_bytes.toString('hex');
-    font_idx = 0;
-    RBW.register_font(font_idx, font_bytes_hex);
-    shy = '\xad';
+    R = {
+      shy: '\xad',
+      _prv_fontidx: -1,
+      _last_fontidx: 15,
+      fonts: {
+        garamond_italic: {
+          path: 'EBGaramond08-Italic.otf'
+        },
+        amiri: {
+          path: 'arabic/Amiri-0.113/Amiri-Bold.ttf'
+        },
+        tibetan: {
+          path: '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
+        }
+      }
+    };
+    ref = R.fonts;
+    //.........................................................................................................
+    for (fontname in ref) {
+      entry = ref[fontname];
+      R.fonts[fontname].font_idx = null;
+      R.fonts[fontname].path = this._resolve_font_path(null, entry.path);
+    }
+    //.........................................................................................................
+    return R;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  this.demo_text_shaping = function() {
+    var arrangement, cfg, d, font_idx, fontnick, format, gids, i, len, me, text;
+    whisper('^33443^ demo_text_shaping');
+    me = this.new_demo();
+    fontnick = 'garamond_italic';
+    font_idx = this.register_font(me, fontnick);
     // format              = 'short'
     format = 'json';
     // format              = 'rusty'
     text = "a certain minimum";
-    text = text.replace(/#/g, shy);
+    text = text.replace(/#/g, me.shy);
     cfg = {format, text};
     arrangement = JSON.parse(RBW.shape_text(cfg));
-//.........................................................................................................
+    //.........................................................................................................
+    urge(`glyf IDs and positions of font ${rpr(fontnick)} for text ${rpr(text)}:`);
     for (i = 0, len = arrangement.length; i < len; i++) {
       d = arrangement[i];
       info('^223^', d);
     }
     //.........................................................................................................
+    urge("unique glyf IDs in this text:");
     gids = new Set((function() {
       var j, len1, results;
       results = [];
@@ -85,36 +148,25 @@
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_svg_typesetting = function() {
-    var arrangement, cfg, d, font_bytes, font_bytes_hex, font_idx, font_path, format, gid, gids, i, len, outline, ref, shy, text, texts;
+    var arrangement, cfg, d, font_idx, fontnick, format, gid, gids, i, len, me, outline, ref, text;
     whisper('^33443^ demo_svg_typesetting');
-    this._set_globals();
-    // globalThis.read_file      = FS.readFileSync
-    font_path = 'EBGaramond08-Italic.otf';
-    // font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
-    font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
-    // font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
-    font_bytes = FS.readFileSync(font_path);
-    font_bytes_hex = font_bytes.toString('hex');
-    font_idx = 0;
-    RBW.register_font(font_idx, font_bytes_hex);
-    // format              = 'short'
-    format = 'json';
-    // format              = 'rusty'
-    shy = '\xad';
-    // "a"
-    // "affix"
-    // "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
-    // ( [ "الخط الأمیری"... ].reverse() ).join ''
-    texts = ["a certain minimum"];
-    // "af#fix-"
-    // " "
-    // "#"
-    // "-"
+    me = this.new_demo();
+    format = 'json'; // 'short', 'rusty'
+    //.........................................................................................................
+    fontnick = 'tibetan';
+    text = "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ";
+    fontnick = 'amiri';
+    text = ([..."الخط الأمیری"].reverse()).join('');
+    fontnick = 'garamond_italic';
+    text = "a certain minimum";
+    fontnick = 'garamond_italic';
+    text = "af#fix";
+    //.........................................................................................................
+    font_idx = this.register_font(me, fontnick);
+    text = text.replace(/#/g, me.shy);
+    //.........................................................................................................
     echo(`<?xml version='1.0' encoding='UTF-8'?>
 <svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 10500 1500' version='2'>`);
-    // for text in texts
-    text = texts[0];
-    text = text.replace(/#/g, shy);
     cfg = {format, text};
     arrangement = JSON.parse(RBW.shape_text(cfg));
     gids = new Set((function() {
@@ -175,10 +227,9 @@ rect {
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_text_wrapping = function() {
-    var i, j, last_line_idx, last_word_idx, len, line, line_idx, line_length, lines, ref, shy, text, width, word_idx, words;
+    var i, j, last_line_idx, last_word_idx, len, line, line_idx, line_length, lines, me, ref, text, width, word_idx, words;
     whisper('^33443^ demo_text_wrapping');
-    this._set_globals();
-    shy = '\xad';
+    me = this.new_demo();
     text = `Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
 to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
 from their respective alphabets, but some also accept punctuation marks such as hyphens and apostrophes,
@@ -190,7 +241,7 @@ lines).
     text = "The ela#bo#ra#te sphinx told me a rid#dle.";
     // text          = "The elaborate sphinx told me a riddle."
     //.........................................................................................................
-    text = text.replace(/#/g, shy);
+    text = text.replace(/#/g, me.shy);
     text = text.replace(/\s+/g, ' ');
     width = 10;
     lines = RBW.wrap_text(text, width);
@@ -238,6 +289,7 @@ lines).
     (() => {
       // try
       this.demo_text_shaping();
+      // @demo_svg_typesetting()
       this.demo_text_wrapping();
       // catch error
       //   ### TAINT improvement over nodexh? ###
