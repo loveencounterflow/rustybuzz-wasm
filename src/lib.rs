@@ -71,18 +71,18 @@ static mut FONTBYTES_2: Vec<u8> = vec![];
 static mut FONTBYTES_3: Vec<u8> = vec![];
 
 
-static mut FONT_BYTES: Vec<u8> = vec![];
-//----------------------------------------------------------------------------------------------------------
-#[wasm_bindgen]
-pub fn set_font_bytes( font_bytes_hex: String ) {
-  unsafe { FONT_BYTES = match hex::decode( font_bytes_hex ) {
-    Ok( v ) => v,
-    Err( error ) => {
-      alert( &format!( "^895734^ error decoding hexadecimal: {}", error ) );
-      std::process::exit( 1 ); }, }; }; }
-//----------------------------------------------------------------------------------------------------------
-#[wasm_bindgen]
-pub fn has_font_bytes() -> bool { unsafe { !FONT_BYTES.is_empty() } }
+// static mut FONT_BYTES: Vec<u8> = vec![];
+// //----------------------------------------------------------------------------------------------------------
+// #[wasm_bindgen]
+// pub fn set_font_bytes( font_bytes_hex: String ) {
+//   unsafe { FONT_BYTES = match hex::decode( font_bytes_hex ) {
+//     Ok( v ) => v,
+//     Err( error ) => {
+//       alert( &format!( "^895734^ error decoding hexadecimal: {}", error ) );
+//       std::process::exit( 1 ); }, }; }; }
+// //----------------------------------------------------------------------------------------------------------
+// #[wasm_bindgen]
+// pub fn has_font_bytes() -> bool { unsafe { !FONT_BYTES.is_empty() } }
 
 //----------------------------------------------------------------------------------------------------------
 // #![allow(unused_mut)]
@@ -91,8 +91,8 @@ pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
   // if font_idx > 4 {
   //   alert( &format!( "^895455^ font_idx must be between 1 and 3, got {}", font_idx ) );
   //   std::process::exit( 1 ); };
-  let face_index = 0;
-  let font_bytes = match hex::decode( font_bytes_hex ) {
+  let face_idx    = 0;
+  let font_bytes  = match hex::decode( font_bytes_hex ) {
     Ok( v ) => v,
     Err( error ) => {
       alert( &format!( "^895734^ error decoding hexadecimal: {}", error ) );
@@ -105,23 +105,19 @@ pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
       3 => FONTBYTES_3 = font_bytes,
       4u16..=std::u16::MAX => {
         alert( &format!( "^895433^ font_idx must be between 0 and 3, got {}", font_idx ) );
-        std::process::exit( 1 ); }
+        std::process::exit( 1 ); } } }; }
 
-      }
-    }
-  // let rustybuzz_face =  rustybuzz::Face::from_slice( &font_bytes, face_index ).unwrap();
-  // let     ttfparser_face = ttf_parser::Face::from_slice( &font_bytes, face_index ).unwrap();
-  // let entry = CacheEntry {
-  //   rustybuzz_face: rustybuzz_face,
-  //   ttfparser_face: ttfparser_face,
-
-  // };
-  // // CACHE.push( &entry );
-  // CACHE.lock().unwrap().push( entry );
-  // CACHE.push( 42 );
-  // (&mut *HASHMAP.borrow_mut())(); // see https://stackoverflow.com/a/59835163/256361
-  // (&mut HASHMAP).insert( name, &entry );
-}
+//----------------------------------------------------------------------------------------------------------
+pub fn get_fontbytes( font_idx: u16 ) -> &'static Vec<u8> {
+  unsafe {
+    match font_idx {
+      0 => &FONTBYTES_0,
+      1 => &FONTBYTES_1,
+      2 => &FONTBYTES_2,
+      3 => &FONTBYTES_3,
+      4u16..=std::u16::MAX => {
+        alert( &format!( "^895433^ font_idx must be between 0 and 3, got {}", font_idx ) );
+        std::process::exit( 1 ); } } } }
 
 
 //==========================================================================================================
@@ -131,6 +127,7 @@ pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
 // acc to https://doc.rust-lang.org/std/fmt/trait.Debug.html
 #[derive(Debug)]
 pub struct CfgOpt {
+    pub font_idx:         Option<u16>,
     pub text:             Option<String>,
     // pub font_bytes_hex:   Option<String>,
     pub format:           Option<String>,
@@ -138,10 +135,11 @@ pub struct CfgOpt {
 
 #[derive(Debug)]
 pub struct Cfg {
+    pub font_idx:         u16,
     pub text:             String,
     pub cluster_level:    rustybuzz::BufferClusterLevel,
     pub direction:        rustybuzz::Direction,
-    pub face_index:       u32,
+    pub face_idx:       u32,
     // pub font_bytes:       Vec<u8>,
     pub font_ptem:        f32,
     pub format:           String,
@@ -172,20 +170,12 @@ fn parse_features(s: &str) -> Result<Vec<rustybuzz::Feature>, String> {
 pub fn shape_text( user_cfg: &JsValue ) -> String {
   //........................................................................................................
   let cfg_opt: CfgOpt = user_cfg.into_serde().unwrap();
-  // //........................................................................................................
-  // let font_bytes = match cfg_opt.font_bytes_hex {
-  //   None => vec![],
-  //   Some( x ) => match hex::decode( x ) {
-  //     Ok( v ) => v,
-  //     Err( error ) => {
-  //       alert( &format!( "^89573485^ error decoding hexadecimal: {}", error ) );
-  //       std::process::exit( 1 ); }, }, };
-  //........................................................................................................
   let cfg = Cfg {
     text:           match cfg_opt.text { None => String::from( "some text" ), Some( x ) => x, },
     // ### TAINT use enumeration
     format:         match cfg_opt.format { None => String::from( "json" ), Some( x ) => x, },
     // font_bytes:     font_bytes,
+    font_idx:       match cfg_opt.font_idx { None => 0, Some( x ) => x, },
     font_ptem:      match cfg_opt.font_ptem { None => 1000.0, Some( x ) => x, },
     language:       rustybuzz::Language::from_str( "English" ).unwrap(),
     //......................................................................................................
@@ -197,11 +187,9 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
     cluster_level:  rustybuzz::BufferClusterLevel::MonotoneGraphemes,
     // cluster_level: rustybuzz::BufferClusterLevel::MonotoneCharacters,
     // cluster_level: rustybuzz::BufferClusterLevel::Characters,
-    face_index:   0, };
+    face_idx:   0, };
   //........................................................................................................
-  // ### TAINT use cache for face_index, face
-  // ### TAINT almost identical to `ttf_parser::Face`
-  let mut face = unsafe { rustybuzz::Face::from_slice(&FONT_BYTES, cfg.face_index).unwrap() };
+  let mut face = rustybuzz::Face::from_slice( get_fontbytes( cfg.font_idx ), cfg.face_idx).unwrap();
   // ### TAINT use `set_pixels_per_em()`?
   face.set_points_per_em( Some( cfg.font_ptem ) );
   if !cfg.variations.is_empty() { face.set_variations( &cfg.variations ); }
@@ -294,15 +282,16 @@ fn _glyfs_as_short( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, s
 //   return String::from( "" ); }
 
 #[wasm_bindgen]
-pub fn glyph_to_svg_pathdata( js_glyph_id: &JsValue ) -> String {
+pub fn glyph_to_svg_pathdata( js_font_idx: &JsValue, js_glyph_id: &JsValue ) -> String {
   // ### TAINT try to shorten
-  let glyph_id_u16: u16 = js_glyph_id.into_serde().unwrap();
+  let font_idx_u16: u16             = js_font_idx.into_serde().unwrap();
+  let glyph_id_u16: u16             = js_glyph_id.into_serde().unwrap();
   let glyph_id: ttf_parser::GlyphId = ttf_parser::GlyphId( glyph_id_u16 );
   //........................................................................................................
-  // ### TAINT use cache for face_index, face
+  // ### TAINT use cache for face_idx, face
   // ### TAINT almost identical to `rustybuzz::Face`
-  let face_index    = 0;
-  let face          = unsafe { ttf_parser::Face::from_slice(&FONT_BYTES, face_index).unwrap() };
+  let face_idx    = 0;
+  let face          = ttf_parser::Face::from_slice( get_fontbytes( font_idx_u16 ), face_idx).unwrap();
   let units_per_em  = match face.units_per_em() { None => FONT_SIZE as u16, Some( x ) => x, };
   let scale         = FONT_SIZE / units_per_em as f64;
   let mut path_buf  = svgtypes::Path::with_capacity(64);

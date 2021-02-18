@@ -41,7 +41,8 @@ RBW                       = require '../../pkg'
   font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
   font_bytes          = FS.readFileSync font_path
   font_bytes_hex      = font_bytes.toString 'hex'
-  RBW.set_font_bytes font_bytes_hex unless RBW.has_font_bytes()
+  font_idx            = 0
+  RBW.register_font font_idx, font_bytes_hex
   shy                 = '\xad'
   # format              = 'short'
   format              = 'json'
@@ -69,7 +70,6 @@ RBW                       = require '../../pkg'
   # font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
   font_bytes          = FS.readFileSync font_path
   font_bytes_hex      = font_bytes.toString 'hex'
-  RBW.set_font_bytes font_bytes_hex unless RBW.has_font_bytes()
   font_idx            = 0
   RBW.register_font font_idx, font_bytes_hex
   # format              = 'short'
@@ -120,7 +120,7 @@ RBW                       = require '../../pkg'
   #.........................................................................................................
   echo "<defs>"
   for gid from gids.values()
-    outline = JSON.parse RBW.glyph_to_svg_pathdata gid
+    outline = JSON.parse RBW.glyph_to_svg_pathdata font_idx, gid
     debug '^3344^', gid, outline.pd[ .. 100 ]
     # continue if outline.pd is ''
     echo "<symbol overflow='visible' id='b#{gid}'>#{outline.br}</symbol>"
@@ -188,6 +188,14 @@ RBW                       = require '../../pkg'
 
 ############################################################################################################
 if module is require.main then do =>
+  # try
   @demo_text_shaping()
   @demo_text_wrapping()
-
+  # catch error
+  #   ### TAINT improvement over nodexh? ###
+  #   if ( error.name is 'RuntimeError' ) and ( error.message is 'unreachable' )
+  #     alert CND.reverse "#{error.name}: #{error.message}"
+  #     whisper error.stack
+  #     process.exit 123
+  #   throw error
+  return null
