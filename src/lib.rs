@@ -69,6 +69,18 @@ static mut FONTBYTES_0: Vec<u8> = vec![];
 static mut FONTBYTES_1: Vec<u8> = vec![];
 static mut FONTBYTES_2: Vec<u8> = vec![];
 static mut FONTBYTES_3: Vec<u8> = vec![];
+static mut FONTBYTES_4: Vec<u8> = vec![];
+static mut FONTBYTES_5: Vec<u8> = vec![];
+static mut FONTBYTES_6: Vec<u8> = vec![];
+static mut FONTBYTES_7: Vec<u8> = vec![];
+static mut FONTBYTES_8: Vec<u8> = vec![];
+static mut FONTBYTES_9: Vec<u8> = vec![];
+static mut FONTBYTES_10: Vec<u8> = vec![];
+static mut FONTBYTES_11: Vec<u8> = vec![];
+static mut FONTBYTES_12: Vec<u8> = vec![];
+static mut FONTBYTES_13: Vec<u8> = vec![];
+static mut FONTBYTES_14: Vec<u8> = vec![];
+static mut FONTBYTES_15: Vec<u8> = vec![];
 
 
 // static mut FONT_BYTES: Vec<u8> = vec![];
@@ -99,11 +111,23 @@ pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
       std::process::exit( 1 ); }, };
   unsafe {
     match font_idx {
-      0 => FONTBYTES_0 = font_bytes,
-      1 => FONTBYTES_1 = font_bytes,
-      2 => FONTBYTES_2 = font_bytes,
-      3 => FONTBYTES_3 = font_bytes,
-      4u16..=std::u16::MAX => {
+      0  => FONTBYTES_0  = font_bytes,
+      1  => FONTBYTES_1  = font_bytes,
+      2  => FONTBYTES_2  = font_bytes,
+      3  => FONTBYTES_3  = font_bytes,
+      4  => FONTBYTES_4  = font_bytes,
+      5  => FONTBYTES_5  = font_bytes,
+      6  => FONTBYTES_6  = font_bytes,
+      7  => FONTBYTES_7  = font_bytes,
+      8  => FONTBYTES_8  = font_bytes,
+      9  => FONTBYTES_9  = font_bytes,
+      10 => FONTBYTES_10 = font_bytes,
+      11 => FONTBYTES_11 = font_bytes,
+      12 => FONTBYTES_12 = font_bytes,
+      13 => FONTBYTES_13 = font_bytes,
+      14 => FONTBYTES_14 = font_bytes,
+      15 => FONTBYTES_15 = font_bytes,
+      16 ..= std::u16::MAX => {
         alert( &format!( "^895433^ font_idx must be between 0 and 3, got {}", font_idx ) );
         std::process::exit( 1 ); } } }; }
 
@@ -111,11 +135,23 @@ pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
 pub fn get_fontbytes( font_idx: u16 ) -> &'static Vec<u8> {
   unsafe {
     match font_idx {
-      0 => &FONTBYTES_0,
-      1 => &FONTBYTES_1,
-      2 => &FONTBYTES_2,
-      3 => &FONTBYTES_3,
-      4u16..=std::u16::MAX => {
+      0  => &FONTBYTES_0,
+      1  => &FONTBYTES_1,
+      2  => &FONTBYTES_2,
+      3  => &FONTBYTES_3,
+      4  => &FONTBYTES_4,
+      5  => &FONTBYTES_5,
+      6  => &FONTBYTES_6,
+      7  => &FONTBYTES_7,
+      8  => &FONTBYTES_8,
+      9  => &FONTBYTES_9,
+      10 => &FONTBYTES_10,
+      11 => &FONTBYTES_11,
+      12 => &FONTBYTES_12,
+      13 => &FONTBYTES_13,
+      14 => &FONTBYTES_14,
+      15 => &FONTBYTES_15,
+      16 ..= std::u16::MAX => {
         alert( &format!( "^895433^ font_idx must be between 0 and 3, got {}", font_idx ) );
         std::process::exit( 1 ); } } } }
 
