@@ -1,21 +1,21 @@
 {
-  "name": "hello-wasm",
+  "name": "rustybuzz-wasm",
   "collaborators": [
     "Your Name <you@example.com>"
   ],
-  "description": "A sample project with wasm-pack",
+  "description": "Typesetting from NodeJS with text shaping, line wrapping, SVG text rendering",
   "version": "0.1.0",
   "license": "MIT/Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourgithubusername/hello-wasm"
+    "url": "https://github.com/loveencounterflow/rustybuzz-wasm"
   },
   "files": [
-    "hello_wasm_bg.wasm",
-    "hello_wasm.js",
-    "hello_wasm_bg.js",
-    "hello_wasm.d.ts"
+    "rustybuzz_wasm_bg.wasm",
+    "rustybuzz_wasm.js",
+    "rustybuzz_wasm_bg.js",
+    "rustybuzz_wasm.d.ts"
   ],
-  "main": "hello_wasm.js",
-  "types": "hello_wasm.d.ts"
+  "main": "rustybuzz_wasm.js",
+  "types": "rustybuzz_wasm.d.ts"
 }

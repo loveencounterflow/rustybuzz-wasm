@@ -47,16 +47,15 @@
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_text_shaping = function() {
-    var arrangement, cfg, d, font_bytes, font_bytes_hex, font_path, format, gids, i, len, shy, text;
+    var arrangement, cfg, d, font_bytes, font_bytes_hex, font_idx, font_path, format, gids, i, len, shy, text;
     whisper('^33443^ demo_text_shaping');
     this._set_globals();
     font_path = 'EBGaramond08-Italic.otf';
     font_path = PATH.resolve(PATH.join(__dirname, '../../fonts', font_path));
     font_bytes = FS.readFileSync(font_path);
     font_bytes_hex = font_bytes.toString('hex');
-    if (!RBW.has_font_bytes()) {
-      RBW.set_font_bytes(font_bytes_hex);
-    }
+    font_idx = 0;
+    RBW.register_font(font_idx, font_bytes_hex);
     shy = '\xad';
     // format              = 'short'
     format = 'json';
@@ -96,9 +95,6 @@
     // font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
     font_bytes = FS.readFileSync(font_path);
     font_bytes_hex = font_bytes.toString('hex');
-    if (!RBW.has_font_bytes()) {
-      RBW.set_font_bytes(font_bytes_hex);
-    }
     font_idx = 0;
     RBW.register_font(font_idx, font_bytes_hex);
     // format              = 'short'
@@ -156,7 +152,7 @@ rect {
     echo("<defs>");
     ref = gids.values();
     for (gid of ref) {
-      outline = JSON.parse(RBW.glyph_to_svg_pathdata(gid));
+      outline = JSON.parse(RBW.glyph_to_svg_pathdata(font_idx, gid));
       debug('^3344^', gid, outline.pd.slice(0, 101));
       // continue if outline.pd is ''
       echo(`<symbol overflow='visible' id='b${gid}'>${outline.br}</symbol>`);
@@ -240,8 +236,17 @@ lines).
   //###########################################################################################################
   if (module === require.main) {
     (() => {
+      // try
       this.demo_text_shaping();
-      return this.demo_text_wrapping();
+      this.demo_text_wrapping();
+      // catch error
+      //   ### TAINT improvement over nodexh? ###
+      //   if ( error.name is 'RuntimeError' ) and ( error.message is 'unreachable' )
+      //     alert CND.reverse "#{error.name}: #{error.message}"
+      //     whisper error.stack
+      //     process.exit 123
+      //   throw error
+      return null;
     })();
   }
 

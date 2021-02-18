@@ -1,14 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {string} font_bytes_hex
-*/
-export function set_font_bytes(font_bytes_hex: string): void;
-/**
-* @returns {boolean}
-*/
-export function has_font_bytes(): boolean;
-/**
 * @param {number} font_idx
 * @param {string} font_bytes_hex
 */

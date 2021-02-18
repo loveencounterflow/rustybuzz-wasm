@@ -108,22 +108,6 @@ function logError(f) {
         }
     };
 }
-/**
-* @param {string} font_bytes_hex
-*/
-module.exports.set_font_bytes = function(font_bytes_hex) {
-    var ptr0 = passStringToWasm0(font_bytes_hex, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    var len0 = WASM_VECTOR_LEN;
-    wasm.set_font_bytes(ptr0, len0);
-};
-
-/**
-* @returns {boolean}
-*/
-module.exports.has_font_bytes = function() {
-    var ret = wasm.has_font_bytes();
-    return ret !== 0;
-};
 
 function _assertNum(n) {
     if (typeof(n) !== 'number') throw new Error('expected a number argument');
@@ -207,6 +191,10 @@ module.exports.wrap_text = function(text, width) {
     }
 };
 
+module.exports.__wbg_alert_578daaffd4fc24d7 = logError(function(arg0, arg1) {
+    alert(getStringFromWasm0(arg0, arg1));
+});
+
 module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     const obj = getObject(arg1);
     var ret = JSON.stringify(obj === undefined ? null : obj);
@@ -216,19 +204,11 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_alert_a5a2f68cc09adc6e = logError(function(arg0, arg1) {
-    alert(getStringFromWasm0(arg0, arg1));
-});
-
-module.exports.__wbg_urge_ae2692d82ada4bf1 = logError(function(arg0, arg1) {
-    urge(getStringFromWasm0(arg0, arg1));
-});
-
 module.exports.__wbindgen_throw = function(arg0, arg1) {
     throw new Error(getStringFromWasm0(arg0, arg1));
 };
 
-const path = require('path').join(__dirname, 'hello_wasm_bg.wasm');
+const path = require('path').join(__dirname, 'rustybuzz_wasm_bg.wasm');
 const bytes = require('fs').readFileSync(path);
 
 const wasmModule = new WebAssembly.Module(bytes);
