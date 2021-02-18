@@ -1,10 +1,10 @@
 [package]
-name = "hello-wasm"
+name = "rustybuzz-wasm"
 version = "0.1.0"
 authors = ["Your Name <you@example.com>"]
-description = "A sample project with wasm-pack"
+description = "Typesetting from NodeJS with text shaping, line wrapping, SVG text rendering"
 license = "MIT/Apache-2.0"
-repository = "https://github.com/yourgithubusername/hello-wasm"
+repository = "https://github.com/loveencounterflow/rustybuzz-wasm"
 edition = "2018"
 
 [lib]
