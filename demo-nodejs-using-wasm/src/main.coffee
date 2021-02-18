@@ -34,27 +34,66 @@ RBW                       = require '../../pkg'
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+@_resolve_font_path = ( me, font_path ) ->
+  return font_path if font_path.startsWith '/'
+  return PATH.resolve PATH.join __dirname, '../../fonts', font_path
+
+#-----------------------------------------------------------------------------------------------------------
+@_get_font_bytes = ( me, font_path ) -> ( FS.readFileSync font_path ).toString 'hex'
+
+#-----------------------------------------------------------------------------------------------------------
+@register_font = ( me, fontnick ) ->
+  #.........................................................................................................
+  unless ( font_entry = me.fonts[ fontnick ] )?
+    throw new Error "^1w37^ unknown fontnick #{rpr fontnick}"
+  #.........................................................................................................
+  unless me._prv_fontidx < me._last_fontidx
+    throw new Error "^1w37^ capacity of #{me._last_fontidx + 1} fonts exceeded"
+  #.........................................................................................................
+  return R if ( R = font_entry.font_idx )?
+  #.........................................................................................................
+  R = me._prv_fontidx += 1
+  RBW.register_font R, @_get_font_bytes me, font_entry.path
+  font_entry.font_idx = R
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
+@new_demo = ->
+  @_set_globals()
+  R =
+    shy:          '\xad'
+    _prv_fontidx:   -1
+    _last_fontidx:  15
+    fonts:
+      garamond_italic:  { path: 'EBGaramond08-Italic.otf', }
+      amiri:            { path: 'arabic/Amiri-0.113/Amiri-Bold.ttf', }
+      tibetan:          { path: '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf', }
+  #.........................................................................................................
+  for fontname, entry of R.fonts
+    R.fonts[ fontname ].font_idx  = null
+    R.fonts[ fontname ].path      = @_resolve_font_path null, entry.path
+  #.........................................................................................................
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
 @demo_text_shaping = ->
   whisper '^33443^ demo_text_shaping'
-  @_set_globals()
-  font_path           = 'EBGaramond08-Italic.otf'
-  font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
-  font_bytes          = FS.readFileSync font_path
-  font_bytes_hex      = font_bytes.toString 'hex'
-  font_idx            = 0
-  RBW.register_font font_idx, font_bytes_hex
-  shy                 = '\xad'
+  me                  = @new_demo()
+  fontnick            = 'garamond_italic'
+  font_idx            = @register_font me, fontnick
   # format              = 'short'
   format              = 'json'
   # format              = 'rusty'
   text                = "a certain minimum"
-  text                = text.replace /#/g, shy
+  text                = text.replace /#/g, me.shy
   cfg                 = { format, text, }
   arrangement         = JSON.parse RBW.shape_text cfg
   #.........................................................................................................
+  urge "glyf IDs and positions of font #{rpr fontnick} for text #{rpr text}:"
   for d in arrangement
     info '^223^', d
   #.........................................................................................................
+  urge "unique glyf IDs in this text:"
   gids                = new Set ( d.gid for d in arrangement )
   debug '^3344^', gids
   return null
@@ -62,36 +101,19 @@ RBW                       = require '../../pkg'
 #-----------------------------------------------------------------------------------------------------------
 @demo_svg_typesetting = ->
   whisper '^33443^ demo_svg_typesetting'
-  @_set_globals()
-  # globalThis.read_file      = FS.readFileSync
-  font_path           = 'EBGaramond08-Italic.otf'
-  # font_path           = 'arabic/Amiri-0.113/Amiri-Bold.ttf'
-  font_path           = PATH.resolve PATH.join __dirname, '../../fonts', font_path
-  # font_path           = '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
-  font_bytes          = FS.readFileSync font_path
-  font_bytes_hex      = font_bytes.toString 'hex'
-  font_idx            = 0
-  RBW.register_font font_idx, font_bytes_hex
-  # format              = 'short'
-  format              = 'json'
-  # format              = 'rusty'
-  shy                 = '\xad'
-  texts               = [
-    # "a"
-    # "affix"
-    # "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
-    # ( [ "الخط الأمیری"... ].reverse() ).join ''
-    "a certain minimum"
-    # "af#fix-"
-    # " "
-    # "#"
-    # "-"
-    ]
+  me        = @new_demo()
+  format    = 'json' # 'short', 'rusty'
+  #.........................................................................................................
+  fontnick  = 'tibetan';          text =  "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ"
+  fontnick  = 'amiri';            text = ( [ "الخط الأمیری"... ].reverse() ).join ''
+  fontnick  = 'garamond_italic';  text = "a certain minimum"
+  fontnick  = 'garamond_italic';  text = "af#fix"
+  #.........................................................................................................
+  font_idx  = @register_font me, fontnick
+  text      = text.replace /#/g, me.shy
+  #.........................................................................................................
   echo """<?xml version='1.0' encoding='UTF-8'?>
     <svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 10500 1500' version='2'>"""
-  # for text in texts
-  text        = texts[ 0 ]
-  text        = text.replace /#/g, shy
   cfg         = { format, text, }
   arrangement = JSON.parse RBW.shape_text cfg
   gids        = new Set ( d.gid for d in arrangement )
@@ -140,8 +162,7 @@ RBW                       = require '../../pkg'
 #-----------------------------------------------------------------------------------------------------------
 @demo_text_wrapping = ->
   whisper '^33443^ demo_text_wrapping'
-  @_set_globals()
-  shy           = '\xad'
+  me        = @new_demo()
   text = """Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
   to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
   from their respective alphabets, but some also accept punctuation marks such as hyphens and apostrophes,
@@ -154,7 +175,7 @@ RBW                       = require '../../pkg'
   text          = "The ela#bo#ra#te sphinx told me a rid#dle."
   # text          = "The elaborate sphinx told me a riddle."
   #.........................................................................................................
-  text          = text.replace /#/g, shy
+  text          = text.replace /#/g, me.shy
   text          = text.replace /\s+/g, ' '
   width         = 10
   lines         = RBW.wrap_text text, width
@@ -184,12 +205,11 @@ RBW                       = require '../../pkg'
   return null
 
 
-
-
 ############################################################################################################
 if module is require.main then do =>
   # try
   @demo_text_shaping()
+  # @demo_svg_typesetting()
   @demo_text_wrapping()
   # catch error
   #   ### TAINT improvement over nodexh? ###
