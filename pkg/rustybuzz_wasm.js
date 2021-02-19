@@ -169,29 +169,6 @@ module.exports.glyph_to_svg_pathdata = function(js_font_idx, js_glyph_id) {
 };
 
 /**
-* return JSON `list<number>` with one wordcount per line
-* TODO: return list of slab indices
-* @param {string} text
-* @param {number} width
-* @returns {string}
-*/
-module.exports.wrap_text = function(text, width) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        var ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len0 = WASM_VECTOR_LEN;
-        _assertNum(width);
-        wasm.wrap_text(retptr, ptr0, len0, width);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        return getStringFromWasm0(r0, r1);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-        wasm.__wbindgen_free(r0, r1);
-    }
-};
-
-/**
 */
 module.exports.wrap_text_with_arbitrary_slabs = function() {
     wasm.wrap_text_with_arbitrary_slabs();
