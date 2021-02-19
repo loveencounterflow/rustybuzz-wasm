@@ -158,9 +158,6 @@ RBW                       = require '../../pkg'
   #.........................................................................................................
   echo "</svg>"
   return null
-
-#-----------------------------------------------------------------------------------------------------------
-@demo_text_wrapping = ->
   whisper '^33443^ demo_text_wrapping'
   me        = @new_demo()
   text = """Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
@@ -204,18 +201,16 @@ RBW                       = require '../../pkg'
       info line
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+@demo_text_wrapping_advanced = ->
+  me        = @new_demo()
+  RBW.wrap_text_with_arbitrary_slabs()
+
 
 ############################################################################################################
 if module is require.main then do =>
-  # try
-  @demo_text_shaping()
+  # @demo_text_shaping()
   # @demo_svg_typesetting()
-  @demo_text_wrapping()
-  # catch error
-  #   ### TAINT improvement over nodexh? ###
-  #   if ( error.name is 'RuntimeError' ) and ( error.message is 'unreachable' )
-  #     alert CND.reverse "#{error.name}: #{error.message}"
-  #     whisper error.stack
-  #     process.exit 123
-  #   throw error
+  # @demo_text_wrapping()
+  @demo_text_wrapping_advanced()
   return null

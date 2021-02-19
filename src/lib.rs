@@ -466,3 +466,159 @@ pub fn wrap_text( text: String, width: usize ) -> String {
   return json!( r ).to_string();
 }
 
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+
+//----------------------------------------------------------------------------------------------------------
+/// A piece of wrappable text, including any trailing whitespace.
+///
+/// A `Word` is an example of a [`Fragment`], so it has a width,
+/// trailing whitespace, and potentially a penalty item.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct Word<'a> {
+    word: &'a str,
+    width: usize,
+    pub(crate) whitespace: &'a str,
+    pub(crate) penalty: &'a str,
+}
+
+impl std::ops::Deref for Word<'_> {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        self.word
+    }
+}
+
+impl<'a> Word<'a> {
+    /// Construct a new `Word`.
+    ///
+    /// A trailing stretch of `' '` is automatically taken to be the
+    /// whitespace part of the word.
+    pub fn from(word: &str) -> Word<'_> {
+        let trimmed = word.trim_end_matches(' ');
+        Word {
+            word: trimmed,
+            width: trimmed.len(),
+            whitespace: &word[trimmed.len()..],
+            penalty: "",
+        }
+    }
+
+    /// Break this word into smaller words with a width of at most
+    /// `line_width`. The whitespace and penalty from this `Word` is
+    /// added to the last piece.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use textwrap::core::Word;
+    /// assert_eq!(
+    ///     Word::from("Hello!  ").break_apart(3).collect::<Vec<_>>(),
+    ///     vec![Word::from("Hel"), Word::from("lo!  ")]
+    /// );
+    /// ```
+    pub fn break_apart<'b>(&'b self, line_width: usize) -> impl Iterator<Item = Word<'a>> + 'b {
+        let mut char_indices = self.word.char_indices();
+        let mut offset = 0;
+        let mut width = 0;
+
+        std::iter::from_fn(move || {
+            while let Some((idx, ch)) = char_indices.next() {
+                // if skip_ansi_escape_sequence(ch, &mut char_indices.by_ref().map(|(_, ch)| ch)) {
+                //     continue;
+                // }
+
+                if width > 0 && width + 1 /* ch_width(ch) */ > line_width {
+                    let word = Word {
+                        word: &self.word[offset..idx],
+                        width: width,
+                        whitespace: "",
+                        penalty: "",
+                    };
+                    offset = idx;
+                    width = 1 /* ch_width(ch) */;
+                    return Some(word);
+                }
+
+                width += 1 /* ch_width(ch) */;
+            }
+
+            if offset < self.word.len() {
+                let word = Word {
+                    word: &self.word[offset..],
+                    width: width,
+                    whitespace: self.whitespace,
+                    penalty: self.penalty,
+                };
+                offset = self.word.len();
+                return Some(word);
+            }
+
+            None
+        })
+    }
+}
+
+impl textwrap::core::Fragment for Word<'_> {
+    #[inline]
+    fn width(&self) -> usize {
+        self.width
+    }
+
+    // We assume the whitespace consist of ' ' only. This allows us to
+    // compute the display width in constant time.
+    #[inline]
+    fn whitespace_width(&self) -> usize {
+        self.whitespace.len()
+    }
+
+    // We assume the penalty is `""` or `"-"`. This allows us to
+    // compute the display width in constant time.
+    #[inline]
+    fn penalty_width(&self) -> usize {
+        self.penalty.len()
+    }
+}
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+//##########################################################################################################
+
+//----------------------------------------------------------------------------------------------------------
+#[wasm_bindgen]
+pub fn wrap_text_with_arbitrary_slabs() {
+  let words           = textwrap::core::find_words( "one two three" ).collect::<Vec<_>>();
+  urge( &format!( "^827^ words: {:#?}", words ) );
+  let lines           = textwrap::core::wrap_optimal_fit( &words, |_| 10 );
+  let mut r: Vec<u16> = Vec::new();
+  // for line in lines {
+  //   r.push( line.len() as u16 );
+    //   let slab = Slab {
+    //     word:             tw_word.word,
+    //     width:            tw_word.width,
+    //     whitespace:       tw_word.whitespace,
+    //     penalty:          tw_word.penalty, };
+    //   r.push( slab );
+  // }
+  urge( &json!( r ).to_string() );
+}
+
