@@ -17,5 +17,6 @@ export function shape_text(user_cfg: any): string;
 */
 export function glyph_to_svg_pathdata(js_font_idx: any, js_glyph_id: any): string;
 /**
+* @returns {string}
 */
-export function wrap_text_with_arbitrary_slabs(): void;
+export function wrap_text_with_arbitrary_slabs(): string;

@@ -281,9 +281,16 @@ lines).
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_text_wrapping_advanced = function() {
-    var me;
+    var i, len, me, ref, slabline, slablines;
     me = this.new_demo();
-    return RBW.wrap_text_with_arbitrary_slabs();
+    slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs());
+    debug('^3334^', rpr(slablines));
+    ref = slablines.lines;
+    for (i = 0, len = ref.length; i < len; i++) {
+      slabline = ref[i];
+      info(slabline);
+    }
+    return null;
   };
 
   //###########################################################################################################
