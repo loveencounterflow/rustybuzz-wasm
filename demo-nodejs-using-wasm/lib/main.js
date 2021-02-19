@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var CND, FS, PATH, RBW, alert, badge, debug, echo, help, info, rpr, urge, warn, whisper;
+  var CND, FS, PATH, RBW, alert, badge, debug, echo, help, info, rpr, to_width, urge, warn, whisper, width_of;
 
   //###########################################################################################################
   CND = require('cnd');
@@ -30,6 +30,8 @@
   PATH = require('path');
 
   RBW = require('../../pkg');
+
+  ({to_width, width_of} = require('to-width'));
 
   //-----------------------------------------------------------------------------------------------------------
   this._set_globals = function() {
@@ -281,6 +283,7 @@ lines).
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_text_wrapping_advanced = function() {
+    /* TAINT use triplets `[m,w,p,]` (material width, whitespace width, penalty width) instead to make JSON significantly smaller */
     var i, len, me, ref, slabline, slablines, slabs;
     me = this.new_demo();
     slabs = [
@@ -332,6 +335,14 @@ lines).
       // @demo_svg_typesetting()
       // @demo_text_wrapping()
       this.demo_text_wrapping_advanced();
+      help('abc', width_of('abc'));
+      help('御門', width_of('御門'));
+      help('اَلْعَرَبِيَّةُ', width_of('اَلْعَرَبِيَّةُ'));
+      help('العربية', width_of('العربية'));
+      help('ﷺ‎', width_of('ﷺ‎'));
+      help('ﷻ‎', width_of('ﷻ‎'));
+      help('﷼‎', width_of('﷼‎'));
+      help('﷽', width_of('﷽'));
       return null;
     })();
   }
