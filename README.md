@@ -12,6 +12,7 @@
 - [What it Is](#what-it-is)
 - [How Does it Compare](#how-does-it-compare)
 - [⚠️ Caveats ⚠️](#-caveats-)
+- [Monospaced Typesetting](#monospaced-typesetting)
 - [Command Lines](#command-lines)
 - [API](#api)
   - [1.) Persistent State](#1-persistent-state)
@@ -181,6 +182,23 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 * ⚠️ Values are currently communicated as JSON and hex-encoded binary strings; this is probably not terribly
   efficient and may change in the future; see https://hacks.mozilla.org/2019/11/multi-value-all-the-wasm/
   and https://docs.rs/serde-wasm-bindgen/0.1.3/serde_wasm_bindgen/.
+
+## Monospaced Typesetting
+
+* provided out-of-the-box by `textwrap`,
+* includes hyphenation, character width calculation
+* problem lies with [*Unicode UAX#11: East Asian Width*](https://www.unicode.org/reports/tr11/) (or its
+  implementation in packages like [`string-width` (JS)](https://github.com/sindresorhus/string-width) and
+  [`unicode-width` (Rust)](https://github.com/unicode-rs/unicode-width)) which report faulty lengths:
+  * `abc`: 3 units 💚
+  * `御門`: 4 units 💚
+  * `اَلْعَرَبِيَّةُ`: 15 units 😠
+  * `العربية`: 7 units 💚
+  * `ﷺ‎`: 2 units ❓
+  * `ﷻ‎`: 2 units ❓
+  * `﷼‎`: 2 units ❓
+  * `﷽`: 1 units 😠😠😠
+
 
 ## Command Lines
 
