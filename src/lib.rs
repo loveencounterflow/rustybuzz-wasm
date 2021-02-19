@@ -441,7 +441,7 @@ TEXT WRAPPING
 ///
 /// A `Slab` is an example of a [`Fragment`], so it has a width,
 /// trailing whitespace, and potentially a penalty_width item.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Slab {
   pub width:            usize,
   pub whitespace_width: usize,
@@ -453,10 +453,10 @@ impl std::ops::Deref for Slab {
 
   fn deref(&self) -> &Self::Target { &self.width } }
 
-//----------------------------------------------------------------------------------------------------------
-impl Slab {
-  pub fn new( width: usize, whitespace_width: usize, penalty_width: usize,  ) -> Slab {
-    Slab { width, whitespace_width, penalty_width, } } }
+// //----------------------------------------------------------------------------------------------------------
+// impl Slab {
+//   pub fn new( width: usize, whitespace_width: usize, penalty_width: usize,  ) -> Slab {
+//     Slab { width, whitespace_width, penalty_width, } } }
 
 //----------------------------------------------------------------------------------------------------------
 impl textwrap::core::Fragment for Slab {
@@ -503,14 +503,8 @@ impl Arrangement {
 // }
 //==========================================================================================================
 #[wasm_bindgen]
-pub fn wrap_text_with_arbitrary_slabs() -> String {
-  let slabs           = vec![
-    Slab::new( 5, 1, 1, ),
-    Slab::new( 3, 1, 1, ),
-    Slab::new( 4, 1, 1, ),
-    Slab::new( 2, 1, 1, ),
-    Slab::new( 5, 1, 1, ),
-    Slab::new( 10, 1, 1, ), ];
+pub fn wrap_text_with_arbitrary_slabs( slabs_js: JsValue ) -> String {
+  let slabs: Vec<Slab>           = slabs_js.into_serde().unwrap();
   urge( &format!( "^827^ slabs: {:#?}", slabs ) );
   let lines           = textwrap::core::wrap_optimal_fit( &slabs, |_| 16 );
   urge( &format!( "^827^ lines: {:#?}", lines ) );
