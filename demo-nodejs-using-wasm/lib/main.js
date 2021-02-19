@@ -335,14 +335,6 @@ lines).
       // @demo_svg_typesetting()
       // @demo_text_wrapping()
       this.demo_text_wrapping_advanced();
-      help('abc', width_of('abc'));
-      help('御門', width_of('御門'));
-      help('اَلْعَرَبِيَّةُ', width_of('اَلْعَرَبِيَّةُ'));
-      help('العربية', width_of('العربية'));
-      help('ﷺ‎', width_of('ﷺ‎'));
-      help('ﷻ‎', width_of('ﷻ‎'));
-      help('﷼‎', width_of('﷼‎'));
-      help('﷽', width_of('﷽'));
       return null;
     })();
   }
