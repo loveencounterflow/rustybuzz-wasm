@@ -461,9 +461,9 @@ pub fn wrap_text( text: String, width: usize ) -> String {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 // pub struct Slab<'a> {
 pub struct Slab<'a> {
-    width: usize,
-    pub(crate) whitespace: &'a usize,
-    pub(crate) penalty: &'a usize,
+    pub width:          usize,
+    pub whitespace: &'a usize,
+    pub penalty: &'a    usize,
 }
 
 //----------------------------------------------------------------------------------------------------------
