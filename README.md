@@ -191,14 +191,14 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
   implementation in packages like [`string-width` (JS)](https://github.com/sindresorhus/string-width) and
   [`unicode-width` (Rust)](https://github.com/unicode-rs/unicode-width)) which report partially faulty
   lengths:
-  * **abc**: <span dir=ltr>3 units 💚</span>
-  * **御門**: <span dir=ltr>4 units 💚</span>
-  * **اَلْعَرَبِيَّةُ**: <span dir=ltr> 15 units ❌</span>
-  * **العربية**: <span dir=ltr> 7 units 💚</span>
-  * **ﷺ‎**: <span dir=ltr>2 units ❌</span>
-  * **ﷻ‎**: <span dir=ltr>2 units ❌</span>
-  * **﷼‎**: <span dir=ltr>2 units ❓</span>
-  * **﷽**: <span dir=ltr>1 units ❌❌❌</span>
+  * abc: <span dir=ltr>3 units 💚</span>
+  * 御門: <span dir=ltr>4 units 💚</span>
+  * اَلْعَرَبِيَّةُ: <span dir=ltr> 15 units ❌</span>
+  * العربية: <span dir=ltr> 7 units 💚</span>
+  * ﷺ‎: <span dir=ltr>2 units ❌</span>
+  * ﷻ‎: <span dir=ltr>2 units ❌</span>
+  * ﷼‎: <span dir=ltr>2 units ❓</span>
+  * ﷽: <span dir=ltr>1 units ❌❌❌</span>
 * the better approach would seem to be to either monkey-fix widths known to be wrong or to do text shaping
   using carefully selected fonts (and quantize widths where they are not already quantized); in either case,
   one cannot simply use the solution provided by `textwrap` without landing a pull request first.
