@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var CND, FS, PATH, RBW, alert, badge, debug, echo, help, info, rpr, to_width, urge, warn, whisper, width_of;
+  var CND, FS, PATH, RBW, alert, badge, debug, echo, help, info, rpr, urge, warn, whisper;
 
   //###########################################################################################################
   CND = require('cnd');
@@ -30,8 +30,6 @@
   PATH = require('path');
 
   RBW = require('../../pkg');
-
-  ({to_width, width_of} = require('to-width'));
 
   //-----------------------------------------------------------------------------------------------------------
   this._set_globals = function() {
