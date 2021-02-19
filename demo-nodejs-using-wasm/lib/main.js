@@ -148,7 +148,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_svg_typesetting = function() {
-    var arrangement, cfg, d, font_idx, fontnick, format, gid, gids, i, len, me, outline, ref, text;
+    var arrangement, cfg, d, font_idx, fontnick, format, gid, gids, i, j, k, last_line_idx, last_word_idx, len, len1, line, line_idx, line_length, lines, me, outline, ref, ref1, text, width, word_idx, words;
     whisper('^33443^ demo_svg_typesetting');
     me = this.new_demo();
     format = 'json'; // 'short', 'rusty'
@@ -223,11 +223,6 @@ rect {
     //.........................................................................................................
     echo("</svg>");
     return null;
-  };
-
-  //-----------------------------------------------------------------------------------------------------------
-  this.demo_text_wrapping = function() {
-    var i, j, last_line_idx, last_word_idx, len, line, line_idx, line_length, lines, me, ref, text, width, word_idx, words;
     whisper('^33443^ demo_text_wrapping');
     me = this.new_demo();
     text = `Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
@@ -250,7 +245,7 @@ lines).
     lines = lines.split('\n');
     last_line_idx = lines.length - 1;
     debug('^449^', lines);
-    for (line_idx = i = 0, len = lines.length; i < len; line_idx = ++i) {
+    for (line_idx = j = 0, len1 = lines.length; j < len1; line_idx = ++j) {
       line = lines[line_idx];
       // debug '^499^', words
       if (line_idx < last_line_idx) {
@@ -264,7 +259,7 @@ lines).
           if (line_length >= width) {
             break;
           }
-          for (word_idx = j = 0, ref = last_word_idx; (0 <= ref ? j < ref : j > ref); word_idx = 0 <= ref ? ++j : --j) {
+          for (word_idx = k = 0, ref1 = last_word_idx; (0 <= ref1 ? k < ref1 : k > ref1); word_idx = 0 <= ref1 ? ++k : --k) {
             if (line_length >= width) {
               // debug word_idx
               break;
@@ -284,20 +279,20 @@ lines).
     return null;
   };
 
+  //-----------------------------------------------------------------------------------------------------------
+  this.demo_text_wrapping_advanced = function() {
+    var me;
+    me = this.new_demo();
+    return RBW.wrap_text_with_arbitrary_slabs();
+  };
+
   //###########################################################################################################
   if (module === require.main) {
     (() => {
-      // try
-      this.demo_text_shaping();
+      // @demo_text_shaping()
       // @demo_svg_typesetting()
-      this.demo_text_wrapping();
-      // catch error
-      //   ### TAINT improvement over nodexh? ###
-      //   if ( error.name is 'RuntimeError' ) and ( error.message is 'unreachable' )
-      //     alert CND.reverse "#{error.name}: #{error.message}"
-      //     whisper error.stack
-      //     process.exit 123
-      //   throw error
+      // @demo_text_wrapping()
+      this.demo_text_wrapping_advanced();
       return null;
     })();
   }

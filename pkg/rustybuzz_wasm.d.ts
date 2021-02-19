@@ -24,3 +24,6 @@ export function glyph_to_svg_pathdata(js_font_idx: any, js_glyph_id: any): strin
 * @returns {string}
 */
 export function wrap_text(text: string, width: number): string;
+/**
+*/
+export function wrap_text_with_arbitrary_slabs(): void;

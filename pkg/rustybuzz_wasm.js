@@ -191,8 +191,18 @@ module.exports.wrap_text = function(text, width) {
     }
 };
 
+/**
+*/
+module.exports.wrap_text_with_arbitrary_slabs = function() {
+    wasm.wrap_text_with_arbitrary_slabs();
+};
+
 module.exports.__wbg_alert_578daaffd4fc24d7 = logError(function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
+});
+
+module.exports.__wbg_urge_153b2dc1ed56a413 = logError(function(arg0, arg1) {
+    urge(getStringFromWasm0(arg0, arg1));
 });
 
 module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
