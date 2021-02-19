@@ -19,6 +19,7 @@ echo                      = CND.echo.bind CND
 FS                        = require 'fs'
 PATH                      = require 'path'
 RBW                       = require '../../pkg'
+INTERTEXT                 = require 'intertext'
 
 #-----------------------------------------------------------------------------------------------------------
 @_set_globals = ->
@@ -52,8 +53,13 @@ RBW                       = require '../../pkg'
   #.........................................................................................................
   return R if ( R = font_entry.font_idx )?
   #.........................................................................................................
-  R = me._prv_fontidx += 1
-  RBW.register_font R, @_get_font_bytes me, font_entry.path
+  R           = me._prv_fontidx += 1
+  whisper "^register_font@1^ reading font #{fontnick}..."
+  font_bytes  = @_get_font_bytes me, font_entry.path
+  whisper "^register_font@2^ ...done"
+  whisper "^register_font@3^ sending font #{fontnick} to registry..."
+  RBW.register_font R, font_bytes
+  whisper "^register_font@4^ ...done"
   font_entry.font_idx = R
   return R
 
@@ -68,6 +74,9 @@ RBW                       = require '../../pkg'
       garamond_italic:  { path: 'EBGaramond08-Italic.otf', }
       amiri:            { path: 'arabic/Amiri-0.113/Amiri-Bold.ttf', }
       tibetan:          { path: '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf', }
+      notoserif:        { path: 'NotoSerifJP/NotoSerifJP-Medium.otf', }
+    ### TAINT disregarding font, size for the moment ###
+    slab_widths: {}
   #.........................................................................................................
   for fontname, entry of R.fonts
     R.fonts[ fontname ].font_idx  = null
@@ -158,8 +167,51 @@ RBW                       = require '../../pkg'
   #.........................................................................................................
   echo "</svg>"
   return null
-  whisper '^33443^ demo_text_wrapping'
+
+#-----------------------------------------------------------------------------------------------------------
+@demo_text_wrapping_advanced = ->
   me        = @new_demo()
+  ### TAINT use triplets `[m,w,p,]` (material width, whitespace width, penalty width) instead to make JSON significantly smaller ###
+  slabs     = [
+    { width: 5,   whitespace_width: 1, penalty_width: 1, },
+    { width: 3,   whitespace_width: 1, penalty_width: 1, },
+    { width: 4,   whitespace_width: 1, penalty_width: 1, },
+    { width: 2,   whitespace_width: 1, penalty_width: 1, },
+    { width: 5,   whitespace_width: 1, penalty_width: 1, },
+    { width: 10,  whitespace_width: 1, penalty_width: 1, }, ];
+  slablines = JSON.parse RBW.wrap_text_with_arbitrary_slabs slabs
+  debug '^3334^', rpr slablines
+  for slabline in slablines.lines
+    info slabline
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@find_widths_from_slabs = ( me, slabs ) ->
+  debug '^443^', slabs
+  new_slabs = new Set()
+  for slab_text, slab_idx in slabs.slabs
+    end       = slabs.ends[ slab_idx ]
+    slab_code = slab_text + end
+    continue if me.slab_widths[ slab_code ]?
+    switch end
+      when '_'
+        new_slabs.add slab_text # + ''
+      when '|'
+        new_slabs.add slab_text # + ''
+        new_slabs.add slab_text + '-'
+      when 'x'
+        new_slabs.add slab_text # + ''
+  debug '^3344^', new_slabs
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@get_font_metrics = ( me, font_idx ) ->
+  { gid: space_gid, dx: space_width, } = ( JSON.parse RBW.shape_text { font_idx, text: ' ', format, } )[ 0 ]
+  return { space_gid, space_width, }
+
+#-----------------------------------------------------------------------------------------------------------
+@demo_typesetting = ->
+  #.........................................................................................................
   text = """Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
   to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
   from their respective alphabets, but some also accept punctuation marks such as hyphens and apostrophes,
@@ -169,15 +221,43 @@ RBW                       = require '../../pkg'
   lines).
   在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。
   """
-  text          = "The ela#bo#ra#te sphinx told me a rid#dle."
-  # text          = "The elaborate sphinx told me a riddle."
+  text          = "The elaborate sphinx told me a riddle, told me a riddle, told me a riddle."
+  # text          = "affixation"
   #.........................................................................................................
-  text          = text.replace /#/g, me.shy
+  whisper '^33443^ demo_typesetting'
+  me            = @new_demo()
+  # fontnick      = 'notoserif'
+  fontnick      = 'garamond_italic'
+  font_idx      = @register_font me, fontnick
+  format        = 'json'
   text          = text.replace /\s+/g, ' '
+  words         = text.split ' '
+  #.........................................................................................................
+  ### NOTE put into method: find glyf ID for space (or is it always 1?) ###
+  debug '^222332^', fm = @get_font_metrics
+  #.........................................................................................................
+  arrangement   = JSON.parse RBW.shape_text { font_idx, text, format, }
+  line_width    = ''
+  for glyfpos in arrangement
+    info '^3336^', glyfpos
+    ### NOTE
+
+    * hyphenate the entire text,
+    * find positions (arrangement) with `RBW.shape_text()`
+    * partition with INTERTEXT.SLABS.slabs_from_text, use whitespace_width = 0 for slabs marked `|` and `#`,
+      `fm.space_width` (or less for tight, more for generous spacing) for those marked `_`
+    * **identify glyfruns with slabs**
+
+    ###
+  # slabs         = INTERTEXT.SLABS.slabs_from_text INTERTEXT.HYPH.hyphenate text
+  # info '^1332^', @find_widths_from_slabs me, slabs
+  # cfg                 = { format, text, }
+  # info '^3388^', arrangement
+  return null
+  #.........................................................................................................
   width         = 10
   lines         = RBW.wrap_text text, width
   debug '^3383^', lines
-  return null
   lines         = lines.split '\n'
   last_line_idx = lines.length - 1
   debug '^449^', lines
@@ -199,12 +279,7 @@ RBW                       = require '../../pkg'
       info words.join ' '
     else
       info line
-  return null
-
-#-----------------------------------------------------------------------------------------------------------
-@demo_text_wrapping_advanced = ->
-  me        = @new_demo()
-  ### TAINT use triplets `[m,w,p,]` (material width, whitespace width, penalty width) instead to make JSON significantly smaller ###
+  #.........................................................................................................
   slabs     = [
     { width: 5,   whitespace_width: 1, penalty_width: 1, },
     { width: 3,   whitespace_width: 1, penalty_width: 1, },
@@ -224,7 +299,8 @@ if module is require.main then do =>
   # @demo_text_shaping()
   # @demo_svg_typesetting()
   # @demo_text_wrapping()
-  @demo_text_wrapping_advanced()
+  # @demo_text_wrapping_advanced()
+  @demo_typesetting()
   return null
 
 
