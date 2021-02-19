@@ -314,8 +314,22 @@ rect {
   };
 
   //-----------------------------------------------------------------------------------------------------------
+  this.get_font_metrics = function(me, font_idx) {
+    var space_gid, space_width;
+    ({
+      gid: space_gid,
+      dx: space_width
+    } = (JSON.parse(RBW.shape_text({
+      font_idx,
+      text: ' ',
+      format
+    })))[0]);
+    return {space_gid, space_width};
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
   this.demo_typesetting = function() {
-    var fontnick, format, i, j, k, last_line_idx, last_word_idx, len, len1, line, line_idx, line_length, lines, me, ref, ref1, slabline, slablines, slabs, text, width, word_idx, words;
+    var arrangement, fm, font_idx, fontnick, format, glyfpos, i, j, k, l, last_line_idx, last_word_idx, len, len1, len2, line, line_idx, line_length, line_width, lines, me, ref, ref1, slabline, slablines, slabs, text, width, word_idx, words;
     //.........................................................................................................
     text = `Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
 to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
@@ -326,19 +340,38 @@ final result (such as where to break hyphen-joined compounds, or whether to set 
 lines).
 在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。`;
     text = "The elaborate sphinx told me a riddle, told me a riddle, told me a riddle.";
-    text = "affixation";
+    // text          = "affixation"
     //.........................................................................................................
     whisper('^33443^ demo_typesetting');
     me = this.new_demo();
     // fontnick      = 'notoserif'
     fontnick = 'garamond_italic';
-    // font_idx      = @register_font me, fontnick
+    font_idx = this.register_font(me, fontnick);
     format = 'json';
     text = text.replace(/\s+/g, ' ');
-    slabs = INTERTEXT.SLABS.slabs_from_text(INTERTEXT.HYPH.hyphenate(text));
-    info('^1332^', this.find_widths_from_slabs(me, slabs));
+    words = text.split(' ');
+    //.........................................................................................................
+    /* NOTE put into method: find glyf ID for space (or is it always 1?) */
+    debug('^222332^', fm = this.get_font_metrics);
+    //.........................................................................................................
+    arrangement = JSON.parse(RBW.shape_text({font_idx, text, format}));
+    line_width = '';
+    for (i = 0, len = arrangement.length; i < len; i++) {
+      glyfpos = arrangement[i];
+      info('^3336^', glyfpos);
+    }
+    /* NOTE
+
+    * hyphenate the entire text,
+    * find positions (arrangement) with `RBW.shape_text()`
+    * partition with INTERTEXT.SLABS.slabs_from_text, use whitespace_width = 0 for slabs marked `|` and `#`,
+      `fm.space_width` (or less for tight, more for generous spacing) for those marked `_`
+    * **identify glyfruns with slabs**
+
+     */
+    // slabs         = INTERTEXT.SLABS.slabs_from_text INTERTEXT.HYPH.hyphenate text
+    // info '^1332^', @find_widths_from_slabs me, slabs
     // cfg                 = { format, text, }
-    // arrangement         = JSON.parse RBW.shape_text cfg
     // info '^3388^', arrangement
     return null;
     //.........................................................................................................
@@ -348,7 +381,7 @@ lines).
     lines = lines.split('\n');
     last_line_idx = lines.length - 1;
     debug('^449^', lines);
-    for (line_idx = i = 0, len = lines.length; i < len; line_idx = ++i) {
+    for (line_idx = j = 0, len1 = lines.length; j < len1; line_idx = ++j) {
       line = lines[line_idx];
       // debug '^499^', words
       if (line_idx < last_line_idx) {
@@ -362,7 +395,7 @@ lines).
           if (line_length >= width) {
             break;
           }
-          for (word_idx = j = 0, ref = last_word_idx; (0 <= ref ? j < ref : j > ref); word_idx = 0 <= ref ? ++j : --j) {
+          for (word_idx = k = 0, ref = last_word_idx; (0 <= ref ? k < ref : k > ref); word_idx = 0 <= ref ? ++k : --k) {
             if (line_length >= width) {
               // debug word_idx
               break;
@@ -415,8 +448,8 @@ lines).
     slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs(slabs));
     debug('^3334^', rpr(slablines));
     ref1 = slablines.lines;
-    for (k = 0, len1 = ref1.length; k < len1; k++) {
-      slabline = ref1[k];
+    for (l = 0, len2 = ref1.length; l < len2; l++) {
+      slabline = ref1[l];
       info(slabline);
     }
     return null;
