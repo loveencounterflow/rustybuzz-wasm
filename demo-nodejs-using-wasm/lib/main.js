@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var CND, FS, PATH, RBW, alert, badge, debug, echo, help, info, rpr, urge, warn, whisper;
+  var CND, FS, INTERTEXT, PATH, RBW, alert, badge, debug, echo, help, info, rpr, urge, warn, whisper;
 
   //###########################################################################################################
   CND = require('cnd');
@@ -31,6 +31,8 @@
 
   RBW = require('../../pkg');
 
+  INTERTEXT = require('intertext');
+
   //-----------------------------------------------------------------------------------------------------------
   this._set_globals = function() {
     globalThis.alert = alert;
@@ -60,7 +62,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   this.register_font = function(me, fontnick) {
-    var R, font_entry;
+    var R, font_bytes, font_entry;
     //.........................................................................................................
     if ((font_entry = me.fonts[fontnick]) == null) {
       throw new Error(`^1w37^ unknown fontnick ${rpr(fontnick)}`);
@@ -75,7 +77,12 @@
     }
     //.........................................................................................................
     R = me._prv_fontidx += 1;
-    RBW.register_font(R, this._get_font_bytes(me, font_entry.path));
+    whisper(`^register_font@1^ reading font ${fontnick}...`);
+    font_bytes = this._get_font_bytes(me, font_entry.path);
+    whisper("^register_font@2^ ...done");
+    whisper(`^register_font@3^ sending font ${fontnick} to registry...`);
+    RBW.register_font(R, font_bytes);
+    whisper("^register_font@4^ ...done");
     font_entry.font_idx = R;
     return R;
   };
@@ -97,8 +104,13 @@
         },
         tibetan: {
           path: '/usr/share/fonts/truetype/tibetan-machine/TibetanMachineUni.ttf'
+        },
+        notoserif: {
+          path: 'NotoSerifJP/NotoSerifJP-Medium.otf'
         }
-      }
+      },
+      /* TAINT disregarding font, size for the moment */
+      slab_widths: {}
     };
     ref = R.fonts;
     //.........................................................................................................
@@ -148,7 +160,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_svg_typesetting = function() {
-    var arrangement, cfg, d, font_idx, fontnick, format, gid, gids, i, j, k, last_line_idx, last_word_idx, len, len1, line, line_idx, line_length, lines, me, outline, ref, ref1, text, width, word_idx, words;
+    var arrangement, cfg, d, font_idx, fontnick, format, gid, gids, i, len, me, outline, ref, text;
     whisper('^33443^ demo_svg_typesetting');
     me = this.new_demo();
     format = 'json'; // 'short', 'rusty'
@@ -223,60 +235,6 @@ rect {
     //.........................................................................................................
     echo("</svg>");
     return null;
-    whisper('^33443^ demo_text_wrapping');
-    me = this.new_demo();
-    text = `Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
-to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
-from their respective alphabets, but some also accept punctuation marks such as hyphens and apostrophes,
-and are thus capable of handling hyphen-joined compound words or elisions. Even so, it's generally
-preferable to handle punctuation at the level of segmentation, as it affords greater control over the
-final result (such as where to break hyphen-joined compounds, or whether to set a leading hyphen on new
-lines).
-在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。`;
-    text = "The ela#bo#ra#te sphinx told me a rid#dle.";
-    // text          = "The elaborate sphinx told me a riddle."
-    //.........................................................................................................
-    text = text.replace(/#/g, me.shy);
-    text = text.replace(/\s+/g, ' ');
-    width = 10;
-    lines = RBW.wrap_text(text, width);
-    debug('^3383^', lines);
-    return null;
-    lines = lines.split('\n');
-    last_line_idx = lines.length - 1;
-    debug('^449^', lines);
-    for (line_idx = j = 0, len1 = lines.length; j < len1; line_idx = ++j) {
-      line = lines[line_idx];
-      // debug '^499^', words
-      if (line_idx < last_line_idx) {
-        line_length = line.length;
-        words = line.split(/\s+/);
-        last_word_idx = words.length - 1;
-        while (true) {
-          if (last_word_idx < 1) {
-            break;
-          }
-          if (line_length >= width) {
-            break;
-          }
-          for (word_idx = k = 0, ref1 = last_word_idx; (0 <= ref1 ? k < ref1 : k > ref1); word_idx = 0 <= ref1 ? ++k : --k) {
-            if (line_length >= width) {
-              // debug word_idx
-              break;
-            }
-            if (!(Math.random() > 0.5)) {
-              continue;
-            }
-            line_length++;
-            words[word_idx] += ' ';
-          }
-        }
-        info(words.join(' '));
-      } else {
-        info(line);
-      }
-    }
-    return null;
   };
 
   //-----------------------------------------------------------------------------------------------------------
@@ -326,13 +284,152 @@ lines).
     return null;
   };
 
+  //-----------------------------------------------------------------------------------------------------------
+  this.find_widths_from_slabs = function(me, slabs) {
+    var end, i, len, new_slabs, ref, slab_code, slab_idx, slab_text;
+    debug('^443^', slabs);
+    new_slabs = new Set();
+    ref = slabs.slabs;
+    for (slab_idx = i = 0, len = ref.length; i < len; slab_idx = ++i) {
+      slab_text = ref[slab_idx];
+      end = slabs.ends[slab_idx];
+      slab_code = slab_text + end;
+      if (me.slab_widths[slab_code] != null) {
+        continue;
+      }
+      switch (end) {
+        case '_':
+          new_slabs.add(slab_text); // + ''
+          break;
+        case '|':
+          new_slabs.add(slab_text); // + ''
+          new_slabs.add(slab_text + '-');
+          break;
+        case 'x':
+          new_slabs.add(slab_text); // + ''
+      }
+    }
+    debug('^3344^', new_slabs);
+    return null;
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  this.demo_typesetting = function() {
+    var fontnick, format, i, j, k, last_line_idx, last_word_idx, len, len1, line, line_idx, line_length, lines, me, ref, ref1, slabline, slablines, slabs, text, width, word_idx, words;
+    //.........................................................................................................
+    text = `Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
+to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
+from their respective alphabets, but some also accept punctuation marks such as hyphens and apostrophes,
+and are thus capable of handling hyphen-joined compound words or elisions. Even so, it's generally
+preferable to handle punctuation at the level of segmentation, as it affords greater control over the
+final result (such as where to break hyphen-joined compounds, or whether to set a leading hyphen on new
+lines).
+在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。`;
+    text = "The elaborate sphinx told me a riddle, told me a riddle, told me a riddle.";
+    text = "affixation";
+    //.........................................................................................................
+    whisper('^33443^ demo_typesetting');
+    me = this.new_demo();
+    // fontnick      = 'notoserif'
+    fontnick = 'garamond_italic';
+    // font_idx      = @register_font me, fontnick
+    format = 'json';
+    text = text.replace(/\s+/g, ' ');
+    slabs = INTERTEXT.SLABS.slabs_from_text(INTERTEXT.HYPH.hyphenate(text));
+    info('^1332^', this.find_widths_from_slabs(me, slabs));
+    // cfg                 = { format, text, }
+    // arrangement         = JSON.parse RBW.shape_text cfg
+    // info '^3388^', arrangement
+    return null;
+    //.........................................................................................................
+    width = 10;
+    lines = RBW.wrap_text(text, width);
+    debug('^3383^', lines);
+    lines = lines.split('\n');
+    last_line_idx = lines.length - 1;
+    debug('^449^', lines);
+    for (line_idx = i = 0, len = lines.length; i < len; line_idx = ++i) {
+      line = lines[line_idx];
+      // debug '^499^', words
+      if (line_idx < last_line_idx) {
+        line_length = line.length;
+        words = line.split(/\s+/);
+        last_word_idx = words.length - 1;
+        while (true) {
+          if (last_word_idx < 1) {
+            break;
+          }
+          if (line_length >= width) {
+            break;
+          }
+          for (word_idx = j = 0, ref = last_word_idx; (0 <= ref ? j < ref : j > ref); word_idx = 0 <= ref ? ++j : --j) {
+            if (line_length >= width) {
+              // debug word_idx
+              break;
+            }
+            if (!(Math.random() > 0.5)) {
+              continue;
+            }
+            line_length++;
+            words[word_idx] += ' ';
+          }
+        }
+        info(words.join(' '));
+      } else {
+        info(line);
+      }
+    }
+    //.........................................................................................................
+    slabs = [
+      {
+        width: 5,
+        whitespace_width: 1,
+        penalty_width: 1
+      },
+      {
+        width: 3,
+        whitespace_width: 1,
+        penalty_width: 1
+      },
+      {
+        width: 4,
+        whitespace_width: 1,
+        penalty_width: 1
+      },
+      {
+        width: 2,
+        whitespace_width: 1,
+        penalty_width: 1
+      },
+      {
+        width: 5,
+        whitespace_width: 1,
+        penalty_width: 1
+      },
+      {
+        width: 10,
+        whitespace_width: 1,
+        penalty_width: 1
+      }
+    ];
+    slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs(slabs));
+    debug('^3334^', rpr(slablines));
+    ref1 = slablines.lines;
+    for (k = 0, len1 = ref1.length; k < len1; k++) {
+      slabline = ref1[k];
+      info(slabline);
+    }
+    return null;
+  };
+
   //###########################################################################################################
   if (module === require.main) {
     (() => {
       // @demo_text_shaping()
       // @demo_svg_typesetting()
       // @demo_text_wrapping()
-      this.demo_text_wrapping_advanced();
+      // @demo_text_wrapping_advanced()
+      this.demo_typesetting();
       return null;
     })();
   }
