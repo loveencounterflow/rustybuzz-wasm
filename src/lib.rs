@@ -459,60 +459,48 @@ pub fn wrap_text( text: String, width: usize ) -> String {
 /// A `Slab` is an example of a [`Fragment`], so it has a width,
 /// trailing whitespace, and potentially a penalty item.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+// pub struct Slab<'a> {
 pub struct Slab<'a> {
-    word: &'a str,
     width: usize,
-    pub(crate) whitespace: &'a str,
-    pub(crate) penalty: &'a str,
-}
-
-impl std::ops::Deref for Slab<'_> {
-    type Target = str;
-
-    fn deref(&self) -> &Self::Target {
-        self.word
-    }
+    pub(crate) whitespace: &'a usize,
+    pub(crate) penalty: &'a usize,
 }
 
 //----------------------------------------------------------------------------------------------------------
-impl<'a> Slab<'a> {
-    /// Construct a new `Slab`.
-    ///
-    /// A trailing stretch of `' '` is automatically taken to be the
-    /// whitespace part of the word.
-    pub fn from(word: &str) -> Slab<'_> {
-        let trimmed = word.trim_end_matches(' ');
-        Slab {
-            word: trimmed,
-            width: trimmed.len(),
-            whitespace: &word[trimmed.len()..],
-            penalty: "",
-        }
-    }
+impl std::ops::Deref for Slab<'_> {
+    type Target = usize;
 
+    fn deref(&self) -> &Self::Target {
+        &self.width
+    }
 }
+
+// //----------------------------------------------------------------------------------------------------------
+// impl<'a> Slab<'a> {
+//     /// Construct a new `Slab`.
+//     ///
+//     /// A trailing stretch of `' '` is automatically taken to be the
+//     /// whitespace part of the word.
+//     pub fn from(word: &str) -> Slab<'_> {
+//       let trimmed = word.trim_end_matches(' ');
+//       Slab {
+//         width:        trimmed.len(),
+//         whitespace:   &word[trimmed.len()..],
+//         penalty:      "", } }
+  // }
 
 //----------------------------------------------------------------------------------------------------------
 impl textwrap::core::Fragment for Slab<'_> {
     #[inline]
-    fn width(&self) -> usize {
-        self.width
-    }
+    fn width(&self) -> usize { self.width }
 
-    // We assume the whitespace consist of ' ' only. This allows us to
-    // compute the display width in constant time.
     #[inline]
-    fn whitespace_width(&self) -> usize {
-        self.whitespace.len()
-    }
+    fn whitespace_width(&self) -> usize { *self.whitespace }
 
-    // We assume the penalty is `""` or `"-"`. This allows us to
-    // compute the display width in constant time.
     #[inline]
-    fn penalty_width(&self) -> usize {
-        self.penalty.len()
-    }
+    fn penalty_width(&self) -> usize { *self.penalty }
 }
+
 // //----------------------------------------------------------------------------------------------------------
 // impl serde::Serialize for textwrap::core::Slab {
 //     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -547,7 +535,9 @@ impl textwrap::core::Fragment for Slab<'_> {
 //----------------------------------------------------------------------------------------------------------
 #[wasm_bindgen]
 pub fn wrap_text_with_arbitrary_slabs() {
+  let slabs           = vec![ Slab { width: 10, penalty: &1, whitespace: &1, }];
   let words           = textwrap::core::find_words( "one two three" ).collect::<Vec<_>>();
+  urge( &format!( "^827^ slabs: {:#?}", slabs ) );
   urge( &format!( "^827^ words: {:#?}", words ) );
   let lines           = textwrap::core::wrap_optimal_fit( &words, |_| 10 );
   let mut r: Vec<u16> = Vec::new();
