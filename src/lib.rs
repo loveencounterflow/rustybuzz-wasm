@@ -417,28 +417,6 @@ fn scale_segment(d: &mut PathSegment, scale: f64 ) {
     }
 
 
-//==========================================================================================================
-// TEXT WRAPPING
-//----------------------------------------------------------------------------------------------------------
-/// return JSON `list<number>` with one wordcount per line
-/// TODO: return list of slab indices
-#[wasm_bindgen]
-pub fn wrap_text( text: String, width: usize ) -> String {
-  let words           = textwrap::core::find_words( &text ).collect::<Vec<_>>();
-  // urge( &format!( "^827^ words: {:#?}", words ) );
-  let lines           = textwrap::core::wrap_optimal_fit( &words, |_| width );
-  let mut r: Vec<u16> = Vec::new();
-  for line in lines {
-    r.push( line.len() as u16 );
-    //   let slab = Slab {
-    //     word:             tw_word.word,
-    //     width:            tw_word.width,
-    //     whitespace:       tw_word.whitespace,
-    //     penalty_width:          tw_word.penalty_width, };
-    //   r.push( slab );
-  }
-  return json!( r ).to_string();
-}
 
 /*
 ############################################################################################################
@@ -454,7 +432,7 @@ pub fn wrap_text( text: String, width: usize ) -> String {
                                                                      888      888                        888
                                                                      888      888                   Y8b d88P
                                                                      888      888                    "Y88P"
-
+TEXT WRAPPING
 ############################################################################################################
 */
 
@@ -486,19 +464,47 @@ impl textwrap::core::Fragment for Slab {
   #[inline] fn whitespace_width(&self) -> usize { self.whitespace_width }
   #[inline] fn penalty_width(&self) -> usize { self.penalty_width } }
 
+//==========================================================================================================
+#[derive(Serialize, Deserialize)]
+pub struct ArrangementLine {
+  pub first_slab_idx: usize,
+  pub last_slab_idx:  usize,
+  pub line_length:    usize,
+  // pub
+}
+
+//----------------------------------------------------------------------------------------------------------
+#[derive(Serialize, Deserialize)]
+pub struct Arrangement {
+  // pub line_length:  usize,
+  pub lines: Vec<ArrangementLine>,
+  // pub
+}
+
 // //----------------------------------------------------------------------------------------------------------
-// impl serde::Serialize for textwrap::core::Slab {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//     where
-//         S: serde::Serializer,
-//     {
-//         serializer.serialize_i32(*self)
-//     }
+// impl ArrangementLine {
+//   pub fn new( first_slab_idx: usize, last_slab_idx: usize, line_length: usize, ) -> ArrangementLine {
+//     return ArrangementLine {
+//     last_slab_idx,
+//     first_slab_idx,
+//     line_length, } }
 // }
 
 //----------------------------------------------------------------------------------------------------------
+impl Arrangement {
+  pub fn new() -> Arrangement { Arrangement {
+    lines: vec![], } }
+}
+
+// impl Serialize for Arrangement {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+//     where
+//         S: Serializer;
+// }
+//==========================================================================================================
 #[wasm_bindgen]
 pub fn wrap_text_with_arbitrary_slabs() {
+// pub fn wrap_text_with_arbitrary_slabs() -> String {
   let slabs           = vec![
     Slab::new( 5, 1, 1, ),
     Slab::new( 3, 1, 1, ),
@@ -509,17 +515,18 @@ pub fn wrap_text_with_arbitrary_slabs() {
   urge( &format!( "^827^ slabs: {:#?}", slabs ) );
   let lines           = textwrap::core::wrap_optimal_fit( &slabs, |_| 16 );
   urge( &format!( "^827^ lines: {:#?}", lines ) );
-  // let mut r: Vec<u16> = Vec::new();
-  // for line in lines {
-  //   r.push( line.len() as u16 );
-    //   let slab = Slab {
-    //     word:             tw_word.word,
-    //     width:            tw_word.width,
-    //     whitespace:       tw_word.whitespace,
-    //     penalty_width:          tw_word.penalty_width, };
-    //   r.push( slab );
-  // }
-  // urge( &json!( r ).to_string() );
+  let mut slab_idx  = 0;
+  let mut r         = Arrangement::new();
+  for line in lines {
+    r.lines.push( ArrangementLine {
+      first_slab_idx: slab_idx,
+      last_slab_idx:  slab_idx + line.len() - 1,
+      line_length:    line.len(), } );
+    slab_idx += 1;
+    // r.insert( 42 );
+    }
+  urge( &json!( r ).to_string() );
+  // return json!( r ).to_string();
 }
 
 
