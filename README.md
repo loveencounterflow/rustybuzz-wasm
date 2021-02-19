@@ -190,14 +190,14 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 * problem lies with [*Unicode UAX#11: East Asian Width*](https://www.unicode.org/reports/tr11/) (or its
   implementation in packages like [`string-width` (JS)](https://github.com/sindresorhus/string-width) and
   [`unicode-width` (Rust)](https://github.com/unicode-rs/unicode-width)) which report faulty lengths:
-  * `abc`: 3 units 💚
-  * `御門`: 4 units 💚
-  * `اَلْعَرَبِيَّةُ` <span dir=ltr> 15 units 😠</span>
-  * `العربية` <span dir=ltr> 7 units 💚</span>
-  * `ﷺ‎`: 2 units 😠
-  * `ﷻ‎`: 2 units 😠
-  * `﷼‎`: 2 units ❓
-  * `﷽`: 1 units 😠😠😠
+  * `abc`: <span dir=ltr>3 units 💚</span>
+  * `御門`: <span dir=ltr>4 units 💚</span>
+  * `اَلْعَرَبِيَّةُ`: <span dir=ltr> 15 units 😠</span>
+  * `العربية`: <span dir=ltr> 7 units 💚</span>
+  * `ﷺ‎`: <span dir=ltr>2 units 😠</span>
+  * `ﷻ‎`: <span dir=ltr>2 units 😠</span>
+  * `﷼‎`: <span dir=ltr>2 units ❓</span>
+  * `﷽`: <span dir=ltr>1 units 😠😠😠</span>
 
 
 ## Command Lines
