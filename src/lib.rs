@@ -460,14 +460,14 @@ pub fn wrap_text( text: String, width: usize ) -> String {
 /// trailing whitespace, and potentially a penalty item.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 // pub struct Slab<'a> {
-pub struct Slab<'a> {
-    pub width:          usize,
-    pub whitespace: &'a usize,
-    pub penalty: &'a    usize,
+pub struct Slab {
+    pub width:      usize,
+    pub whitespace: usize,
+    pub penalty:    usize,
 }
 
 //----------------------------------------------------------------------------------------------------------
-impl std::ops::Deref for Slab<'_> {
+impl std::ops::Deref for Slab {
     type Target = usize;
 
     fn deref(&self) -> &Self::Target {
@@ -490,15 +490,15 @@ impl std::ops::Deref for Slab<'_> {
   // }
 
 //----------------------------------------------------------------------------------------------------------
-impl textwrap::core::Fragment for Slab<'_> {
+impl textwrap::core::Fragment for Slab {
     #[inline]
     fn width(&self) -> usize { self.width }
 
     #[inline]
-    fn whitespace_width(&self) -> usize { *self.whitespace }
+    fn whitespace_width(&self) -> usize { self.whitespace }
 
     #[inline]
-    fn penalty_width(&self) -> usize { *self.penalty }
+    fn penalty_width(&self) -> usize { self.penalty }
 }
 
 // //----------------------------------------------------------------------------------------------------------
@@ -536,12 +536,12 @@ impl textwrap::core::Fragment for Slab<'_> {
 #[wasm_bindgen]
 pub fn wrap_text_with_arbitrary_slabs() {
   let slabs           = vec![
-    Slab { width: 5, penalty: &1, whitespace: &1, },
-    Slab { width: 3, penalty: &1, whitespace: &1, },
-    Slab { width: 4, penalty: &1, whitespace: &1, },
-    Slab { width: 2, penalty: &1, whitespace: &1, },
-    Slab { width: 5, penalty: &1, whitespace: &1, },
-    Slab { width: 10, penalty: &1, whitespace: &1, }, ];
+    Slab { width: 5, penalty: 1, whitespace: 1, },
+    Slab { width: 3, penalty: 1, whitespace: 1, },
+    Slab { width: 4, penalty: 1, whitespace: 1, },
+    Slab { width: 2, penalty: 1, whitespace: 1, },
+    Slab { width: 5, penalty: 1, whitespace: 1, },
+    Slab { width: 10, penalty: 1, whitespace: 1, }, ];
   urge( &format!( "^827^ slabs: {:#?}", slabs ) );
   let lines           = textwrap::core::wrap_optimal_fit( &slabs, |_| 16 );
   urge( &format!( "^827^ lines: {:#?}", lines ) );
