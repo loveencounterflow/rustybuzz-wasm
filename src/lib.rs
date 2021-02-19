@@ -535,12 +535,17 @@ impl textwrap::core::Fragment for Slab<'_> {
 //----------------------------------------------------------------------------------------------------------
 #[wasm_bindgen]
 pub fn wrap_text_with_arbitrary_slabs() {
-  let slabs           = vec![ Slab { width: 10, penalty: &1, whitespace: &1, }];
-  let words           = textwrap::core::find_words( "one two three" ).collect::<Vec<_>>();
+  let slabs           = vec![
+    Slab { width: 5, penalty: &1, whitespace: &1, },
+    Slab { width: 3, penalty: &1, whitespace: &1, },
+    Slab { width: 4, penalty: &1, whitespace: &1, },
+    Slab { width: 2, penalty: &1, whitespace: &1, },
+    Slab { width: 5, penalty: &1, whitespace: &1, },
+    Slab { width: 10, penalty: &1, whitespace: &1, }, ];
   urge( &format!( "^827^ slabs: {:#?}", slabs ) );
-  urge( &format!( "^827^ words: {:#?}", words ) );
-  let lines           = textwrap::core::wrap_optimal_fit( &words, |_| 10 );
-  let mut r: Vec<u16> = Vec::new();
+  let lines           = textwrap::core::wrap_optimal_fit( &slabs, |_| 16 );
+  urge( &format!( "^827^ lines: {:#?}", lines ) );
+  // let mut r: Vec<u16> = Vec::new();
   // for line in lines {
   //   r.push( line.len() as u16 );
     //   let slab = Slab {
@@ -550,7 +555,7 @@ pub fn wrap_text_with_arbitrary_slabs() {
     //     penalty:          tw_word.penalty, };
     //   r.push( slab );
   // }
-  urge( &json!( r ).to_string() );
+  // urge( &json!( r ).to_string() );
 }
 
 
