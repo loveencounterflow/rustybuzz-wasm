@@ -8,8 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "cnd": "^9.2.1",
     "hello-wasm": "file://../pkg",
-    "cnd": "^9.2.1"
+    "intertext": "^5.0.0"
   },
   "keywords": [],
   "author": "",
