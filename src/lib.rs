@@ -503,8 +503,7 @@ impl Arrangement {
 // }
 //==========================================================================================================
 #[wasm_bindgen]
-pub fn wrap_text_with_arbitrary_slabs() {
-// pub fn wrap_text_with_arbitrary_slabs() -> String {
+pub fn wrap_text_with_arbitrary_slabs() -> String {
   let slabs           = vec![
     Slab::new( 5, 1, 1, ),
     Slab::new( 3, 1, 1, ),
@@ -522,12 +521,9 @@ pub fn wrap_text_with_arbitrary_slabs() {
       first_slab_idx: slab_idx,
       last_slab_idx:  slab_idx + line.len() - 1,
       line_length:    line.len(), } );
-    slab_idx += 1;
-    // r.insert( 42 );
+    slab_idx += line.len();
     }
-  urge( &json!( r ).to_string() );
-  // return json!( r ).to_string();
-}
+  return json!( r ).to_string(); }
 
 
 //==========================================================================================================

@@ -204,7 +204,11 @@ RBW                       = require '../../pkg'
 #-----------------------------------------------------------------------------------------------------------
 @demo_text_wrapping_advanced = ->
   me        = @new_demo()
-  RBW.wrap_text_with_arbitrary_slabs()
+  slablines = JSON.parse RBW.wrap_text_with_arbitrary_slabs()
+  debug '^3334^', rpr slablines
+  for slabline in slablines.lines
+    info slabline
+  return null
 
 
 ############################################################################################################
