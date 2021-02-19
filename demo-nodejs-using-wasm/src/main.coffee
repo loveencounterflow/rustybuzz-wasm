@@ -204,6 +204,7 @@ RBW                       = require '../../pkg'
 #-----------------------------------------------------------------------------------------------------------
 @demo_text_wrapping_advanced = ->
   me        = @new_demo()
+  ### TAINT use triplets `[m,w,p,]` (material width, whitespace width, penalty width) instead to make JSON significantly smaller ###
   slabs     = [
     { width: 5,   whitespace_width: 1, penalty_width: 1, },
     { width: 3,   whitespace_width: 1, penalty_width: 1, },
@@ -225,3 +226,6 @@ if module is require.main then do =>
   # @demo_text_wrapping()
   @demo_text_wrapping_advanced()
   return null
+
+
+

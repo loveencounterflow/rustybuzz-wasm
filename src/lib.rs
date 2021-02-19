@@ -502,14 +502,15 @@ impl Arrangement {
 //         S: Serializer;
 // }
 //==========================================================================================================
+// ### TAINT use triplets `[m,w,p,]` (material width, whitespace width, penalty width) instead to make JSON significantly smaller ###
 #[wasm_bindgen]
 pub fn wrap_text_with_arbitrary_slabs( slabs_js: JsValue ) -> String {
-  let slabs: Vec<Slab>           = slabs_js.into_serde().unwrap();
-  urge( &format!( "^827^ slabs: {:#?}", slabs ) );
-  let lines           = textwrap::core::wrap_optimal_fit( &slabs, |_| 16 );
-  urge( &format!( "^827^ lines: {:#?}", lines ) );
-  let mut slab_idx  = 0;
-  let mut r         = Arrangement::new();
+  let slabs: Vec<Slab>  = slabs_js.into_serde().unwrap();
+  let lines             = textwrap::core::wrap_optimal_fit( &slabs, |_| 16 );
+  // urge( &format!( "^827^ slabs: {:#?}", slabs ) );
+  // urge( &format!( "^827^ lines: {:#?}", lines ) );
+  let mut slab_idx      = 0;
+  let mut r             = Arrangement::new();
   for line in lines {
     r.lines.push( ArrangementLine {
       first_slab_idx: slab_idx,
