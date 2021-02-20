@@ -220,9 +220,9 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
     features:       vec![],
     variations:     vec![],
     direction:      rustybuzz::Direction::LeftToRight,
-    cluster_level:  rustybuzz::BufferClusterLevel::MonotoneGraphemes,
+    // cluster_level:  rustybuzz::BufferClusterLevel::MonotoneGraphemes,
     // cluster_level: rustybuzz::BufferClusterLevel::MonotoneCharacters,
-    // cluster_level: rustybuzz::BufferClusterLevel::Characters,
+    cluster_level: rustybuzz::BufferClusterLevel::Characters,
     face_idx:   0, };
   //........................................................................................................
   let mut face = rustybuzz::Face::from_slice( get_fontbytes( cfg.font_idx ), cfg.face_idx).unwrap();
@@ -239,6 +239,8 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   // if !cfg.utf8_clusters { buffer.reset_clusters(); }
   //........................................................................................................
   let glyph_buffer = rustybuzz::shape( &face, &cfg.features, buffer );
+  // urge( &format!( "^5454^ text: {:#?}", cfg.text ) );
+  // urge( &format!( "^5454^ glyph_buffer: {:#?}", glyph_buffer ) );
   //........................................................................................................
   if cfg.format == "json" { return glyfs_as_json( &glyph_buffer, ); }
   else if cfg.format == "rusty" {
@@ -269,6 +271,7 @@ fn _glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, st
   for (info, pos) in info.iter().zip(pos) {
     write!(&mut s, "{{" )?;
     write!(&mut s, "\"gid\":{},", info.codepoint)?;
+    write!(&mut s, "\"cluster\":{},", info.cluster)?;
     write!(&mut s, "\"x\":{},\"y\":{},", x, y )?;
     write!(&mut s, "\"dx\":{},\"dy\":{}", pos.x_advance, pos.y_advance )?;
     x += pos.x_advance;
