@@ -258,27 +258,45 @@ INTERTEXT                 = require 'intertext'
   text          = text.replace /\s+/g, ' '
   text          = INTERTEXT.HYPH.hyphenate text
   text_bfr      = Buffer.from text, { encoding: 'utf-8', }
-  lbos          = JSON.parse RBW.find_line_break_positions text
+  lbo_starts    = JSON.parse RBW.find_line_break_positions text
+  shape_batches = []
   #.........................................................................................................
   # urge '^454-1^', @_slice_buffer text_bfr, 0, 3
-  for idx in [ 0 ... lbos.length - 1 ]
-    lbo =lbos[ idx ]
-    chunk = @_slice_buffer text_bfr, lbo, lbos[ idx + 1 ]
-    chunk = chunk.replace /\xad/g, '|'
-    urge '^454-1^', lbo, rpr chunk
+  for batch_idx in [ 0 ... lbo_starts.length - 1 ]
+    lbo_start     = lbo_starts[ batch_idx ]
+    lbo_stop      = lbo_starts[ batch_idx + 1 ]
+    chunk         = @_slice_buffer text_bfr, lbo_start, lbo_stop
+    chunk         = chunk.replace /\xad/g, '|'
+    shape_batch   = { lbo_start, lbo_stop, chunk, pods: [], }
+    shape_batches.push shape_batch
+    urge '^454-1^', lbo_start, ( rpr chunk ), shape_batch
   arrangement   = JSON.parse RBW.shape_text { font_idx, text, format: 'json', }
   #.........................................................................................................
-  segment_gids  = [ fm.space.gid, fm.hyphen.gid, fm.endash.gid, ]
-  slab_idx = 0
-  for glyfpos in arrangement
-    if ( glyfpos.gid in segment_gids )
-      if ( glyfpos.dx is 0 )
-        info '^3336^', ( CND.reverse CND.red glyfpos ), ( CND.lime rpr @_firstchr text_bfr, glyfpos.bidx )
-      else
-        info '^3336^', ( CND.reverse CND.yellow glyfpos ), ( CND.lime rpr @_firstchr text_bfr, glyfpos.bidx )
-      slab_idx++
-    else
-      info '^3336^', glyfpos, ( CND.lime rpr @_firstchr text_bfr, glyfpos.bidx )
+  # segment_gids  = [ fm.space.gid, fm.hyphen.gid, fm.endash.gid, ]
+  batch_idx = 0
+  batch     = shape_batches[ batch_idx ]
+  for pod in arrangement ### NOTE *POD*: Positioned Outline Descriptor ###
+    # info '^3331^', batch, '<-', pod
+    if pod.bidx >= batch.lbo_stop
+      batch_idx++
+      batch = shape_batches[ batch_idx ]
+      unless batch.lbo_start <= pod.bidx < batch.lbo_stop
+        throw new Error "^3332^ POD #{rpr pod} does not fit into shape batch #{rpr batch}"
+    batch.pods.push pod
+    # urge '^3332^', batch
+  for shape_batch in shape_batches
+    { lbo_start, lbo_stop, chunk, } = shape_batch
+    help { lbo_start, lbo_stop, chunk, }
+    for pod in shape_batch.pods
+      info "  #{rpr pod}"
+    # if ( pod.gid in segment_gids )
+    #   if ( pod.dx is 0 )
+    #     info '^3336^', ( CND.reverse CND.red pod ), ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
+    #   else
+    #     info '^3336^', ( CND.reverse CND.yellow pod ), ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
+    #   batch_idx++
+    # else
+    #   info '^3336^', pod, ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
   return null
   #.........................................................................................................
   #.........................................................................................................
