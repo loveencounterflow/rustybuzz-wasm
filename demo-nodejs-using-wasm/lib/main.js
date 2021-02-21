@@ -354,7 +354,8 @@ rect {
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_typesetting = function() {
-    var batch, batch_idx, chunk, fm, font_idx, fontnick, i, j, k, l, last_line_idx, last_word_idx, lbo_start, lbo_starts, lbo_stop, len, len1, len2, len3, len4, line, line_idx, line_length, line_width, lines, m, me, n, o, ref, ref1, ref2, ref3, ref4, shape_batch, shape_batches, slabline, slablines, slabs, text, text_bfr, textshape, textshapes, word_idx, words;
+    /* TAINT incorrect of course */
+    var batch, batch_idx, chunk, first_textshape, fm, font_idx, fontnick, i, j, k, l, last_line_idx, last_textshape, last_word_idx, lbo_start, lbo_starts, lbo_stop, len, len1, len2, len3, len4, len5, line, line_idx, line_length, line_width, lines, m, me, n, o, p, ref, ref1, ref2, ref3, ref4, shape_batch, shape_batches, slab, slabline, slablines, slabs, text, text_bfr, textshape, textshapes, width, word_idx, words;
     me = this.new_demo();
     whisper('^33443^ demo_typesetting');
     //.........................................................................................................
@@ -373,8 +374,7 @@ lines).
     text = "the affixation";
     // text          = "affix"
     //.........................................................................................................
-    line_width = 10;
-    // fontnick      = 'notoserif'
+    line_width = 15 * 1000;
     fontnick = 'garamond_italic';
     font_idx = this.register_font(me, fontnick);
     fm = this.get_font_metrics(me, font_idx);
@@ -433,7 +433,6 @@ lines).
     batch = shape_batches[batch_idx];
     for (j = 0, len = textshapes.length; j < len; j++) {
       textshape = textshapes[j];
-      // info '^3331^', batch, '<-', textshape
       if (textshape.bidx >= batch.lbo_stop) {
         batch_idx++;
         batch = shape_batches[batch_idx];
@@ -444,18 +443,57 @@ lines).
       batch.textshapes.push(textshape);
     }
 // urge '^3332^', batch
+//.........................................................................................................
+/* Show shape batches: */
     for (k = 0, len1 = shape_batches.length; k < len1; k++) {
       shape_batch = shape_batches[k];
       ({lbo_start, lbo_stop, chunk} = shape_batch);
-      help({lbo_start, lbo_stop, chunk});
+      help({
+        lbo_start,
+        lbo_stop,
+        chunk,
+        textshapes: '...'
+      });
       ref2 = shape_batch.textshapes;
       for (l = 0, len2 = ref2.length; l < len2; l++) {
         textshape = ref2[l];
         info(`  ${rpr(textshape)}`);
       }
     }
-    return null;
     //.........................................................................................................
+    /* Perform line wrapping: */
+    slabs = [];
+    for (m = 0, len3 = shape_batches.length; m < len3; m++) {
+      shape_batch = shape_batches[m];
+      ({textshapes} = shape_batch);
+      first_textshape = textshapes[0];
+      last_textshape = textshapes[textshapes.length - 1];
+      width = (last_textshape.x + last_textshape.dx) - first_textshape.x;
+      slab = {
+        width,
+        whitespace_width: fm.space.dx,
+        penalty_width: fm.hyphen.dx
+      };
+      debug('^3345^', slab);
+      slabs.push(slab);
+    }
+    slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs(slabs, line_width));
+    debug('^3334^', rpr(slablines));
+    ref3 = slablines.lines;
+    for (n = 0, len4 = ref3.length; n < len4; n++) {
+      slabline = ref3[n];
+      info(slabline);
+    }
+    return null;
+    // slabs     = [
+    //   { width: 5,   whitespace_width: 1, penalty_width: 1, },
+    //   { width: 3,   whitespace_width: 1, penalty_width: 1, },
+    //   { width: 4,   whitespace_width: 1, penalty_width: 1, },
+    //   { width: 2,   whitespace_width: 1, penalty_width: 1, },
+    //   { width: 5,   whitespace_width: 1, penalty_width: 1, },
+    //   { width: 10,  whitespace_width: 1, penalty_width: 1, }, ];
+    //.........................................................................................................
+    /* Write SVG: */
     //.........................................................................................................
     //.........................................................................................................
     //.........................................................................................................
@@ -464,7 +502,7 @@ lines).
     lines = lines.split('\n');
     last_line_idx = lines.length - 1;
     debug('^449^', lines);
-    for (line_idx = m = 0, len3 = lines.length; m < len3; line_idx = ++m) {
+    for (line_idx = o = 0, len5 = lines.length; o < len5; line_idx = ++o) {
       line = lines[line_idx];
       // debug '^499^', words
       if (line_idx < last_line_idx) {
@@ -478,7 +516,7 @@ lines).
           if (line_length >= line_width) {
             break;
           }
-          for (word_idx = n = 0, ref3 = last_word_idx; (0 <= ref3 ? n < ref3 : n > ref3); word_idx = 0 <= ref3 ? ++n : --n) {
+          for (word_idx = p = 0, ref4 = last_word_idx; (0 <= ref4 ? p < ref4 : p > ref4); word_idx = 0 <= ref4 ? ++p : --p) {
             if (line_length >= line_width) {
               // debug word_idx
               break;
@@ -494,46 +532,6 @@ lines).
       } else {
         info(line);
       }
-    }
-    //.........................................................................................................
-    slabs = [
-      {
-        width: 5,
-        whitespace_width: 1,
-        penalty_width: 1
-      },
-      {
-        width: 3,
-        whitespace_width: 1,
-        penalty_width: 1
-      },
-      {
-        width: 4,
-        whitespace_width: 1,
-        penalty_width: 1
-      },
-      {
-        width: 2,
-        whitespace_width: 1,
-        penalty_width: 1
-      },
-      {
-        width: 5,
-        whitespace_width: 1,
-        penalty_width: 1
-      },
-      {
-        width: 10,
-        whitespace_width: 1,
-        penalty_width: 1
-      }
-    ];
-    slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs(slabs));
-    debug('^3334^', rpr(slablines));
-    ref4 = slablines.lines;
-    for (o = 0, len4 = ref4.length; o < len4; o++) {
-      slabline = ref4[o];
-      info(slabline);
     }
     return null;
   };
