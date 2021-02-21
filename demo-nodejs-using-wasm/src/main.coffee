@@ -214,7 +214,7 @@ INTERTEXT                 = require 'intertext'
   space       = arrangement[ 0 ]
   hyphen      = arrangement[ 1 ]
   endash      = arrangement[ 3 ]
-  debug '^get_font_metrics@445^', arrangement
+  # debug '^get_font_metrics@445^', arrangement
   return {
     space:  { gid: space.gid, dx: space.dx},
     hyphen: { gid: hyphen.gid, dx: hyphen.dx},
@@ -250,10 +250,13 @@ INTERTEXT                 = require 'intertext'
   text          = "the affixation"
   # text          = "affix"
   #.........................................................................................................
+  line_width    = 10
   # fontnick      = 'notoserif'
   fontnick      = 'garamond_italic'
   font_idx      = @register_font me, fontnick
-  debug '^222332^', fm = @get_font_metrics me, font_idx
+  fm            = @get_font_metrics me, font_idx
+  info '^222332^', "fontnick: #{rpr fontnick}"
+  info '^222332^', "font metric: #{rpr fm}"
   #.........................................................................................................
   ### Prepare text: normalize whitespace (replace incidental newlines, repeated blanks), then hyphenate it.
   Prepare a buffer so we access the underlying raw bytes (`RBW.find_line_break_positions()` and
@@ -307,21 +310,12 @@ INTERTEXT                 = require 'intertext'
     help { lbo_start, lbo_stop, chunk, }
     for textshape in shape_batch.textshapes
       info "  #{rpr textshape}"
-    # if ( pod.gid in segment_gids )
-    #   if ( pod.dx is 0 )
-    #     info '^3336^', ( CND.reverse CND.red pod ), ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
-    #   else
-    #     info '^3336^', ( CND.reverse CND.yellow pod ), ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
-    #   batch_idx++
-    # else
-    #   info '^3336^', pod, ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
   return null
   #.........................................................................................................
   #.........................................................................................................
   #.........................................................................................................
   #.........................................................................................................
-  width         = 10
-  lines         = RBW.wrap_text text, width
+  lines         = RBW.wrap_text text, line_width
   debug '^3383^', lines
   lines         = lines.split '\n'
   last_line_idx = lines.length - 1
@@ -334,10 +328,10 @@ INTERTEXT                 = require 'intertext'
       last_word_idx = words.length - 1
       loop
         break if last_word_idx < 1
-        break if line_length >= width
+        break if line_length >= line_width
         for word_idx in [ 0 ... last_word_idx ]
           # debug word_idx
-          break if line_length >= width
+          break if line_length >= line_width
           continue unless Math.random() > 0.5
           line_length++
           words[ word_idx ] += ' '
