@@ -255,40 +255,58 @@ INTERTEXT                 = require 'intertext'
   font_idx      = @register_font me, fontnick
   debug '^222332^', fm = @get_font_metrics me, font_idx
   #.........................................................................................................
+  ### Prepare text: normalize whitespace (replace incidental newlines, repeated blanks), then hyphenate it.
+  Prepare a buffer so we access the underlying raw bytes (`RBW.find_line_break_positions()` and
+  `RBW.shape_text()` both return positions into the raw bytes). Find the line break opportunities (LBOs) as
+  a list of byte indexes: ###
   text          = text.replace /\s+/g, ' '
   text          = INTERTEXT.HYPH.hyphenate text
   text_bfr      = Buffer.from text, { encoding: 'utf-8', }
   lbo_starts    = JSON.parse RBW.find_line_break_positions text
   shape_batches = []
   #.........................................................................................................
-  # urge '^454-1^', @_slice_buffer text_bfr, 0, 3
+  ### We have made it so that the LBO indexes always start with zero and end with the index to the first
+  byte after the end of the buffer; hence, we can 'hydrate' the raw indices by looking at the current and
+  the following index to find the corresponding 'chunk' (i.e. the piece of text that stretches from the
+  previous to the upcomping line break opportunity). Each chunk in turn will, after text shaping, correspond
+  to any number of glyf outlines ('textshapes'), so we provide a list for them: ###
   for batch_idx in [ 0 ... lbo_starts.length - 1 ]
     lbo_start     = lbo_starts[ batch_idx ]
     lbo_stop      = lbo_starts[ batch_idx + 1 ]
     chunk         = @_slice_buffer text_bfr, lbo_start, lbo_stop
     chunk         = chunk.replace /\xad/g, '|'
-    shape_batch   = { lbo_start, lbo_stop, chunk, pods: [], }
+    shape_batch   = { lbo_start, lbo_stop, chunk, textshapes: [], }
     shape_batches.push shape_batch
     urge '^454-1^', lbo_start, ( rpr chunk ), shape_batch
-  arrangement   = JSON.parse RBW.shape_text { font_idx, text, format: 'json', }
   #.........................................................................................................
-  # segment_gids  = [ fm.space.gid, fm.hyphen.gid, fm.endash.gid, ]
+  ### Now we shape the text. Observe that any number of Unicode codepoints may correspond to any number
+  of visible and invisible outlines with any kind of relationship between codepoints and glyf IDs depending
+  on the font and the exact sequence of codepoints. This is especially apparent in so-called 'complex
+  scripts' like Arabic and Devanagari, but also present in Latin scripts where ligatures are present. These
+  ligatures will later on reqquire our attention because they crucially depend on the results of line
+  wrapping (e.g. `affix` may be written out with a `ﬃ` ligature when being unhyphenated, but end up as
+  `af-`, `ﬁx` when wrapped across two lines). This in turn will result in either incorrect shaping or
+  incorrect line wrapping, so should be dealt with. ###
+  textshapes    = JSON.parse RBW.shape_text { font_idx, text, format: 'json', }
+  #.........................................................................................................
+  ### Bring the chunks that fall out from LBO analysis together with the textshapes (positioned outlines)
+  that result from text shaping: ###
   batch_idx = 0
   batch     = shape_batches[ batch_idx ]
-  for pod in arrangement ### NOTE *POD*: Positioned Outline Descriptor ###
-    # info '^3331^', batch, '<-', pod
-    if pod.bidx >= batch.lbo_stop
+  for textshape in textshapes
+    # info '^3331^', batch, '<-', textshape
+    if textshape.bidx >= batch.lbo_stop
       batch_idx++
       batch = shape_batches[ batch_idx ]
-      unless batch.lbo_start <= pod.bidx < batch.lbo_stop
-        throw new Error "^3332^ POD #{rpr pod} does not fit into shape batch #{rpr batch}"
-    batch.pods.push pod
+      unless batch.lbo_start <= textshape.bidx < batch.lbo_stop
+        throw new Error "^3332^ POD #{rpr textshape} does not fit into shape batch #{rpr batch}"
+    batch.textshapes.push textshape
     # urge '^3332^', batch
   for shape_batch in shape_batches
     { lbo_start, lbo_stop, chunk, } = shape_batch
     help { lbo_start, lbo_stop, chunk, }
-    for pod in shape_batch.pods
-      info "  #{rpr pod}"
+    for textshape in shape_batch.textshapes
+      info "  #{rpr textshape}"
     # if ( pod.gid in segment_gids )
     #   if ( pod.dx is 0 )
     #     info '^3336^', ( CND.reverse CND.red pod ), ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
