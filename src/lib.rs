@@ -271,7 +271,7 @@ fn _glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, st
   for (info, pos) in info.iter().zip(pos) {
     write!(&mut s, "{{" )?;
     write!(&mut s, "\"gid\":{},", info.codepoint)?;
-    write!(&mut s, "\"cluster\":{},", info.cluster)?;
+    write!(&mut s, "\"bidx\":{},", info.cluster)?; // bidx: byte index
     write!(&mut s, "\"x\":{},\"y\":{},", x, y )?;
     write!(&mut s, "\"dx\":{},\"dy\":{}", pos.x_advance, pos.y_advance )?;
     x += pos.x_advance;
@@ -533,5 +533,44 @@ pub fn wrap_text_with_arbitrary_slabs( slabs_js: JsValue ) -> String {
 // let options     = textwrap::Options::new( width ).splitter( dictionary );
 // return format!( "{}", fill( &text, &options ) );
 // return format!( "{:#?}", textwrap::wrap( &text, &options ) );
+
+
+/*
+############################################################################################################
+
+888      d8b                       888888b.                             888      d8b
+888      Y8P                       888  "88b                            888      Y8P
+888                                888  .88P                            888
+888      888 88888b.   .d88b.      8888888K.  888d888  .d88b.   8888b.  888  888 888 88888b.   .d88b.
+888      888 888 "88b d8P  Y8b     888  "Y88b 888P"   d8P  Y8b     "88b 888 .88P 888 888 "88b d88P"88b
+888      888 888  888 88888888     888    888 888     88888888 .d888888 888888K  888 888  888 888  888
+888      888 888  888 Y8b.         888   d88P 888     Y8b.     888  888 888 "88b 888 888  888 Y88b 888
+88888888 888 888  888  "Y8888      8888888P"  888      "Y8888  "Y888888 888  888 888 888  888  "Y88888
+                                                                                                   888
+                                                                                              Y8b d88P
+                                                                                               "Y88P"
+LINE BREAKING
+############################################################################################################
+*/
+
+// #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+// pub struct Lbo {
+//   pub p:         usize,
+//   pub k:         char, }
+
+// // //----------------------------------------------------------------------------------------------------------
+// // impl std::ops::Deref for Lbo {
+// //   k Target = usize;
+// //   fn deref(&self) -> &Self::Target { &self.width } }
+
+
+//----------------------------------------------------------------------------------------------------------
+#[wasm_bindgen]
+pub fn find_line_break_positions( text: String ) -> String {
+  use unicode_linebreak; //::{linebreaks, BreakOpportunity::{Mandatory, Allowed}};
+  let mut r: Vec<usize> = vec![ 0, ];
+  for linebreak in unicode_linebreak::linebreaks( &text ) { r.push( linebreak.0, ); }
+  return json!( r ).to_string(); }
+
 
 
