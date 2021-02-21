@@ -21,3 +21,8 @@ export function glyph_to_svg_pathdata(js_font_idx: any, js_glyph_id: any): strin
 * @returns {string}
 */
 export function wrap_text_with_arbitrary_slabs(slabs_js: any): string;
+/**
+* @param {string} text
+* @returns {string}
+*/
+export function find_line_break_positions(text: string): string;

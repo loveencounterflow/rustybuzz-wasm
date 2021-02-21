@@ -343,8 +343,21 @@ rect {
   };
 
   //-----------------------------------------------------------------------------------------------------------
+  this._firstchr = function(buffer, idx) {
+    /* Return the first character found in buffer at given position, assuming UTF-8. */
+    return (Array.from(buffer.slice(idx, idx + 4).toString()))[0];
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
+  this._slice_buffer = function(buffer, start_idx, stop_idx) {
+    return buffer.slice(start_idx, stop_idx).toString();
+  };
+
+  //-----------------------------------------------------------------------------------------------------------
   this.demo_typesetting = function() {
-    var arrangement, fm, font_idx, fontnick, format, glyfpos, i, j, k, l, last_line_idx, last_word_idx, len, len1, len2, line, line_idx, line_length, lines, me, ref, ref1, ref2, segment_gids, slab_idx, slabline, slablines, slabs, text, text_bfr, width, word_idx, words;
+    var arrangement, chunk, fm, font_idx, fontnick, glyfpos, i, idx, j, k, l, last_line_idx, last_word_idx, lbo, lbos, len, len1, len2, line, line_idx, line_length, lines, m, me, ref, ref1, ref2, ref3, segment_gids, slab_idx, slabline, slablines, slabs, text, text_bfr, width, word_idx, words;
+    me = this.new_demo();
+    whisper('^33443^ demo_typesetting');
     //.........................................................................................................
     text = `Knuth–Liang hyphenation operates at the level of individual words, but there can be ambiguity as
 to what constitutes a word. All hyphenation dictionaries handle the expected set of word-forming graphemes
@@ -354,15 +367,13 @@ preferable to handle punctuation at the level of segmentation, as it affords gre
 final result (such as where to break hyphen-joined compounds, or whether to set a leading hyphen on new
 lines).
 在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。`;
-    text = "Knuth–Liang hyphenation"; //# en-dash U+2013 ###
-    // text            = "Knuth-Liang hyphenation" ### hyphen-minus U+002d ###
-    // text            = "今日も明日も。"
-    // text            = "The elaborate sphinx told me a riddle, told me a riddle, told me a riddle."
+    // text          = "Knuth–Liang hyphenation" ## en-dash U+2013 ###
+    // text          = "Knuth-Liang hyphenation" ### hyphen-minus U+002d ###
+    text = "今日も明日も。";
+    // text          = "The elaborate sphinx told me a riddle, told me a riddle, told me a riddle."
     text = "the affixation";
-    // text            = "riddle"
+    // text          = "affix"
     //.........................................................................................................
-    whisper('^33443^ demo_typesetting');
-    me = this.new_demo();
     // fontnick      = 'notoserif'
     fontnick = 'garamond_italic';
     font_idx = this.register_font(me, fontnick);
@@ -373,43 +384,40 @@ lines).
     text_bfr = Buffer.from(text, {
       encoding: 'utf-8'
     });
-    //.........................................................................................................
-    format = 'json';
-    slabs = INTERTEXT.SLABS.slabs_from_text(text);
-    arrangement = JSON.parse(RBW.shape_text({font_idx, text, format}));
-    //.........................................................................................................
-    /* NOTE put into method: find glyf ID for space (or is it always 1?) */
-    // debug '^222332^', arrangement
-    debug('^222332^', slabs);
+    lbos = JSON.parse(RBW.find_line_break_positions(text));
+//.........................................................................................................
+// urge '^454-1^', @_slice_buffer text_bfr, 0, 3
+    for (idx = i = 0, ref = lbos.length - 1; (0 <= ref ? i < ref : i > ref); idx = 0 <= ref ? ++i : --i) {
+      lbo = lbos[idx];
+      chunk = this._slice_buffer(text_bfr, lbo, lbos[idx + 1]);
+      chunk = chunk.replace(/\xad/g, '|');
+      urge('^454-1^', lbo, rpr(chunk));
+    }
+    arrangement = JSON.parse(RBW.shape_text({
+      font_idx,
+      text,
+      format: 'json'
+    }));
     //.........................................................................................................
     segment_gids = [fm.space.gid, fm.hyphen.gid, fm.endash.gid];
     slab_idx = 0;
-    for (i = 0, len = arrangement.length; i < len; i++) {
-      glyfpos = arrangement[i];
-      if ((ref = glyfpos.gid, indexOf.call(segment_gids, ref) >= 0)) {
+    for (j = 0, len = arrangement.length; j < len; j++) {
+      glyfpos = arrangement[j];
+      if ((ref1 = glyfpos.gid, indexOf.call(segment_gids, ref1) >= 0)) {
         if (glyfpos.dx === 0) {
-          info('^3336^', CND.reverse(CND.red(glyfpos)), slabs.slabs[slab_idx], CND.lime(rpr(text_bfr.slice(glyfpos.cluster, glyfpos.cluster + 4).toString())));
+          info('^3336^', CND.reverse(CND.red(glyfpos)), CND.lime(rpr(this._firstchr(text_bfr, glyfpos.bidx))));
         } else {
-          info('^3336^', CND.reverse(CND.yellow(glyfpos)), slabs.slabs[slab_idx], CND.lime(rpr(text_bfr.slice(glyfpos.cluster, glyfpos.cluster + 4).toString())));
+          info('^3336^', CND.reverse(CND.yellow(glyfpos)), CND.lime(rpr(this._firstchr(text_bfr, glyfpos.bidx))));
         }
         slab_idx++;
       } else {
-        info('^3336^', glyfpos, slabs.slabs[slab_idx], CND.lime(rpr(text_bfr.slice(glyfpos.cluster, glyfpos.cluster + 4).toString())));
+        info('^3336^', glyfpos, CND.lime(rpr(this._firstchr(text_bfr, glyfpos.bidx))));
       }
     }
-    /* NOTE
-
-    * hyphenate the entire text,
-    * find positions (arrangement) with `RBW.shape_text()`
-    * partition with INTERTEXT.SLABS.slabs_from_text, use whitespace_width = 0 for slabs marked `|` and `#`,
-      `fm.space_width` (or less for tight, more for generous spacing) for those marked `_`
-    * **identify glyfruns with slabs**
-
-     */
-    // info '^1332^', @find_widths_from_slabs me, slabs
-    // cfg                 = { format, text, }
-    // info '^3388^', arrangement
     return null;
+    //.........................................................................................................
+    //.........................................................................................................
+    //.........................................................................................................
     //.........................................................................................................
     width = 10;
     lines = RBW.wrap_text(text, width);
@@ -417,7 +425,7 @@ lines).
     lines = lines.split('\n');
     last_line_idx = lines.length - 1;
     debug('^449^', lines);
-    for (line_idx = j = 0, len1 = lines.length; j < len1; line_idx = ++j) {
+    for (line_idx = k = 0, len1 = lines.length; k < len1; line_idx = ++k) {
       line = lines[line_idx];
       // debug '^499^', words
       if (line_idx < last_line_idx) {
@@ -431,7 +439,7 @@ lines).
           if (line_length >= width) {
             break;
           }
-          for (word_idx = k = 0, ref1 = last_word_idx; (0 <= ref1 ? k < ref1 : k > ref1); word_idx = 0 <= ref1 ? ++k : --k) {
+          for (word_idx = l = 0, ref2 = last_word_idx; (0 <= ref2 ? l < ref2 : l > ref2); word_idx = 0 <= ref2 ? ++l : --l) {
             if (line_length >= width) {
               // debug word_idx
               break;
@@ -483,9 +491,9 @@ lines).
     ];
     slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs(slabs));
     debug('^3334^', rpr(slablines));
-    ref2 = slablines.lines;
-    for (l = 0, len2 = ref2.length; l < len2; l++) {
-      slabline = ref2[l];
+    ref3 = slablines.lines;
+    for (m = 0, len2 = ref3.length; m < len2; m++) {
+      slabline = ref3[m];
       info(slabline);
     }
     return null;
