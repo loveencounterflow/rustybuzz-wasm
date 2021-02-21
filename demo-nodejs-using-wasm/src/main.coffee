@@ -250,7 +250,7 @@ INTERTEXT                 = require 'intertext'
   text          = "the affixation"
   # text          = "affix"
   #.........................................................................................................
-  line_width    = 10
+  line_width    = 15 * 1000;
   # fontnick      = 'notoserif'
   fontnick      = 'garamond_italic'
   font_idx      = @register_font me, fontnick
@@ -297,7 +297,6 @@ INTERTEXT                 = require 'intertext'
   batch_idx = 0
   batch     = shape_batches[ batch_idx ]
   for textshape in textshapes
-    # info '^3331^', batch, '<-', textshape
     if textshape.bidx >= batch.lbo_stop
       batch_idx++
       batch = shape_batches[ batch_idx ]
@@ -305,13 +304,39 @@ INTERTEXT                 = require 'intertext'
         throw new Error "^3332^ POD #{rpr textshape} does not fit into shape batch #{rpr batch}"
     batch.textshapes.push textshape
     # urge '^3332^', batch
+  #.........................................................................................................
+  ### Show shape batches: ###
   for shape_batch in shape_batches
     { lbo_start, lbo_stop, chunk, } = shape_batch
-    help { lbo_start, lbo_stop, chunk, }
+    help { lbo_start, lbo_stop, chunk, textshapes: '...', }
     for textshape in shape_batch.textshapes
       info "  #{rpr textshape}"
-  return null
   #.........................................................................................................
+  ### Perform line wrapping: ###
+  slabs = []
+  for shape_batch in shape_batches
+    { textshapes  } = shape_batch
+    first_textshape = textshapes[ 0 ]
+    last_textshape  = textshapes[ textshapes.length - 1 ]
+    width           = ( last_textshape.x + last_textshape.dx ) - first_textshape.x
+    ### TAINT incorrect of course ###
+    slab            = { width, whitespace_width: fm.space.dx, penalty_width: fm.hyphen.dx, }
+    debug '^3345^', slab
+    slabs.push slab
+  slablines = JSON.parse RBW.wrap_text_with_arbitrary_slabs slabs, line_width
+  debug '^3334^', rpr slablines
+  for slabline in slablines.lines
+    info slabline
+  return null
+  # slabs     = [
+  #   { width: 5,   whitespace_width: 1, penalty_width: 1, },
+  #   { width: 3,   whitespace_width: 1, penalty_width: 1, },
+  #   { width: 4,   whitespace_width: 1, penalty_width: 1, },
+  #   { width: 2,   whitespace_width: 1, penalty_width: 1, },
+  #   { width: 5,   whitespace_width: 1, penalty_width: 1, },
+  #   { width: 10,  whitespace_width: 1, penalty_width: 1, }, ];
+  #.........................................................................................................
+  ### Write SVG: ###
   #.........................................................................................................
   #.........................................................................................................
   #.........................................................................................................
@@ -338,18 +363,6 @@ INTERTEXT                 = require 'intertext'
       info words.join ' '
     else
       info line
-  #.........................................................................................................
-  slabs     = [
-    { width: 5,   whitespace_width: 1, penalty_width: 1, },
-    { width: 3,   whitespace_width: 1, penalty_width: 1, },
-    { width: 4,   whitespace_width: 1, penalty_width: 1, },
-    { width: 2,   whitespace_width: 1, penalty_width: 1, },
-    { width: 5,   whitespace_width: 1, penalty_width: 1, },
-    { width: 10,  whitespace_width: 1, penalty_width: 1, }, ];
-  slablines = JSON.parse RBW.wrap_text_with_arbitrary_slabs slabs
-  debug '^3334^', rpr slablines
-  for slabline in slablines.lines
-    info slabline
   return null
 
 
