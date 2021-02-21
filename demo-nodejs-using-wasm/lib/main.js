@@ -1,7 +1,6 @@
 (function() {
   'use strict';
-  var CND, FS, INTERTEXT, PATH, RBW, alert, badge, debug, echo, help, info, rpr, urge, warn, whisper,
-    indexOf = [].indexOf;
+  var CND, FS, INTERTEXT, PATH, RBW, alert, badge, debug, echo, help, info, rpr, urge, warn, whisper;
 
   //###########################################################################################################
   CND = require('cnd');
@@ -355,7 +354,7 @@ rect {
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_typesetting = function() {
-    var arrangement, chunk, fm, font_idx, fontnick, glyfpos, i, idx, j, k, l, last_line_idx, last_word_idx, lbo, lbos, len, len1, len2, line, line_idx, line_length, lines, m, me, ref, ref1, ref2, ref3, segment_gids, slab_idx, slabline, slablines, slabs, text, text_bfr, width, word_idx, words;
+    var arrangement, batch, batch_idx, chunk, fm, font_idx, fontnick, i, j, k, l, last_line_idx, last_word_idx, lbo_start, lbo_starts, lbo_stop, len, len1, len2, len3, len4, line, line_idx, line_length, lines, m, me, n, o, pod, ref, ref1, ref2, ref3, ref4, shape_batch, shape_batches, slabline, slablines, slabs, text, text_bfr, width, word_idx, words;
     me = this.new_demo();
     whisper('^33443^ demo_typesetting');
     //.........................................................................................................
@@ -384,14 +383,23 @@ lines).
     text_bfr = Buffer.from(text, {
       encoding: 'utf-8'
     });
-    lbos = JSON.parse(RBW.find_line_break_positions(text));
+    lbo_starts = JSON.parse(RBW.find_line_break_positions(text));
+    shape_batches = [];
 //.........................................................................................................
 // urge '^454-1^', @_slice_buffer text_bfr, 0, 3
-    for (idx = i = 0, ref = lbos.length - 1; (0 <= ref ? i < ref : i > ref); idx = 0 <= ref ? ++i : --i) {
-      lbo = lbos[idx];
-      chunk = this._slice_buffer(text_bfr, lbo, lbos[idx + 1]);
+    for (batch_idx = i = 0, ref = lbo_starts.length - 1; (0 <= ref ? i < ref : i > ref); batch_idx = 0 <= ref ? ++i : --i) {
+      lbo_start = lbo_starts[batch_idx];
+      lbo_stop = lbo_starts[batch_idx + 1];
+      chunk = this._slice_buffer(text_bfr, lbo_start, lbo_stop);
       chunk = chunk.replace(/\xad/g, '|');
-      urge('^454-1^', lbo, rpr(chunk));
+      shape_batch = {
+        lbo_start,
+        lbo_stop,
+        chunk,
+        pods: []
+      };
+      shape_batches.push(shape_batch);
+      urge('^454-1^', lbo_start, rpr(chunk), shape_batch);
     }
     arrangement = JSON.parse(RBW.shape_text({
       font_idx,
@@ -399,21 +407,41 @@ lines).
       format: 'json'
     }));
     //.........................................................................................................
-    segment_gids = [fm.space.gid, fm.hyphen.gid, fm.endash.gid];
-    slab_idx = 0;
+    // segment_gids  = [ fm.space.gid, fm.hyphen.gid, fm.endash.gid, ]
+    batch_idx = 0;
+    batch = shape_batches[batch_idx];
+/* NOTE *POD*: Positioned Outline Descriptor */
     for (j = 0, len = arrangement.length; j < len; j++) {
-      glyfpos = arrangement[j];
-      if ((ref1 = glyfpos.gid, indexOf.call(segment_gids, ref1) >= 0)) {
-        if (glyfpos.dx === 0) {
-          info('^3336^', CND.reverse(CND.red(glyfpos)), CND.lime(rpr(this._firstchr(text_bfr, glyfpos.bidx))));
-        } else {
-          info('^3336^', CND.reverse(CND.yellow(glyfpos)), CND.lime(rpr(this._firstchr(text_bfr, glyfpos.bidx))));
+      pod = arrangement[j];
+      // info '^3331^', batch, '<-', pod
+      if (pod.bidx >= batch.lbo_stop) {
+        batch_idx++;
+        batch = shape_batches[batch_idx];
+        if (!((batch.lbo_start <= (ref1 = pod.bidx) && ref1 < batch.lbo_stop))) {
+          throw new Error(`^3332^ POD ${rpr(pod)} does not fit into shape batch ${rpr(batch)}`);
         }
-        slab_idx++;
-      } else {
-        info('^3336^', glyfpos, CND.lime(rpr(this._firstchr(text_bfr, glyfpos.bidx))));
+      }
+      batch.pods.push(pod);
+    }
+// urge '^3332^', batch
+    for (k = 0, len1 = shape_batches.length; k < len1; k++) {
+      shape_batch = shape_batches[k];
+      ({lbo_start, lbo_stop, chunk} = shape_batch);
+      help({lbo_start, lbo_stop, chunk});
+      ref2 = shape_batch.pods;
+      for (l = 0, len2 = ref2.length; l < len2; l++) {
+        pod = ref2[l];
+        info(`  ${rpr(pod)}`);
       }
     }
+    // if ( pod.gid in segment_gids )
+    //   if ( pod.dx is 0 )
+    //     info '^3336^', ( CND.reverse CND.red pod ), ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
+    //   else
+    //     info '^3336^', ( CND.reverse CND.yellow pod ), ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
+    //   batch_idx++
+    // else
+    //   info '^3336^', pod, ( CND.lime rpr @_firstchr text_bfr, pod.bidx )
     return null;
     //.........................................................................................................
     //.........................................................................................................
@@ -425,7 +453,7 @@ lines).
     lines = lines.split('\n');
     last_line_idx = lines.length - 1;
     debug('^449^', lines);
-    for (line_idx = k = 0, len1 = lines.length; k < len1; line_idx = ++k) {
+    for (line_idx = m = 0, len3 = lines.length; m < len3; line_idx = ++m) {
       line = lines[line_idx];
       // debug '^499^', words
       if (line_idx < last_line_idx) {
@@ -439,7 +467,7 @@ lines).
           if (line_length >= width) {
             break;
           }
-          for (word_idx = l = 0, ref2 = last_word_idx; (0 <= ref2 ? l < ref2 : l > ref2); word_idx = 0 <= ref2 ? ++l : --l) {
+          for (word_idx = n = 0, ref3 = last_word_idx; (0 <= ref3 ? n < ref3 : n > ref3); word_idx = 0 <= ref3 ? ++n : --n) {
             if (line_length >= width) {
               // debug word_idx
               break;
@@ -491,9 +519,9 @@ lines).
     ];
     slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs(slabs));
     debug('^3334^', rpr(slablines));
-    ref3 = slablines.lines;
-    for (m = 0, len2 = ref3.length; m < len2; m++) {
-      slabline = ref3[m];
+    ref4 = slablines.lines;
+    for (o = 0, len4 = ref4.length; o < len4; o++) {
+      slabline = ref4[o];
       info(slabline);
     }
     return null;
