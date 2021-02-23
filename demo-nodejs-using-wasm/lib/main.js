@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var CND, FS, INTERTEXT, PATH, RBW, alert, badge, debug, echo, help, info, rpr, urge, warn, whisper;
+  var CND, FS, INTERTEXT, PATH, RBW, alert, badge, debug, echo, help, info, rpr, to_width, urge, warn, whisper;
 
   //###########################################################################################################
   CND = require('cnd');
@@ -32,6 +32,8 @@
   RBW = require('../../pkg');
 
   INTERTEXT = require('intertext');
+
+  ({to_width} = require('to-width'));
 
   //-----------------------------------------------------------------------------------------------------------
   this._set_globals = function() {
@@ -355,7 +357,7 @@ rect {
   //-----------------------------------------------------------------------------------------------------------
   this.demo_typesetting = function() {
     /* TAINT incorrect of course */
-    var batch, batch_idx, chunk, first_textshape, fm, font_idx, fontnick, i, j, k, l, last_line_idx, last_textshape, last_word_idx, lbo_start, lbo_starts, lbo_stop, len, len1, len2, len3, len4, len5, line, line_idx, line_length, line_width, lines, m, me, n, o, p, ref, ref1, ref2, ref3, ref4, shape_batch, shape_batches, slab, slabline, slablines, slabs, text, text_bfr, textshape, textshapes, width, word_idx, words;
+    var batch, batch_idx, chunk, first_textshape, fm, font_idx, fontnick, i, j, k, l, last_line_idx, last_textshape, last_word_idx, lbo_start, lbo_starts, lbo_stop, len, len1, len2, len3, len4, len5, line, line_idx, line_length, line_width, lines, m, me, n, o, p, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, shape, shape_batch, shape_batches, shapes, slab, slab_idx, slabline, slabline_idx, slablines, slabs, text, text_bfr, width, word_idx, words;
     me = this.new_demo();
     whisper('^33443^ demo_typesetting');
     //.........................................................................................................
@@ -369,12 +371,13 @@ lines).
 在文本的显示中， 换行 （line wrap）是指文本在一行已满的情况下转到新行，使得每一行都能在窗口范围看到，不需要任何水平的滚动。 自动换行 （word wrap） 是 大 多 数 文 字 編 輯 器 、 文書處理器、和网页浏览器的一个附加功能。它用于在行间或一行里的单词间隔处分行，不考虑一个单词超过一行长度的情况。`;
     // text          = "Knuth–Liang hyphenation" ## en-dash U+2013 ###
     // text          = "Knuth-Liang hyphenation" ### hyphen-minus U+002d ###
-    text = "今日も明日も。";
+    // text          = "今日も明日も。"
     // text          = "The elaborate sphinx told me a riddle, told me a riddle, told me a riddle."
     text = "the affixation";
     // text          = "affix"
+    help("^33376^ text:", to_width(rpr(text), 100));
     //.........................................................................................................
-    line_width = 15 * 1000;
+    line_width = 6 * 500;
     fontnick = 'garamond_italic';
     font_idx = this.register_font(me, fontnick);
     fm = this.get_font_metrics(me, font_idx);
@@ -391,13 +394,14 @@ lines).
       encoding: 'utf-8'
     });
     lbo_starts = JSON.parse(RBW.find_line_break_positions(text));
+    help("^33376^ lbo_starts:", lbo_starts);
+    //.........................................................................................................
+    /* We have made it so that the LBO indexes always start with zero and end with the index to the first
+     byte after the end of the buffer; hence, we can 'hydrate' the raw indices by looking at the current and
+     the following index to find the corresponding 'chunk' (i.e. the piece of text that stretches from the
+     previous to the upcomping line break opportunity). Each chunk in turn will, after text shaping, correspond
+     to any number of glyf outlines ('shapes'), so we provide a list for them: */
     shape_batches = [];
-//.........................................................................................................
-/* We have made it so that the LBO indexes always start with zero and end with the index to the first
- byte after the end of the buffer; hence, we can 'hydrate' the raw indices by looking at the current and
- the following index to find the corresponding 'chunk' (i.e. the piece of text that stretches from the
- previous to the upcomping line break opportunity). Each chunk in turn will, after text shaping, correspond
- to any number of glyf outlines ('textshapes'), so we provide a list for them: */
     for (batch_idx = i = 0, ref = lbo_starts.length - 1; (0 <= ref ? i < ref : i > ref); batch_idx = 0 <= ref ? ++i : --i) {
       lbo_start = lbo_starts[batch_idx];
       lbo_stop = lbo_starts[batch_idx + 1];
@@ -407,11 +411,12 @@ lines).
         lbo_start,
         lbo_stop,
         chunk,
-        textshapes: []
+        shapes: []
       };
       shape_batches.push(shape_batch);
       urge('^454-1^', lbo_start, rpr(chunk), shape_batch);
     }
+    help("^33376^ shape_batches:", shape_batches);
     //.........................................................................................................
     /* Now we shape the text. Observe that any number of Unicode codepoints may correspond to any number
      of visible and invisible outlines with any kind of relationship between codepoints and glyf IDs depending
@@ -421,26 +426,27 @@ lines).
      wrapping (e.g. `affix` may be written out with a `ﬃ` ligature when being unhyphenated, but end up as
      `af-`, `ﬁx` when wrapped across two lines). This in turn will result in either incorrect shaping or
      incorrect line wrapping, so should be dealt with. */
-    textshapes = JSON.parse(RBW.shape_text({
+    shapes = JSON.parse(RBW.shape_text({
       font_idx,
       text,
       format: 'json'
     }));
+    // help "^33376^ shapes:", shapes
     //.........................................................................................................
-    /* Bring the chunks that fall out from LBO analysis together with the textshapes (positioned outlines)
+    /* Bring the chunks that fall out from LBO analysis together with the shapes (positioned outlines)
      that result from text shaping: */
     batch_idx = 0;
     batch = shape_batches[batch_idx];
-    for (j = 0, len = textshapes.length; j < len; j++) {
-      textshape = textshapes[j];
-      if (textshape.bidx >= batch.lbo_stop) {
+    for (j = 0, len = shapes.length; j < len; j++) {
+      shape = shapes[j];
+      if (shape.bidx >= batch.lbo_stop) {
         batch_idx++;
         batch = shape_batches[batch_idx];
-        if (!((batch.lbo_start <= (ref1 = textshape.bidx) && ref1 < batch.lbo_stop))) {
-          throw new Error(`^3332^ POD ${rpr(textshape)} does not fit into shape batch ${rpr(batch)}`);
+        if (!((batch.lbo_start <= (ref1 = shape.bidx) && ref1 < batch.lbo_stop))) {
+          throw new Error(`^3332^ POD ${rpr(shape)} does not fit into shape batch ${rpr(batch)}`);
         }
       }
-      batch.textshapes.push(textshape);
+      batch.shapes.push(shape);
     }
 // urge '^3332^', batch
 //.........................................................................................................
@@ -448,16 +454,16 @@ lines).
     for (k = 0, len1 = shape_batches.length; k < len1; k++) {
       shape_batch = shape_batches[k];
       ({lbo_start, lbo_stop, chunk} = shape_batch);
-      help({
+      help('^3334^ shape_batch:', {
         lbo_start,
         lbo_stop,
         chunk,
-        textshapes: '...'
+        shapes: '...'
       });
-      ref2 = shape_batch.textshapes;
+      ref2 = shape_batch.shapes;
       for (l = 0, len2 = ref2.length; l < len2; l++) {
-        textshape = ref2[l];
-        info(`  ${rpr(textshape)}`);
+        shape = ref2[l];
+        info(`  ^3334^ shape: ${rpr(shape)}`);
       }
     }
     //.........................................................................................................
@@ -465,9 +471,9 @@ lines).
     slabs = [];
     for (m = 0, len3 = shape_batches.length; m < len3; m++) {
       shape_batch = shape_batches[m];
-      ({textshapes} = shape_batch);
-      first_textshape = textshapes[0];
-      last_textshape = textshapes[textshapes.length - 1];
+      ({shapes} = shape_batch);
+      first_textshape = shapes[0];
+      last_textshape = shapes[shapes.length - 1];
       width = (last_textshape.x + last_textshape.dx) - first_textshape.x;
       slab = {
         width,
@@ -478,11 +484,17 @@ lines).
       slabs.push(slab);
     }
     slablines = JSON.parse(RBW.wrap_text_with_arbitrary_slabs(slabs, line_width));
-    debug('^3334^', rpr(slablines));
     ref3 = slablines.lines;
-    for (n = 0, len4 = ref3.length; n < len4; n++) {
-      slabline = ref3[n];
-      info(slabline);
+    //.........................................................................................................
+    /* Show shape batches: */
+    // urge "^3334^ slablines:", slablines
+    for (slabline_idx = n = 0, len4 = ref3.length; n < len4; slabline_idx = ++n) {
+      slabline = ref3[slabline_idx];
+      urge(`^3334^ line# ${slabline_idx + 1} slabline: ${rpr(slabline)}`);
+      for (slab_idx = o = ref4 = slabline.first_slab_idx, ref5 = slabline.last_slab_idx; (ref4 <= ref5 ? o < ref5 : o > ref5); slab_idx = ref4 <= ref5 ? ++o : --o) {
+        // for shape_idx in
+        info(`  ^3334^ slab: ${rpr(slabs[slab_idx])}`);
+      }
     }
     return null;
     // slabs     = [
@@ -502,7 +514,7 @@ lines).
     lines = lines.split('\n');
     last_line_idx = lines.length - 1;
     debug('^449^', lines);
-    for (line_idx = o = 0, len5 = lines.length; o < len5; line_idx = ++o) {
+    for (line_idx = p = 0, len5 = lines.length; p < len5; line_idx = ++p) {
       line = lines[line_idx];
       // debug '^499^', words
       if (line_idx < last_line_idx) {
@@ -516,7 +528,7 @@ lines).
           if (line_length >= line_width) {
             break;
           }
-          for (word_idx = p = 0, ref4 = last_word_idx; (0 <= ref4 ? p < ref4 : p > ref4); word_idx = 0 <= ref4 ? ++p : --p) {
+          for (word_idx = q = 0, ref6 = last_word_idx; (0 <= ref6 ? q < ref6 : q > ref6); word_idx = 0 <= ref6 ? ++q : --q) {
             if (line_length >= line_width) {
               // debug word_idx
               break;

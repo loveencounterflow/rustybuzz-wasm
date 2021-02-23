@@ -242,14 +242,6 @@ module.exports.__wbg_alert_578daaffd4fc24d7 = logError(function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
 });
 
-module.exports.__wbg_help_2a378c4f9f7ba19d = logError(function(arg0, arg1) {
-    help(getStringFromWasm0(arg0, arg1));
-});
-
-module.exports.__wbg_urge_153b2dc1ed56a413 = logError(function(arg0, arg1) {
-    urge(getStringFromWasm0(arg0, arg1));
-});
-
 module.exports.__wbindgen_object_drop_ref = function(arg0) {
     takeObject(arg0);
 };

@@ -10,7 +10,8 @@
   "dependencies": {
     "cnd": "^9.2.1",
     "hello-wasm": "file://../pkg",
-    "intertext": "^5.0.0"
+    "intertext": "^5.0.0",
+    "to-width": "^1.0.4"
   },
   "keywords": [],
   "author": "",

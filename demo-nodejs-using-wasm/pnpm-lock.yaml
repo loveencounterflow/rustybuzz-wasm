@@ -2,6 +2,7 @@ dependencies:
   cnd: 9.2.1
   hello-wasm: link:../pkg
   intertext: 5.0.0
+  to-width: 1.0.4
 lockfileVersion: 5.2
 packages:
   /@uppy/fs-tail-stream/1.2.0:
@@ -783,3 +784,4 @@ specifiers:
   cnd: ^9.2.1
   hello-wasm: file://../pkg
   intertext: ^5.0.0
+  to-width: ^1.0.4
