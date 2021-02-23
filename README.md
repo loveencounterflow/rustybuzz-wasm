@@ -20,6 +20,7 @@
   - [3.) Text Shaping](#3-text-shaping)
   - [4.) Text Rendering](#4-text-rendering)
   - [5.) Line Breaking](#5-line-breaking)
+- [From Typing Text to Typeset Text](#from-typing-text-to-typeset-text)
 - [🚧 To Do 🚧](#-to-do-)
 - [Also See](#also-see)
   - [Rendering](#rendering)
@@ -245,6 +246,15 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/node
 ### 5.) Line Breaking
 
 * **`pub fn wrap_text( text: String, width: usize ) -> String {`**—
+
+## From Typing Text to Typeset Text
+
+* 'raw' text is encoded as a series of bytes (UTF-8)
+* a sequence of codepoints (positive integer numbers) intended to represent graphemes
+* hyphenate text (in languages that use hyphenation); this inserts soft hyphens (U+00ad)
+* find line break opportunities (LBOs); these occur, for example, after each space, each hyphen (hard or
+  soft), each full stop and so on
+
 
 ## 🚧 To Do 🚧
 
