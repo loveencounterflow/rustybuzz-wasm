@@ -511,28 +511,26 @@ pub fn wrap_text_with_arbitrary_slabs( slabs_js: JsValue, line_width_js: JsValue
   let slabs:      Vec<Slab> = slabs_js.into_serde().unwrap();
   let line_width: usize     = line_width_js.into_serde().unwrap();
   let lines                 = textwrap::core::wrap_optimal_fit( &slabs, |_| line_width );
-  urge( &format!( "^827^ slabs: {:#?}", slabs ) );
-  help( &format!( "^827^ line_width: {:#?}", line_width ) );
-  help( &format!( "^827^ lines: {:#?}", lines ) );
+  // urge( &format!( "^827^ slabs: {:#?}", slabs ) );
+  // help( &format!( "^827^ line_width: {:#?}", line_width ) );
+  // help( &format!( "^827^ lines: {:#?}", lines ) );
   let mut slab_idx      = 0;
   let mut r             = Arrangement::new();
   for line in lines {
-    urge( "^1113398-1^" );
-      urge( &format!( "^1113398-2^ {:#?}", slab_idx ) );
-      urge( &format!( "^1113398-3^ {:#?}", line.len() ) );
-      // ### TAINT may become negative ###
-      urge( &format!( "^1113398-4^ {:#?}", slab_idx + line.len() - 1 ) );
+    // urge( &format!( "^1113398-2^ {:#?}", slab_idx ) );
+    // urge( &format!( "^1113398-3^ {:#?}", line.len() ) );
+    // urge( &format!( "^1113398-4^ {:#?}", slab_idx + line.len() - 1 ) );
     let arrangement_line =  ArrangementLine {
       first_slab_idx: slab_idx,
-      last_slab_idx:  slab_idx + line.len() - 1,
+      last_slab_idx:  slab_idx + line.len() - 1, // ### TAINT may become negative ###
       line_length:    line.len(), };
-    urge( "^1113398-5^" );
+    // urge( "^1113398-5^" );
     r.lines.push( arrangement_line );
-    urge( "^1113398-6^" );
+    // urge( "^1113398-6^" );
     slab_idx += line.len();
-    urge( "^1113398-7^" );
+    // urge( "^1113398-7^" );
     }
-  urge( "^1113398-8^" );
+  // urge( "^1113398-8^" );
   return json!( r ).to_string(); }
 
 

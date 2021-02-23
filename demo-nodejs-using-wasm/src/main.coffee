@@ -20,6 +20,7 @@ FS                        = require 'fs'
 PATH                      = require 'path'
 RBW                       = require '../../pkg'
 INTERTEXT                 = require 'intertext'
+{ to_width }              = require 'to-width'
 
 #-----------------------------------------------------------------------------------------------------------
 @_set_globals = ->
@@ -245,12 +246,13 @@ INTERTEXT                 = require 'intertext'
   """
   # text          = "Knuth–Liang hyphenation" ## en-dash U+2013 ###
   # text          = "Knuth-Liang hyphenation" ### hyphen-minus U+002d ###
-  text          = "今日も明日も。"
+  # text          = "今日も明日も。"
   # text          = "The elaborate sphinx told me a riddle, told me a riddle, told me a riddle."
   text          = "the affixation"
   # text          = "affix"
+  help "^33376^ text:", to_width ( rpr text ), 100
   #.........................................................................................................
-  line_width    = 15 * 1000;
+  line_width    = 6 * 500;
   # fontnick      = 'notoserif'
   fontnick      = 'garamond_italic'
   font_idx      = @register_font me, fontnick
@@ -266,21 +268,23 @@ INTERTEXT                 = require 'intertext'
   text          = INTERTEXT.HYPH.hyphenate text
   text_bfr      = Buffer.from text, { encoding: 'utf-8', }
   lbo_starts    = JSON.parse RBW.find_line_break_positions text
-  shape_batches = []
+  help "^33376^ lbo_starts:", lbo_starts
   #.........................................................................................................
   ### We have made it so that the LBO indexes always start with zero and end with the index to the first
   byte after the end of the buffer; hence, we can 'hydrate' the raw indices by looking at the current and
   the following index to find the corresponding 'chunk' (i.e. the piece of text that stretches from the
   previous to the upcomping line break opportunity). Each chunk in turn will, after text shaping, correspond
-  to any number of glyf outlines ('textshapes'), so we provide a list for them: ###
+  to any number of glyf outlines ('shapes'), so we provide a list for them: ###
+  shape_batches = []
   for batch_idx in [ 0 ... lbo_starts.length - 1 ]
     lbo_start     = lbo_starts[ batch_idx ]
     lbo_stop      = lbo_starts[ batch_idx + 1 ]
     chunk         = @_slice_buffer text_bfr, lbo_start, lbo_stop
     chunk         = chunk.replace /\xad/g, '|'
-    shape_batch   = { lbo_start, lbo_stop, chunk, textshapes: [], }
+    shape_batch   = { lbo_start, lbo_stop, chunk, shapes: [], }
     shape_batches.push shape_batch
     urge '^454-1^', lbo_start, ( rpr chunk ), shape_batch
+  help "^33376^ shape_batches:", shape_batches
   #.........................................................................................................
   ### Now we shape the text. Observe that any number of Unicode codepoints may correspond to any number
   of visible and invisible outlines with any kind of relationship between codepoints and glyf IDs depending
@@ -290,43 +294,49 @@ INTERTEXT                 = require 'intertext'
   wrapping (e.g. `affix` may be written out with a `ﬃ` ligature when being unhyphenated, but end up as
   `af-`, `ﬁx` when wrapped across two lines). This in turn will result in either incorrect shaping or
   incorrect line wrapping, so should be dealt with. ###
-  textshapes    = JSON.parse RBW.shape_text { font_idx, text, format: 'json', }
+  shapes    = JSON.parse RBW.shape_text { font_idx, text, format: 'json', }
+  # help "^33376^ shapes:", shapes
   #.........................................................................................................
-  ### Bring the chunks that fall out from LBO analysis together with the textshapes (positioned outlines)
+  ### Bring the chunks that fall out from LBO analysis together with the shapes (positioned outlines)
   that result from text shaping: ###
   batch_idx = 0
   batch     = shape_batches[ batch_idx ]
-  for textshape in textshapes
-    if textshape.bidx >= batch.lbo_stop
+  for shape in shapes
+    if shape.bidx >= batch.lbo_stop
       batch_idx++
       batch = shape_batches[ batch_idx ]
-      unless batch.lbo_start <= textshape.bidx < batch.lbo_stop
-        throw new Error "^3332^ POD #{rpr textshape} does not fit into shape batch #{rpr batch}"
-    batch.textshapes.push textshape
+      unless batch.lbo_start <= shape.bidx < batch.lbo_stop
+        throw new Error "^3332^ POD #{rpr shape} does not fit into shape batch #{rpr batch}"
+    batch.shapes.push shape
     # urge '^3332^', batch
   #.........................................................................................................
   ### Show shape batches: ###
   for shape_batch in shape_batches
     { lbo_start, lbo_stop, chunk, } = shape_batch
-    help { lbo_start, lbo_stop, chunk, textshapes: '...', }
-    for textshape in shape_batch.textshapes
-      info "  #{rpr textshape}"
+    help '^3334^ shape_batch:', { lbo_start, lbo_stop, chunk, shapes: '...', }
+    for shape in shape_batch.shapes
+      info "  ^3334^ shape: #{rpr shape}"
   #.........................................................................................................
   ### Perform line wrapping: ###
   slabs = []
   for shape_batch in shape_batches
-    { textshapes  } = shape_batch
-    first_textshape = textshapes[ 0 ]
-    last_textshape  = textshapes[ textshapes.length - 1 ]
+    { shapes  } = shape_batch
+    first_textshape = shapes[ 0 ]
+    last_textshape  = shapes[ shapes.length - 1 ]
     width           = ( last_textshape.x + last_textshape.dx ) - first_textshape.x
     ### TAINT incorrect of course ###
     slab            = { width, whitespace_width: fm.space.dx, penalty_width: fm.hyphen.dx, }
     debug '^3345^', slab
     slabs.push slab
   slablines = JSON.parse RBW.wrap_text_with_arbitrary_slabs slabs, line_width
-  debug '^3334^', rpr slablines
-  for slabline in slablines.lines
-    info slabline
+  #.........................................................................................................
+  ### Show shape batches: ###
+  # urge "^3334^ slablines:", slablines
+  for slabline, slabline_idx in slablines.lines
+    urge "^3334^ line# #{slabline_idx + 1} slabline: #{rpr slabline}"
+    for slab_idx in [ slabline.first_slab_idx ... slabline.last_slab_idx ]
+      # for shape_idx in
+      info "  ^3334^ slab: #{rpr slabs[slab_idx]}"
   return null
   # slabs     = [
   #   { width: 5,   whitespace_width: 1, penalty_width: 1, },
