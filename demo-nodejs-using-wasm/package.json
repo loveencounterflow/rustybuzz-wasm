@@ -2,7 +2,7 @@
   "name": "demo-nodejs-using-wasm",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/main.js",
   "scripts": {
     "serve": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
