@@ -21,10 +21,17 @@ PATH                      = require 'path'
 RBW                       = require '../../pkg'
 INTERTEXT                 = require 'intertext'
 { to_width }              = require 'to-width'
+_border                   = CND.gold ( '█████     '.repeat 10 )
 
 #-----------------------------------------------------------------------------------------------------------
 @_set_globals = ->
-  globalThis.alert          = alert
+  _alert                    = alert
+  globalThis.alert          = ( P... ) =>
+    alert _border
+    alert()
+    _alert CND.reverse P...
+    alert()
+    alert _border
   globalThis.help           = help
   globalThis.urge           = urge
   globalThis.info           = info
@@ -379,10 +386,11 @@ INTERTEXT                 = require 'intertext'
 ############################################################################################################
 if module is require.main then do =>
   # @demo_text_shaping()
-  # @demo_svg_typesetting()
+  @demo_svg_typesetting()
   # @demo_text_wrapping()
   # @demo_text_wrapping_advanced()
   @demo_typesetting()
+  debug '^36972^', ( k for k of RBW )
   return null
 
 
