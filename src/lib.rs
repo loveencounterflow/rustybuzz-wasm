@@ -131,10 +131,11 @@ pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
       14 => FONTBYTES_14 = font_bytes,
       15 => FONTBYTES_15 = font_bytes,
       16 ..= std::u16::MAX => {
-        alert( &format!( "^895433^ font_idx must be between 0 and 3, got {}", font_idx ) );
+        alert( &format!( "^895433^ font_idx must be between 0 and 15, got {}", font_idx ) );
         std::process::exit( 1 ); } } }; }
 
 //----------------------------------------------------------------------------------------------------------
+        alert( &format!( "^895433^ font_idx must be between 0 and 15, got {}", font_idx ) );
 pub fn get_fontbytes( font_idx: u16 ) -> &'static Vec<u8> {
   unsafe {
     match font_idx {
