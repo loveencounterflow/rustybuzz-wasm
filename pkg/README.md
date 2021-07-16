@@ -215,13 +215,13 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 To build and test in dev (much faster, but also *much* slower)
 
 ```sh
-wasm-pack build --debug --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/nodexh ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
+wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
 ```
 
 To build and test production:
 
 ```sh
-wasm-pack build --target nodejs && trash pkg/.gitignore && ~/jzr/nodexh/bin/nodexh ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
+wasm-pack build --target nodejs && trash pkg/.gitignore && node ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
 ```
 
 ## API

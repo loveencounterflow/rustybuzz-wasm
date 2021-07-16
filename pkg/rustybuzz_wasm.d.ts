@@ -6,6 +6,11 @@
 */
 export function register_font(font_idx: number, font_bytes_hex: string): void;
 /**
+* @param {number} font_idx
+* @returns {boolean}
+*/
+export function font_register_is_free(font_idx: number): boolean;
+/**
 * @param {any} user_cfg
 * @returns {string}
 */

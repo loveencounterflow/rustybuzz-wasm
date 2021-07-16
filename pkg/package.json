@@ -13,7 +13,6 @@
   "files": [
     "rustybuzz_wasm_bg.wasm",
     "rustybuzz_wasm.js",
-    "rustybuzz_wasm_bg.js",
     "rustybuzz_wasm.d.ts"
   ],
   "main": "rustybuzz_wasm.js",

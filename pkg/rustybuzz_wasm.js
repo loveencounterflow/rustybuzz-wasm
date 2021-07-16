@@ -137,6 +137,16 @@ module.exports.register_font = function(font_idx, font_bytes_hex) {
     wasm.register_font(font_idx, ptr0, len0);
 };
 
+/**
+* @param {number} font_idx
+* @returns {boolean}
+*/
+module.exports.font_register_is_free = function(font_idx) {
+    _assertNum(font_idx);
+    var ret = wasm.font_register_is_free(font_idx);
+    return ret !== 0;
+};
+
 let stack_pointer = 32;
 
 function addBorrowedObject(obj) {
@@ -229,6 +239,10 @@ module.exports.find_line_break_positions = function(text) {
     }
 };
 
+module.exports.__wbg_alert_578daaffd4fc24d7 = logError(function(arg0, arg1) {
+    alert(getStringFromWasm0(arg0, arg1));
+});
+
 module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     const obj = getObject(arg1);
     var ret = JSON.stringify(obj === undefined ? null : obj);
@@ -237,10 +251,6 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 1] = len0;
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
-
-module.exports.__wbg_alert_578daaffd4fc24d7 = logError(function(arg0, arg1) {
-    alert(getStringFromWasm0(arg0, arg1));
-});
 
 module.exports.__wbindgen_object_drop_ref = function(arg0) {
     takeObject(arg0);
