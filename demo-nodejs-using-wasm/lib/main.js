@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var CND, FS, INTERTEXT, PATH, RBW, alert, badge, debug, echo, help, info, rpr, to_width, urge, warn, whisper;
+  var CND, FS, INTERTEXT, PATH, RBW, _border, alert, badge, debug, echo, help, info, rpr, to_width, urge, warn, whisper;
 
   //###########################################################################################################
   CND = require('cnd');
@@ -35,9 +35,19 @@
 
   ({to_width} = require('to-width'));
 
+  _border = CND.gold('█████     '.repeat(10));
+
   //-----------------------------------------------------------------------------------------------------------
   this._set_globals = function() {
-    globalThis.alert = alert;
+    var _alert;
+    _alert = alert;
+    globalThis.alert = (...P) => {
+      alert(_border);
+      alert();
+      _alert(CND.reverse(...P));
+      alert();
+      return alert(_border);
+    };
     globalThis.help = help;
     globalThis.urge = urge;
     globalThis.info = info;
@@ -357,7 +367,7 @@ rect {
   //-----------------------------------------------------------------------------------------------------------
   this.demo_typesetting = function() {
     /* TAINT incorrect of course */
-    var batch, batch_idx, chunk, first_textshape, fm, font_idx, fontnick, i, j, k, l, last_line_idx, last_textshape, last_word_idx, lbo_start, lbo_starts, lbo_stop, len, len1, len2, len3, len4, len5, line, line_idx, line_length, line_width, lines, m, me, n, o, p, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, shape, shape_batch, shape_batches, shapes, slab, slab_idx, slabline, slabline_idx, slablines, slabs, text, text_bfr, width, word_idx, words;
+    var batch, batch_idx, chunk, first_textshape, fm, font_idx, fontnick, i, j, l, last_line_idx, last_textshape, last_word_idx, lbo_start, lbo_starts, lbo_stop, len, len1, len2, len3, len4, len5, line, line_idx, line_length, line_width, lines, m, me, n, o, p, q, r, ref, ref1, ref2, ref3, ref4, ref5, ref6, shape, shape_batch, shape_batches, shapes, slab, slab_idx, slabline, slabline_idx, slablines, slabs, text, text_bfr, width, word_idx, words;
     me = this.new_demo();
     whisper('^33443^ demo_typesetting');
     //.........................................................................................................
@@ -451,8 +461,8 @@ lines).
 // urge '^3332^', batch
 //.........................................................................................................
 /* Show shape batches: */
-    for (k = 0, len1 = shape_batches.length; k < len1; k++) {
-      shape_batch = shape_batches[k];
+    for (l = 0, len1 = shape_batches.length; l < len1; l++) {
+      shape_batch = shape_batches[l];
       ({lbo_start, lbo_stop, chunk} = shape_batch);
       help('^3334^ shape_batch:', {
         lbo_start,
@@ -461,16 +471,16 @@ lines).
         shapes: '...'
       });
       ref2 = shape_batch.shapes;
-      for (l = 0, len2 = ref2.length; l < len2; l++) {
-        shape = ref2[l];
+      for (m = 0, len2 = ref2.length; m < len2; m++) {
+        shape = ref2[m];
         info(`  ^3334^ shape: ${rpr(shape)}`);
       }
     }
     //.........................................................................................................
     /* Perform line wrapping: */
     slabs = [];
-    for (m = 0, len3 = shape_batches.length; m < len3; m++) {
-      shape_batch = shape_batches[m];
+    for (n = 0, len3 = shape_batches.length; n < len3; n++) {
+      shape_batch = shape_batches[n];
       ({shapes} = shape_batch);
       first_textshape = shapes[0];
       last_textshape = shapes[shapes.length - 1];
@@ -488,10 +498,10 @@ lines).
     //.........................................................................................................
     /* Show shape batches: */
     // urge "^3334^ slablines:", slablines
-    for (slabline_idx = n = 0, len4 = ref3.length; n < len4; slabline_idx = ++n) {
+    for (slabline_idx = o = 0, len4 = ref3.length; o < len4; slabline_idx = ++o) {
       slabline = ref3[slabline_idx];
       urge(`^3334^ line# ${slabline_idx + 1} slabline: ${rpr(slabline)}`);
-      for (slab_idx = o = ref4 = slabline.first_slab_idx, ref5 = slabline.last_slab_idx; (ref4 <= ref5 ? o < ref5 : o > ref5); slab_idx = ref4 <= ref5 ? ++o : --o) {
+      for (slab_idx = p = ref4 = slabline.first_slab_idx, ref5 = slabline.last_slab_idx; (ref4 <= ref5 ? p < ref5 : p > ref5); slab_idx = ref4 <= ref5 ? ++p : --p) {
         // for shape_idx in
         info(`  ^3334^ slab: ${rpr(slabs[slab_idx])}`);
       }
@@ -514,7 +524,7 @@ lines).
     lines = lines.split('\n');
     last_line_idx = lines.length - 1;
     debug('^449^', lines);
-    for (line_idx = p = 0, len5 = lines.length; p < len5; line_idx = ++p) {
+    for (line_idx = q = 0, len5 = lines.length; q < len5; line_idx = ++q) {
       line = lines[line_idx];
       // debug '^499^', words
       if (line_idx < last_line_idx) {
@@ -528,7 +538,7 @@ lines).
           if (line_length >= line_width) {
             break;
           }
-          for (word_idx = q = 0, ref6 = last_word_idx; (0 <= ref6 ? q < ref6 : q > ref6); word_idx = 0 <= ref6 ? ++q : --q) {
+          for (word_idx = r = 0, ref6 = last_word_idx; (0 <= ref6 ? r < ref6 : r > ref6); word_idx = 0 <= ref6 ? ++r : --r) {
             if (line_length >= line_width) {
               // debug word_idx
               break;
@@ -551,11 +561,20 @@ lines).
   //###########################################################################################################
   if (module === require.main) {
     (() => {
+      var k;
       // @demo_text_shaping()
-      // @demo_svg_typesetting()
+      this.demo_svg_typesetting();
       // @demo_text_wrapping()
       // @demo_text_wrapping_advanced()
       this.demo_typesetting();
+      debug('^36972^', (function() {
+        var results;
+        results = [];
+        for (k in RBW) {
+          results.push(k);
+        }
+        return results;
+      })());
       return null;
     })();
   }
