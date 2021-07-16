@@ -135,7 +135,31 @@ pub fn register_font( font_idx: u16, font_bytes_hex: String ) {
         std::process::exit( 1 ); } } }; }
 
 //----------------------------------------------------------------------------------------------------------
+#[wasm_bindgen]
+pub fn font_register_is_free( font_idx: u16 ) -> bool {
+  unsafe {
+    match font_idx {
+      0  => ( FONTBYTES_0.is_empty() ),
+      1  => ( FONTBYTES_1.is_empty() ),
+      2  => ( FONTBYTES_2.is_empty() ),
+      3  => ( FONTBYTES_3.is_empty() ),
+      4  => ( FONTBYTES_4.is_empty() ),
+      5  => ( FONTBYTES_5.is_empty() ),
+      6  => ( FONTBYTES_6.is_empty() ),
+      7  => ( FONTBYTES_7.is_empty() ),
+      8  => ( FONTBYTES_8.is_empty() ),
+      9  => ( FONTBYTES_9.is_empty() ),
+      10 => ( FONTBYTES_10.is_empty() ),
+      11 => ( FONTBYTES_11.is_empty() ),
+      12 => ( FONTBYTES_12.is_empty() ),
+      13 => ( FONTBYTES_13.is_empty() ),
+      14 => ( FONTBYTES_14.is_empty() ),
+      15 => ( FONTBYTES_15.is_empty() ),
+      16 ..= std::u16::MAX => {
         alert( &format!( "^895433^ font_idx must be between 0 and 15, got {}", font_idx ) );
+        std::process::exit( 1 ); } } } }
+
+//----------------------------------------------------------------------------------------------------------
 pub fn get_fontbytes( font_idx: u16 ) -> &'static Vec<u8> {
   unsafe {
     match font_idx {
