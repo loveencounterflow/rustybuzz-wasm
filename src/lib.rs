@@ -255,7 +255,7 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   //........................................................................................................
   if font_register_is_free( cfg.font_idx ) {
     alert( &format!( "^rustybuzz-wasm/shape_text@39883^ no font registered for font_idx: {}", cfg.font_idx ) );
-    panic!( "no font registered for font_idx: " ); }
+    panic!( "no font registered for font_idx" ); }
   //........................................................................................................
   let mut face = rustybuzz::Face::from_slice( get_fontbytes( cfg.font_idx ), cfg.face_idx).unwrap();
   // ### TAINT use `set_pixels_per_em()`?
