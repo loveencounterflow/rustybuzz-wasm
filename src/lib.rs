@@ -9,6 +9,9 @@ use wasm_bindgen::prelude::*;
 #[macro_use]
 extern crate serde_derive;
 
+//----------------------------------------------------------------------------------------------------------
+/* ### NOTE these methods must be provided as global functions by the calling JS; we're doing this e.g. by
+  setting `globalThis.alert = -> ...` in the accompanying demo. */
 #[wasm_bindgen]
 extern {
   pub fn info(  s: &str );
