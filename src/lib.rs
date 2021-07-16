@@ -180,7 +180,7 @@ pub fn get_fontbytes( font_idx: u16 ) -> &'static Vec<u8> {
       14 => &FONTBYTES_14,
       15 => &FONTBYTES_15,
       16 ..= std::u16::MAX => {
-        alert( &format!( "^895433^ font_idx must be between 0 and 3, got {}", font_idx ) );
+        alert( &format!( "^895433^ font_idx must be between 0 and 15, got {}", font_idx ) );
         std::process::exit( 1 ); } } } }
 
 
