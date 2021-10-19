@@ -566,7 +566,7 @@ lines).
       this.demo_svg_typesetting();
       // @demo_text_wrapping()
       // @demo_text_wrapping_advanced()
-      this.demo_typesetting();
+      // @demo_typesetting()
       debug('^36972^', (function() {
         var results;
         results = [];

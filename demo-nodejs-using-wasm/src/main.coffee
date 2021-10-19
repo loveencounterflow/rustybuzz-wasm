@@ -389,7 +389,7 @@ if module is require.main then do =>
   @demo_svg_typesetting()
   # @demo_text_wrapping()
   # @demo_text_wrapping_advanced()
-  @demo_typesetting()
+  # @demo_typesetting()
   debug '^36972^', ( k for k of RBW )
   return null
 
