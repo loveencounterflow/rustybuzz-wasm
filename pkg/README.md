@@ -1,33 +1,37 @@
 
 
-# WASM for NodeJS Sample Application
+# RustyBuzz-WASM
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Introductory Notes](#introductory-notes)
-- [What it Does](#what-it-does)
-- [Samples](#samples)
-- [What it Is](#what-it-is)
-- [How Does it Compare](#how-does-it-compare)
-- [⚠️ Caveats ⚠️](#-caveats-)
-- [Monospaced Typesetting](#monospaced-typesetting)
-- [Command Lines](#command-lines)
-- [API](#api)
-  - [1.) Persistent State](#1-persistent-state)
-  - [2.) Text Preparation](#2-text-preparation)
-  - [3.) Text Shaping](#3-text-shaping)
-  - [4.) Text Rendering](#4-text-rendering)
-  - [5.) Line Breaking](#5-line-breaking)
-- [From Typing Text to Typeset Text](#from-typing-text-to-typeset-text)
-- [🚧 To Do 🚧](#-to-do-)
-- [Also See](#also-see)
-  - [Rendering](#rendering)
-  - [Text Shaping](#text-shaping)
-  - [Line Breaking / Text Wrapping](#line-breaking--text-wrapping)
+- [RustyBuzz-WASM](#rustybuzz-wasm)
+  - [Introductory Notes](#introductory-notes)
+  - [What it Does](#what-it-does)
+  - [Samples](#samples)
+  - [What it Is](#what-it-is)
+  - [How Does it Compare](#how-does-it-compare)
+  - [⚠️ Caveats ⚠️](#-caveats-)
+  - [Monospaced Typesetting](#monospaced-typesetting)
+  - [Command Lines](#command-lines)
+  - [API](#api)
+    - [1.) Persistent State](#1-persistent-state)
+    - [2.) Text Preparation](#2-text-preparation)
+    - [3.) Text Shaping](#3-text-shaping)
+    - [4.) Text Rendering](#4-text-rendering)
+    - [5.) Line Breaking](#5-line-breaking)
+  - [From Typing Text to Typeset Text](#from-typing-text-to-typeset-text)
+  - [Benchmarks](#benchmarks)
+  - [🚧 To Do 🚧](#-to-do-)
+  - [Also See](#also-see)
+    - [Rendering](#rendering)
+    - [Text Shaping](#text-shaping)
+    - [Line Breaking / Text Wrapping](#line-breaking--text-wrapping)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# RustyBuzz-WASM
 
 ## Introductory Notes
 
@@ -215,13 +219,13 @@ harfbuzz_shaping                  17,153 Hz     7.8 % │█            │
 To build and test in dev (much faster, but also *much* slower)
 
 ```sh
-wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
+wasm-pack build --debug --target nodejs && trash pkg/.gitignore && node demo-nodejs-using-wasm/lib/main.js
 ```
 
 To build and test production:
 
 ```sh
-wasm-pack build --target nodejs && trash pkg/.gitignore && node ~/temp/hello-wasm/demo-nodejs-using-wasm/lib/main.js
+wasm-pack build --target nodejs && trash pkg/.gitignore && node demo-nodejs-using-wasm/lib/main.js
 ```
 
 ## API
@@ -255,6 +259,23 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && node ~/temp/hello-was
 * find line break opportunities (LBOs); these occur, for example, after each space, each hyphen (hard or
   soft), each full stop and so on
 
+## Benchmarks
+
+On my smallish, not new laptop, RustyBuzz-WASM's `shape_text()` method achieves speeds exceeding 280,000
+glyfs (outlines) per second, around twenty times the speed attained by OpenTypeJS:
+
+```
+rustybuzz_wasm_rusty_shaping   286,779 Hz ≙ 1 ÷ 1.0    100.0 % │████████████▌│
+rustybuzz_wasm_short_shaping   254,097 Hz ≙ 1 ÷ 1.1     88.6 % │███████████▏ │
+rustybuzz_wasm_json_shaping    216,043 Hz ≙ 1 ÷ 1.3     75.3 % │█████████▍   │
+opentypejs_shaping              61,997 Hz ≙ 1 ÷ 4.6     21.6 % │██▊          │
+fontkit_shaping                 27,953 Hz ≙ 1 ÷ 10.3     9.7 % │█▎           │
+harfbuzz_shaping                16,221 Hz ≙ 1 ÷ 17.7     5.7 % │▊            │
+```
+
+**Note** that in order to obtain this kind of performance, you absolutely *must* [build for
+production](#command-lines) as development builds will be much, much, much slower. Benchmarks created with
+[`textshaping.benchmarks`](https://github.com/loveencounterflow/hengist/tree/master/dev/glyphshapes-and-typesetting-with-harfbuzz/src).
 
 ## 🚧 To Do 🚧
 
