@@ -1,7 +1,7 @@
 let imports = {};
 imports['__wbindgen_placeholder__'] = module.exports;
 let wasm;
-const { TextEncoder, TextDecoder } = require(String.raw`util`);
+const { TextEncoder, TextDecoder } = require(`util`);
 
 const heap = new Array(32).fill(undefined);
 
@@ -210,7 +210,7 @@ module.exports.find_line_break_positions = function(text) {
     }
 };
 
-module.exports.__wbg_alert_578daaffd4fc24d7 = function(arg0, arg1) {
+module.exports.__wbg_alert_fb3cc7951690c002 = function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
 };
 
