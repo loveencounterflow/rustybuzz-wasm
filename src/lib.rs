@@ -4,6 +4,7 @@
 extern crate serde_json;
 extern crate wasm_bindgen;
 extern crate hex;
+use regex::Regex;
 use wasm_bindgen::prelude::*;
 
 #[macro_use]
@@ -369,13 +370,18 @@ pub fn glyph_to_svg_pathdata( js_font_idx: &JsValue, js_glyph_id: &JsValue ) -> 
   let mut builder   = Builder( &mut path_buf );
   let bbox          = face.outline_glyph( glyph_id, &mut builder );
   for seg in path_buf.iter_mut() { scale_segment( seg, scale ); };
-  let bbox_svg     = rectangle_from_bbox( match bbox {
+  let bbox_svg      = rectangle_from_bbox( match bbox {
     None      => ttf_parser::Rect { x_min: 0, y_min: 0, x_max: 0, y_max: 0, },
     Some( x ) => x, },
     scale );
+  let left_d_right_no_d_re = Regex::new( r"([0-9])\x20([^0-9])" ).unwrap();
+  let left_no_d_right_d_re = Regex::new( r"([^0-9])\x20([0-9])" ).unwrap();
+  let mut path_str  = path_buf.to_string();
+  path_str          = left_d_right_no_d_re.replace_all( &path_str, "$1$2" ).to_string();
+  path_str          = left_no_d_right_d_re.replace_all( &path_str, "$1$2" ).to_string();
   //........................................................................................................
   return json!({
-    "pd": path_buf.to_string(),
+    "pd": path_str,
     "br": bbox_svg,
   }).to_string();
 }

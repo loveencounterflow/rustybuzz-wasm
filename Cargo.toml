@@ -23,6 +23,7 @@ svgtypes = "0.5"
 # xmlwriter = "0.1" ### TAINT really needed?
 textwrap = { version = "0.13", features = [ "smawk", "hyphenation", "unicode-width", ] }
 hyphenation = "0.8"
+regex ="*"
 
 # [dev-dependencies]
 pico-args = "0.3"
