@@ -5,6 +5,9 @@ extern crate serde_json;
 extern crate wasm_bindgen;
 extern crate hex;
 use regex::Regex;
+// use std::io::prelude::*;
+// use flate2::Compression;
+// use flate2::write::ZlibEncoder;
 use wasm_bindgen::prelude::*;
 
 #[macro_use]
@@ -385,6 +388,42 @@ pub fn glyph_to_svg_pathdata( js_font_idx: &JsValue, js_glyph_id: &JsValue ) -> 
     "br": bbox_svg,
   }).to_string();
 }
+
+// #[wasm_bindgen]
+// pub fn glyph_to_svg_pathdata_2( js_font_idx: &JsValue, js_glyph_id: &JsValue ) -> String {
+//   // ### TAINT try to shorten
+//   let font_idx_u16: u16             = js_font_idx.into_serde().unwrap();
+//   let glyph_id_u16: u16             = js_glyph_id.into_serde().unwrap();
+//   let glyph_id: ttf_parser::GlyphId = ttf_parser::GlyphId( glyph_id_u16 );
+//   //........................................................................................................
+//   // ### TAINT use cache for face_idx, face
+//   // ### TAINT almost identical to `rustybuzz::Face`
+//   let face_idx    = 0;
+//   let face          = ttf_parser::Face::from_slice( get_fontbytes( font_idx_u16 ), face_idx).unwrap();
+//   let units_per_em  = match face.units_per_em() { None => FONT_SIZE as u16, Some( x ) => x, };
+//   let scale         = FONT_SIZE / units_per_em as f64;
+//   let mut path_buf  = svgtypes::Path::with_capacity(64);
+//   let mut builder   = Builder( &mut path_buf );
+//   let bbox          = face.outline_glyph( glyph_id, &mut builder );
+//   for seg in path_buf.iter_mut() { scale_segment( seg, scale ); };
+//   let bbox_svg      = rectangle_from_bbox( match bbox {
+//     None      => ttf_parser::Rect { x_min: 0, y_min: 0, x_max: 0, y_max: 0, },
+//     Some( x ) => x, },
+//     scale );
+//   let left_d_right_no_d_re = Regex::new( r"([0-9])\x20([^0-9])" ).unwrap();
+//   let left_no_d_right_d_re = Regex::new( r"([^0-9])\x20([0-9])" ).unwrap();
+//   let mut path_str  = path_buf.to_string();
+//   path_str          = left_d_right_no_d_re.replace_all( &path_str, "$1$2" ).to_string();
+//   path_str          = left_no_d_right_d_re.replace_all( &path_str, "$1$2" ).to_string();
+//   //........................................................................................................
+//   let mut path_bfr  = ZlibEncoder::new( Vec::new(), Compression::default() );
+//   path_bfr.write_all( path_str.as_bytes() );
+//   //........................................................................................................
+//   return json!({
+//     "pd": path_bfr.finish(),
+//     "br": bbox_svg,
+//   }).to_string();
+// }
 
 //----------------------------------------------------------------------------------------------------------
 fn rectangle_from_bbox( bbox: ttf_parser::Rect, scale: f64, ) -> String {
