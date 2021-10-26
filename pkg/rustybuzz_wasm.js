@@ -36,8 +36,6 @@ const encodeString = (typeof cachedTextEncoder.encodeInto === 'function'
 
 function passStringToWasm0(arg, malloc, realloc) {
 
-    if (typeof(arg) !== 'string') throw new Error('expected a string argument');
-
     if (realloc === undefined) {
         const buf = cachedTextEncoder.encode(arg);
         const ptr = malloc(buf.length);
@@ -66,7 +64,7 @@ function passStringToWasm0(arg, malloc, realloc) {
         ptr = realloc(ptr, len, len = offset + arg.length * 3);
         const view = getUint8Memory0().subarray(ptr + offset, ptr + len);
         const ret = encodeString(arg, view);
-        if (ret.read !== arg.length) throw new Error('failed to pass whole string');
+
         offset += ret.written;
     }
 
@@ -103,32 +101,11 @@ cachedTextDecoder.decode();
 function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
-
-function logError(f, args) {
-    try {
-        return f.apply(this, args);
-    } catch (e) {
-        let error = (function () {
-            try {
-                return e instanceof Error ? `${e.message}\n\nStack:\n${e.stack}` : e.toString();
-            } catch(_) {
-                return "<failed to stringify thrown value>";
-            }
-        }());
-        console.error("wasm-bindgen: imported JS function that was not marked as `catch` threw an error:", error);
-        throw e;
-    }
-}
-
-function _assertNum(n) {
-    if (typeof(n) !== 'number') throw new Error('expected a number argument');
-}
 /**
 * @param {number} font_idx
 * @param {string} font_bytes_hex
 */
 module.exports.register_font = function(font_idx, font_bytes_hex) {
-    _assertNum(font_idx);
     var ptr0 = passStringToWasm0(font_bytes_hex, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     var len0 = WASM_VECTOR_LEN;
     wasm.register_font(font_idx, ptr0, len0);
@@ -139,7 +116,6 @@ module.exports.register_font = function(font_idx, font_bytes_hex) {
 * @returns {boolean}
 */
 module.exports.font_register_is_free = function(font_idx) {
-    _assertNum(font_idx);
     var ret = wasm.font_register_is_free(font_idx);
     return ret !== 0;
 };
@@ -194,8 +170,6 @@ function addHeapObject(obj) {
     const idx = heap_next;
     heap_next = heap[idx];
 
-    if (typeof(heap_next) !== 'number') throw new Error('corrupt heap');
-
     heap[idx] = obj;
     return idx;
 }
@@ -236,10 +210,6 @@ module.exports.find_line_break_positions = function(text) {
     }
 };
 
-module.exports.__wbg_alert_fb3cc7951690c002 = function() { return logError(function (arg0, arg1) {
-    alert(getStringFromWasm0(arg0, arg1));
-}, arguments) };
-
 module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     const obj = getObject(arg1);
     var ret = JSON.stringify(obj === undefined ? null : obj);
@@ -249,12 +219,12 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbindgen_object_drop_ref = function(arg0) {
-    takeObject(arg0);
+module.exports.__wbg_alert_fb3cc7951690c002 = function(arg0, arg1) {
+    alert(getStringFromWasm0(arg0, arg1));
 };
 
-module.exports.__wbindgen_throw = function(arg0, arg1) {
-    throw new Error(getStringFromWasm0(arg0, arg1));
+module.exports.__wbindgen_object_drop_ref = function(arg0) {
+    takeObject(arg0);
 };
 
 const path = require('path').join(__dirname, 'rustybuzz_wasm_bg.wasm');
