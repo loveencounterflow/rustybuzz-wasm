@@ -5,9 +5,6 @@ extern crate serde_json;
 extern crate wasm_bindgen;
 extern crate hex;
 use regex::Regex;
-// use std::io::prelude::*;
-// use flate2::Compression;
-// use flate2::write::ZlibEncoder;
 use wasm_bindgen::prelude::*;
 
 #[macro_use]
@@ -41,7 +38,7 @@ use textwrap;
 //----------------------------------------------------------------------------------------------------------
 fn rtodp( a: f32 ) -> String {
   /* "Round To One Decimal Place", returns string with up to one decimal place, using 4/5 rounding. */
-  return format!( "{}", ( a * 10.0 as f32 ).round() / 10.0 ); }
+  return format!( "{}", ( a * 10.0f32 ).round() / 10.0f32 ); }
 
 
 
@@ -208,8 +205,7 @@ pub struct CfgOpt {
     pub text:             Option<String>,
     // pub font_bytes_hex:   Option<String>,
     pub format:           Option<String>,
-    pub font_ptem:        Option<f32>,
-    pub size_mm:          Option<f32>, }
+    pub font_ptem:        Option<f32>, }
 
 #[derive(Debug)]
 pub struct Cfg {
@@ -220,7 +216,6 @@ pub struct Cfg {
     pub face_idx:       u32,
     // pub font_bytes:       Vec<u8>,
     pub font_ptem:        f32,
-    pub size_mm:          f32,
     pub format:           String,
     pub variations:       Vec<rustybuzz::Variation>,
     pub features:         Vec<rustybuzz::Feature>,
@@ -255,7 +250,6 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
     format:         match cfg_opt.format    { None => String::from( "json" ),      Some( x ) => x, },
     font_idx:       match cfg_opt.font_idx  { None => 0,                           Some( x ) => x, },
     font_ptem:      match cfg_opt.font_ptem { None => 1000.0,                      Some( x ) => x, },
-    size_mm:        match cfg_opt.size_mm   { None => 1000.0,                      Some( x ) => x, },
     language:       rustybuzz::Language::from_str( "English" ).unwrap(),
     //......................................................................................................
     // script:         Some( rustybuzz::Script::new() ),
@@ -268,7 +262,6 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
     cluster_level: rustybuzz::BufferClusterLevel::Characters,
     face_idx:   0, };
   //........................................................................................................
-  let scale_factor = cfg.size_mm / cfg.font_ptem;
   // info( &format!( "^3344^ size_mm: {}, scale_factor: {}", cfg.size_mm, scale_factor ) );
   if font_register_is_free( cfg.font_idx ) {
     alert( &format!( "^rustybuzz-wasm/shape_text@39883^ no font registered for font_idx: {}", cfg.font_idx ) );
@@ -276,9 +269,7 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   //........................................................................................................
   let mut face = rustybuzz::Face::from_slice( get_fontbytes( cfg.font_idx ), cfg.face_idx).unwrap();
   // ### TAINT use `set_pixels_per_em()`?
-  // ### scaling here seems to do nothing, so the entire function call may be dispensible:
-  // face.set_points_per_em( Some( cfg.font_ptem * scale_factor ) );
-  // face.set_points_per_em( Some( cfg.font_ptem ) );
+  face.set_points_per_em( Some( cfg.font_ptem ) );
   if !cfg.variations.is_empty() { face.set_variations( &cfg.variations ); }
   let mut buffer = rustybuzz::UnicodeBuffer::new();
   buffer.push_str( &cfg.text );
@@ -293,7 +284,7 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
   // urge( &format!( "^5454^ text: {:#?}", cfg.text ) );
   // urge( &format!( "^5454^ glyph_buffer: {:#?}", glyph_buffer ) );
   //........................................................................................................
-  if cfg.format == "json" { return glyfs_as_json( scale_factor, &glyph_buffer, ); }
+  if cfg.format == "json" { return glyfs_as_json( &glyph_buffer, ); }
   else if cfg.format == "rusty" {
     let format_flags: rustybuzz::SerializeFlags =
       // rustybuzz::SerializeFlags::NO_GLYPH_NAMES |
@@ -307,28 +298,26 @@ pub fn shape_text( user_cfg: &JsValue ) -> String {
 //==========================================================================================================
 //
 //----------------------------------------------------------------------------------------------------------
-pub fn glyfs_as_json( scale_factor: f32, glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {
-  _glyfs_as_json( scale_factor, &glyph_buffer, ).unwrap_or_default() }
+pub fn glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {
+  _glyfs_as_json( &glyph_buffer, ).unwrap_or_default() }
 
 //----------------------------------------------------------------------------------------------------------
-fn _glyfs_as_json( scale_factor: f32, glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, std::fmt::Error> {
+fn _glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, std::fmt::Error> {
   use std::fmt::Write;
   let mut s = String::with_capacity(64);
   let info  = glyph_buffer.glyph_infos();
   let pos   = glyph_buffer.glyph_positions();
-  let mut x = 0.0;
-  let mut y = 0.0;
+  let mut x = 0;
+  let mut y = 0;
   write!(&mut s, "[" )?;
   for (info, pos) in info.iter().zip(pos) {
-    let dx = ( pos.x_advance as f32 ) * scale_factor;
-    let dy = ( pos.y_advance as f32 ) * scale_factor;
     write!(&mut s, "{{" )?;
     write!(&mut s, "\"gid\":{},", info.codepoint)?;
     write!(&mut s, "\"bidx\":{},", info.cluster)?; // bidx: byte index
-    write!(&mut s, "\"x\":{},\"y\":{},",  rtodp(  x ),  rtodp(  y ) )?;
-    write!(&mut s, "\"dx\":{},\"dy\":{}", rtodp( dx ),  rtodp( dy ) )?;
-    x += dx;
-    y += dy;
+    write!(&mut s, "\"x\":{},\"y\":{},", x, y )?;
+    write!(&mut s, "\"dx\":{},\"dy\":{}", pos.x_advance, pos.y_advance )?;
+    x += pos.x_advance;
+    y += pos.y_advance;
     //....................................................................................................
     write!(&mut s, "}}" )?;
     s.push(','); }
@@ -406,41 +395,6 @@ pub fn glyph_to_svg_pathdata( js_font_idx: &JsValue, js_glyph_id: &JsValue ) -> 
   }).to_string();
 }
 
-// #[wasm_bindgen]
-// pub fn glyph_to_svg_pathdata_2( js_font_idx: &JsValue, js_glyph_id: &JsValue ) -> String {
-//   // ### TAINT try to shorten
-//   let font_idx_u16: u16             = js_font_idx.into_serde().unwrap();
-//   let glyph_id_u16: u16             = js_glyph_id.into_serde().unwrap();
-//   let glyph_id: ttf_parser::GlyphId = ttf_parser::GlyphId( glyph_id_u16 );
-//   //........................................................................................................
-//   // ### TAINT use cache for face_idx, face
-//   // ### TAINT almost identical to `rustybuzz::Face`
-//   let face_idx    = 0;
-//   let face          = ttf_parser::Face::from_slice( get_fontbytes( font_idx_u16 ), face_idx).unwrap();
-//   let units_per_em  = match face.units_per_em() { None => FONT_SIZE as u16, Some( x ) => x, };
-//   let scale         = FONT_SIZE / units_per_em as f64;
-//   let mut path_buf  = svgtypes::Path::with_capacity(64);
-//   let mut builder   = Builder( &mut path_buf );
-//   let bbox          = face.outline_glyph( glyph_id, &mut builder );
-//   for seg in path_buf.iter_mut() { scale_segment( seg, scale ); };
-//   let bbox_svg      = rectangle_from_bbox( match bbox {
-//     None      => ttf_parser::Rect { x_min: 0, y_min: 0, x_max: 0, y_max: 0, },
-//     Some( x ) => x, },
-//     scale );
-//   let left_d_right_no_d_re = Regex::new( r"([0-9])\x20([^0-9])" ).unwrap();
-//   let left_no_d_right_d_re = Regex::new( r"([^0-9])\x20([0-9])" ).unwrap();
-//   let mut path_str  = path_buf.to_string();
-//   path_str          = left_d_right_no_d_re.replace_all( &path_str, "$1$2" ).to_string();
-//   path_str          = left_no_d_right_d_re.replace_all( &path_str, "$1$2" ).to_string();
-//   //........................................................................................................
-//   let mut path_bfr  = ZlibEncoder::new( Vec::new(), Compression::default() );
-//   path_bfr.write_all( path_str.as_bytes() );
-//   //........................................................................................................
-//   return json!({
-//     "pd": path_bfr.finish(),
-//     "br": bbox_svg,
-//   }).to_string();
-// }
 
 //----------------------------------------------------------------------------------------------------------
 fn rectangle_from_bbox( bbox: ttf_parser::Rect, scale: f64, ) -> String {
