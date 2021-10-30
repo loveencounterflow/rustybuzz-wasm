@@ -4,7 +4,7 @@
     "Your Name <you@example.com>"
   ],
   "description": "Typesetting from NodeJS with text shaping, line wrapping, SVG text rendering",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "license": "MIT/Apache-2.0",
   "repository": {
     "type": "git",
