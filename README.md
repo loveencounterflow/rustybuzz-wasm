@@ -243,9 +243,9 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && node demo-nodejs-usin
 <!-- * **`pub fn glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {`**— -->
 <!-- * **`pub fn glyfs_as_short( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {`**— -->
 
-  * **NOTE** as a preliminary measure in >=v0.3, `shape_text()` now returns *scaled* coordinates *but only
+  * **NOTE** as a preliminary measure in >=v0.4, `shape_text()` now returns *scaled* coordinates *but only
     for format `JSON`*. Set `size_mm` to the em size in millimeters of the intended output; leave it unset
-    or set `size_mm: 1000` to obtain the same results as with versions before 0.3. Coordinates will have up
+    or set `size_mm: 1000` to obtain the same results as with versions before 0.4. Coordinates will have up
     to one decimal place (tenths of millimeters).
 
 ### 4.) Text Rendering
