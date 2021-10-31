@@ -175,7 +175,7 @@
 
   //-----------------------------------------------------------------------------------------------------------
   this.demo_svg_typesetting = function() {
-    var arrangement, cfg, d, font_idx, fontnick, format, gid, gids, i, len, me, outline, ref, text;
+    var font_idx, fontnick, format, me, text;
     whisper('^33443^ demo_svg_typesetting');
     me = this.new_demo();
     format = 'json'; // 'short', 'rusty'
@@ -193,64 +193,6 @@
     //.........................................................................................................
     font_idx = this.register_font(me, fontnick);
     text = text.replace(/#/g, me.shy);
-    //.........................................................................................................
-    echo(`<?xml version='1.0' encoding='UTF-8'?>
-<svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 10500 1500' version='2'>`);
-    cfg = {format, text};
-    arrangement = JSON.parse(RBW.shape_text(cfg));
-    gids = new Set((function() {
-      var i, len, results;
-      results = [];
-      for (i = 0, len = arrangement.length; i < len; i++) {
-        d = arrangement[i];
-        results.push(d.gid);
-      }
-      return results;
-    })());
-    debug('^3344^', gids);
-    //.........................................................................................................
-    echo(`<style>
-path {
-  stroke:                 transparent;
-  stroke-width:           0mm;
-  fill:                   black;; }
-rect {
-  stroke:                 transparent;
-  stroke-width:           0;
-  fill:                   transparent; }
-  </style>`);
-    // echo """<style>
-    //   path {
-    //     stroke:                 black;
-    //     stroke-width:           8px;
-    //     fill:                   #880000bd;; }
-    //   rect {
-    //     stroke:                 black;
-    //     stroke-width:           3px;
-    //     fill:                   #ffeb3b42; }
-    //     </style>"""
-    //.........................................................................................................
-    echo("<defs>");
-    ref = gids.values();
-    for (gid of ref) {
-      outline = JSON.parse(RBW.glyph_to_svg_pathdata(font_idx, gid));
-      debug('^3344^', gid, outline.pd.slice(0, 101));
-      // continue if outline.pd is ''
-      echo(`<symbol overflow='visible' id='b${gid}'>${outline.br}</symbol>`);
-      echo(`<symbol overflow='visible' id='g${gid}'><path d='${outline.pd}'/></symbol>`);
-    }
-    echo("</defs>");
-//.........................................................................................................
-    for (i = 0, len = arrangement.length; i < len; i++) {
-      d = arrangement[i];
-      echo(`<use href='#g${d.gid}' x='${d.x}' y='${d.y}'/>`);
-      echo(`<use href='#b${d.gid}' x='${d.x}' y='${d.y}'/>`);
-    }
-    // echo "<g x='#{d.x}' y='#{d.y + 1000}'>"
-    // echo "#{outline.br}"
-    // echo "</g>"
-    //.........................................................................................................
-    echo("</svg>");
     //.........................................................................................................
     info('^48596^', rpr(RBW.get_font_metrics(font_idx)));
     return null;

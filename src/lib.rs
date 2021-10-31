@@ -408,6 +408,11 @@ pub fn get_font_metrics( js_font_idx: &JsValue ) -> String {
   let scale         = FONT_SIZE / units_per_em as f64;
   //........................................................................................................
   return json!({
+    // "style": match face.style() { None => 0 as u16, Some( x ) => x, },
+    "ascender":       ( -face.ascender()  as f64 * scale ).round() as i16,
+    "descender":      ( -face.descender() as f64 * scale ).round() as i16,
+    "x_height":       ( -( match face.x_height()       { None => 0 as i16, Some( x ) => x, } ) as f64 * scale ).round() as i16,
+    "capital_height": ( -( match face.capital_height() { None => 0 as i16, Some( x ) => x, } ) as f64 * scale ).round() as i16,
     "units_per_em": units_per_em,
     "scale": scale,
   }).to_string();

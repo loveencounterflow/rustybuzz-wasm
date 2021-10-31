@@ -131,52 +131,6 @@ _border                   = CND.gold ( '█████     '.repeat 10 )
   font_idx  = @register_font me, fontnick
   text      = text.replace /#/g, me.shy
   #.........................................................................................................
-  echo """<?xml version='1.0' encoding='UTF-8'?>
-    <svg xmlns='http://www.w3.org/2000/svg' width='6000' height='3000' viewBox='-100 -1500 10500 1500' version='2'>"""
-  cfg         = { format, text, }
-  arrangement = JSON.parse RBW.shape_text cfg
-  gids        = new Set ( d.gid for d in arrangement )
-  debug '^3344^', gids
-  #.........................................................................................................
-  echo """<style>
-    path {
-      stroke:                 transparent;
-      stroke-width:           0mm;
-      fill:                   black;; }
-    rect {
-      stroke:                 transparent;
-      stroke-width:           0;
-      fill:                   transparent; }
-      </style>"""
-  # echo """<style>
-  #   path {
-  #     stroke:                 black;
-  #     stroke-width:           8px;
-  #     fill:                   #880000bd;; }
-  #   rect {
-  #     stroke:                 black;
-  #     stroke-width:           3px;
-  #     fill:                   #ffeb3b42; }
-  #     </style>"""
-  #.........................................................................................................
-  echo "<defs>"
-  for gid from gids.values()
-    outline = JSON.parse RBW.glyph_to_svg_pathdata font_idx, gid
-    debug '^3344^', gid, outline.pd[ .. 100 ]
-    # continue if outline.pd is ''
-    echo "<symbol overflow='visible' id='b#{gid}'>#{outline.br}</symbol>"
-    echo "<symbol overflow='visible' id='g#{gid}'><path d='#{outline.pd}'/></symbol>"
-  echo "</defs>"
-  #.........................................................................................................
-  for d in arrangement
-    echo "<use href='#g#{d.gid}' x='#{d.x}' y='#{d.y}'/>"
-    echo "<use href='#b#{d.gid}' x='#{d.x}' y='#{d.y}'/>"
-    # echo "<g x='#{d.x}' y='#{d.y + 1000}'>"
-    # echo "#{outline.br}"
-    # echo "</g>"
-  #.........................................................................................................
-  echo "</svg>"
-  #.........................................................................................................
   info '^48596^', rpr RBW.get_font_metrics font_idx
   return null
 
