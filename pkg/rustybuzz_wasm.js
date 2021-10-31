@@ -165,6 +165,24 @@ module.exports.glyph_to_svg_pathdata = function(js_font_idx, js_glyph_id) {
     }
 };
 
+/**
+* @param {any} js_font_idx
+* @returns {string}
+*/
+module.exports.get_font_metrics = function(js_font_idx) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.get_font_metrics(retptr, addBorrowedObject(js_font_idx));
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        heap[stack_pointer++] = undefined;
+        wasm.__wbindgen_free(r0, r1);
+    }
+};
+
 function addHeapObject(obj) {
     if (heap_next === heap.length) heap.push(heap.length + 1);
     const idx = heap_next;
@@ -219,7 +237,7 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_alert_fb3cc7951690c002 = function(arg0, arg1) {
+module.exports.__wbg_alert_1e7eee2944df4f4c = function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
 };
 

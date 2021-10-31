@@ -22,6 +22,11 @@ export function shape_text(user_cfg: any): string;
 */
 export function glyph_to_svg_pathdata(js_font_idx: any, js_glyph_id: any): string;
 /**
+* @param {any} js_font_idx
+* @returns {string}
+*/
+export function get_font_metrics(js_font_idx: any): string;
+/**
 * @param {any} slabs_js
 * @param {any} line_width_js
 * @returns {string}
