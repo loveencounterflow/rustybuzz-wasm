@@ -243,7 +243,6 @@ wasm-pack build --target nodejs && trash pkg/.gitignore && node demo-nodejs-usin
 <!-- * **`pub fn glyfs_as_json( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {`**— -->
 <!-- * **`pub fn glyfs_as_short( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> String {`**— -->
 
-
 ### 4.) Text Rendering
 
 * **`pub fn glyph_to_svg_pathdata( js_glyph_id: &JsValue ) -> String {`**—

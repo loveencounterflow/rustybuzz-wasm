@@ -119,6 +119,9 @@
         },
         notoserif: {
           path: 'NotoSerifJP/NotoSerifJP-Medium.otf'
+        },
+        djvsi: {
+          path: 'DejaVuSerif-Italic.ttf'
         }
       },
       /* TAINT disregarding font, size for the moment */
@@ -185,6 +188,8 @@
     text = "a certain minimum";
     fontnick = 'garamond_italic';
     text = "af#fix";
+    fontnick = 'djvsi';
+    text = "af#fix";
     //.........................................................................................................
     font_idx = this.register_font(me, fontnick);
     text = text.replace(/#/g, me.shy);
@@ -246,6 +251,8 @@ rect {
     // echo "</g>"
     //.........................................................................................................
     echo("</svg>");
+    //.........................................................................................................
+    info('^48596^', rpr(RBW.get_font_metrics(font_idx)));
     return null;
   };
 
@@ -564,6 +571,7 @@ lines).
       var k;
       // @demo_text_shaping()
       this.demo_svg_typesetting();
+      // @demo_get_font_metrics()
       // @demo_text_wrapping()
       // @demo_text_wrapping_advanced()
       // @demo_typesetting()
