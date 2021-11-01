@@ -314,8 +314,8 @@ fn _glyfs_as_json( scale: f64, glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Resul
     let dx = ( pos.x_advance as f64 ) * scale;
     let dy = ( pos.y_advance as f64 ) * scale;
     write!(&mut s, "{{" )?;
-    write!(&mut s, "\"gid\":{},", info.codepoint)?;
-    // write!(&mut s, "\"bidx\":{},", info.cluster)?; // bidx: byte index
+    write!(&mut s, "\"gid\":{},", info.codepoint  )?;
+    write!(&mut s, "\"b\":{},",   info.cluster    )?; // *b*yte index
     write!(&mut s, "\"x\":{},\"y\":{},",  rtodp( x  ), rtodp( y  ) )?;
     write!(&mut s, "\"dx\":{},\"dy\":{}", rtodp( dx ), rtodp( dy ) )?;
     x += dx;
