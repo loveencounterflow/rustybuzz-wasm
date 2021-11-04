@@ -237,7 +237,7 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_alert_2d02a66141416a43 = function(arg0, arg1) {
+module.exports.__wbg_alert_fe0e9daeb7638401 = function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
 };
 
