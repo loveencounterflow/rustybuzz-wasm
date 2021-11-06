@@ -415,6 +415,7 @@ pub fn get_font_metrics( js_font_idx: &JsValue ) -> String {
     "capital_height": ( -( match face.capital_height() { None => 0 as i16, Some( x ) => x, } ) as f64 * scale ).round() as i16,
     "units_per_em": units_per_em,
     "scale": scale,
+    "angle":          (    match face.italic_angle()   { None => 0 as f32, Some( x ) => x, } ) as f32 * scale as f32,
   }).to_string();
 }
 
