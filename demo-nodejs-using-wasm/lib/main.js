@@ -431,6 +431,7 @@ lines).
     for (n = 0, len3 = shape_batches.length; n < len3; n++) {
       shape_batch = shape_batches[n];
       ({shapes} = shape_batch);
+      debug('^9800484^', shapes);
       first_textshape = shapes[0];
       last_textshape = shapes[shapes.length - 1];
       width = (last_textshape.x + last_textshape.dx) - first_textshape.x;
@@ -512,11 +513,11 @@ lines).
     (() => {
       var k;
       // @demo_text_shaping()
-      this.demo_svg_typesetting();
+      // @demo_svg_typesetting()
       // @demo_get_font_metrics()
       // @demo_text_wrapping()
       // @demo_text_wrapping_advanced()
-      // @demo_typesetting()
+      this.demo_typesetting();
       debug('^36972^', (function() {
         var results;
         results = [];

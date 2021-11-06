@@ -286,6 +286,7 @@ _border                   = CND.gold ( '█████     '.repeat 10 )
   slabs = []
   for shape_batch in shape_batches
     { shapes  } = shape_batch
+    debug '^9800484^', shapes
     first_textshape = shapes[ 0 ]
     last_textshape  = shapes[ shapes.length - 1 ]
     width           = ( last_textshape.x + last_textshape.dx ) - first_textshape.x
@@ -344,11 +345,11 @@ _border                   = CND.gold ( '█████     '.repeat 10 )
 ############################################################################################################
 if module is require.main then do =>
   # @demo_text_shaping()
-  @demo_svg_typesetting()
+  # @demo_svg_typesetting()
   # @demo_get_font_metrics()
   # @demo_text_wrapping()
   # @demo_text_wrapping_advanced()
-  # @demo_typesetting()
+  @demo_typesetting()
   debug '^36972^', ( k for k of RBW )
   return null
 
