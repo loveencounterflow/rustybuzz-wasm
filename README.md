@@ -341,4 +341,4 @@ production](#command-lines) as development builds will be much, much, much slowe
   * Updating syn v1.0.80 -> v1.0.81
   * Updating ttf-parser v0.9.0 -> v0.12.3
   * Updating unicode-general-category v0.2.0 -> v0.4.0
-
+* **[+]** implement `ad.nobr` attribute to signal where breaking glyfs is unsafe
