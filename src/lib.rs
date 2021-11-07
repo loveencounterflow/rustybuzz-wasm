@@ -311,11 +311,13 @@ fn _glyfs_as_json( scale: f64, glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Resul
   let mut y: f64  = 0.0;
   write!(&mut s, "[" )?;
   for (info, pos) in info.iter().zip(pos) {
-    let dx = ( pos.x_advance as f64 ) * scale;
-    let dy = ( pos.y_advance as f64 ) * scale;
+    let dx    = ( pos.x_advance as f64 ) * scale;
+    let dy    = ( pos.y_advance as f64 ) * scale;
+    let nobr  = info.unsafe_to_break(); // see https://docs.rs/rustybuzz/0.4.0/rustybuzz/struct.GlyphInfo.html#method.unsafe_to_break
     write!(&mut s, "{{" )?;
-    write!(&mut s, "\"gid\":{},", info.glyph_id  )?;
-    write!(&mut s, "\"b\":{},",   info.cluster    )?; // *b*yte index
+    write!(&mut s, "\"gid\":{},",   info.glyph_id           )?;
+    write!(&mut s, "\"b\":{},",     info.cluster            )?; // *b*yte index
+    if nobr { write!(&mut s, "\"nobr\":true," )?; };
     write!(&mut s, "\"x\":{},\"y\":{},",  rtodp( x  ), rtodp( y  ) )?;
     write!(&mut s, "\"dx\":{},\"dy\":{}", rtodp( dx ), rtodp( dy ) )?;
     x += dx;

@@ -1,6 +1,6 @@
 [package]
 name = "rustybuzz-wasm"
-version = "4.3.0"
+version = "4.4.0"
 authors = ["Your Name <you@example.com>"]
 description = "Typesetting from NodeJS with text shaping, line wrapping, SVG text rendering"
 license = "MIT/Apache-2.0"
