@@ -1,6 +1,6 @@
 [package]
 name = "rustybuzz-wasm"
-version = "3.3.0"
+version = "4.3.0"
 authors = ["Your Name <you@example.com>"]
 description = "Typesetting from NodeJS with text shaping, line wrapping, SVG text rendering"
 license = "MIT/Apache-2.0"
@@ -17,7 +17,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.32"
 serde_derive = "1.0.80"
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
-rustybuzz = "0.3"
+rustybuzz = "0.4"
 ttf-parser = "0.11"
 svgtypes = "0.5"
 # xmlwriter = "0.1" ### TAINT really needed?

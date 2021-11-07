@@ -28,6 +28,7 @@
     - [Rendering](#rendering)
     - [Text Shaping](#text-shaping)
     - [Line Breaking / Text Wrapping](#line-breaking--text-wrapping)
+  - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -328,4 +329,16 @@ production](#command-lines) as development builds will be much, much, much slowe
 * [kas-text](https://github.com/kas-gui/kas-text) looks enticing but is a huge thing geared towards building
   GUI apps. 🛑 It uses the original HarfBuzz C libraries so I rather not touch this thing as C dependencies
   will always be cans of worms.
+
+## To Do
+
+* **[+]** update dependencies (3.3.0 -> 4.3.0):
+  * Updating libc v0.2.104 -> v0.2.107
+  * Updating proc-macro2 v1.0.30 -> v1.0.32
+  * Updating rustybuzz v0.3.0 -> v0.4.0
+  * Updating rustybuzz-wasm v3.3.0 (/home/flow/jzr/rustybuzz-wasm) -> v4.3.0
+  * Updating serde_json v1.0.68 -> v1.0.69
+  * Updating syn v1.0.80 -> v1.0.81
+  * Updating ttf-parser v0.9.0 -> v0.12.3
+  * Updating unicode-general-category v0.2.0 -> v0.4.0
 

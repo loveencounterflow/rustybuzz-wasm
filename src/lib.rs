@@ -314,7 +314,7 @@ fn _glyfs_as_json( scale: f64, glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Resul
     let dx = ( pos.x_advance as f64 ) * scale;
     let dy = ( pos.y_advance as f64 ) * scale;
     write!(&mut s, "{{" )?;
-    write!(&mut s, "\"gid\":{},", info.codepoint  )?;
+    write!(&mut s, "\"gid\":{},", info.glyph_id  )?;
     write!(&mut s, "\"b\":{},",   info.cluster    )?; // *b*yte index
     write!(&mut s, "\"x\":{},\"y\":{},",  rtodp( x  ), rtodp( y  ) )?;
     write!(&mut s, "\"dx\":{},\"dy\":{}", rtodp( dx ), rtodp( dy ) )?;
@@ -345,7 +345,7 @@ fn _glyfs_as_short( glyph_buffer: &rustybuzz::GlyphBuffer, ) -> Result<String, s
   let mut y = 0;
   write!(&mut s, "|" )?;
   for (info, pos) in info.iter().zip(pos) {
-    write!(&mut s, "{}:", info.codepoint)?;
+    write!(&mut s, "{}:", info.glyph_id)?;
     write!(&mut s, "{},{};", x, y )?;
     write!(&mut s, "{},{}", pos.x_advance, pos.y_advance )?;
     x += pos.x_advance;
