@@ -608,16 +608,6 @@ pub fn wrap_text_with_arbitrary_slabs( slabs_js: JsValue, line_width_js: JsValue
   return json!( r ).to_string(); }
 
 
-//==========================================================================================================
-// HYPHENATION
-//----------------------------------------------------------------------------------------------------------
-// use hyphenation::{Language, Load, Standard};
-// let text = "textwrap: a small library for wrapping text.";
-// let dictionary  = Standard::from_embedded( Language::EnglishUS ).unwrap();
-// let options     = textwrap::Options::new( width ).splitter( dictionary );
-// return format!( "{}", fill( &text, &options ) );
-// return format!( "{:#?}", textwrap::wrap( &text, &options ) );
-
 
 /*
 ############################################################################################################
@@ -637,17 +627,6 @@ LINE BREAKING
 ############################################################################################################
 */
 
-// #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
-// pub struct Lbo {
-//   pub p:         usize,
-//   pub k:         char, }
-
-// // //----------------------------------------------------------------------------------------------------------
-// // impl std::ops::Deref for Lbo {
-// //   k Target = usize;
-// //   fn deref(&self) -> &Self::Target { &self.width } }
-
-
 //----------------------------------------------------------------------------------------------------------
 #[wasm_bindgen]
 pub fn find_line_break_positions( text: String ) -> String {
@@ -657,4 +636,109 @@ pub fn find_line_break_positions( text: String ) -> String {
   return json!( r ).to_string(); }
 
 
+/*
+############################################################################################################
+
+888b    888  .d8888b.  8888888b.
+8888b   888 d88P  Y88b 888   Y88b
+88888b  888 888    888 888    888
+888Y88b 888 888        888   d88P .d8888b
+888 Y88b888 888        8888888P"  88K
+888  Y88888 888    888 888 T88b   "Y8888b.
+888   Y8888 Y88b  d88P 888  T88b       X88
+888    Y888  "Y8888P"  888   T88b  88888P'
+
+NCRs
+############################################################################################################
+*/
+
+//----------------------------------------------------------------------------------------------------------
+#[wasm_bindgen]
+pub fn decode_ncrs( text: String ) -> String {
+  // decode_html_entities                        Decode html entities in a given string.
+  // decode_script                               Decode text from the <script> element.
+  // decode_script_double_quoted_text            Decode text from a double quoted text in the <script> element.
+  // decode_script_quoted_text                   Decode text from a quoted text in the <script> element.
+  // decode_script_single_quoted_text            Decode text from a single quoted text in the <script> element.
+  // decode_style                                Decode text from the <style> element.
+  // decode_style_double_quoted_text             Decode text from a double quoted text in the <style> element.
+  // decode_style_quoted_text                    Decode text from a quoted text in the <style> element.
+  // decode_style_single_quoted_text             Decode text from a single quoted text in the <style> element.
+  // encode_double_quoted_attribute              Encode text used in a double-quoted attribute.
+  // encode_quoted_attribute                     Encode text used in a quoted attribute.
+  // encode_safe                                 Encode text to prevent special characters functioning.
+  // encode_script                               Encode text used in the <script> element.
+  // encode_script_double_quoted_text            Encode text used in a double quoted text in the <script> element.
+  // encode_script_quoted_text                   Encode text used in a quoted text in the <script> element.
+  // encode_script_single_quoted_text            Encode text used in a single quoted text in the <script> element.
+  // encode_single_quoted_attribute              Encode text used in a single-quoted attribute.
+  // encode_style                                Encode text used in the <style> element.
+  // encode_style_double_quoted_text             Encode text used in a double quoted text in the <style> element.
+  // encode_style_quoted_text                    Encode text used in a quoted text in the <style> element.
+  // encode_style_single_quoted_text             Encode text used in a single quoted text in the <style> element.
+  // encode_text                                 Encode text used as regular HTML text.
+  // encode_text_minimal                         Encode text used as regular HTML text.
+  // encode_unquoted_attribute                   Encode text used in an unquoted attribute. Except for alphanumeric characters, escape all characters which are less than 128.
+  use html_escape;
+  return html_escape::decode_html_entities( &text ).to_string(); }
+
+
+
+/*
+############################################################################################################
+
+888    888                   888                                 888   d8b
+888    888                   888                                 888   Y8P
+888    888                   888                                 888
+8888888888 888  888 88888b.  88888b.   .d88b.  88888b.   8888b.  888888888  .d88b.  88888b.
+888    888 888  888 888 "88b 888 "88b d8P  Y8b 888 "88b     "88b 888   888 d88""88b 888 "88b
+888    888 888  888 888  888 888  888 88888888 888  888 .d888888 888   888 888  888 888  888
+888    888 Y88b 888 888 d88P 888  888 Y8b.     888  888 888  888 Y88b. 888 Y88..88P 888  888
+888    888  "Y88888 88888P"  888  888  "Y8888  888  888 "Y888888  "Y888888  "Y88P"  888  888
+                888 888
+           Y8b d88P 888
+            "Y88P"  888
+
+Hyphenation
+############################################################################################################
+*/
+
+// Sadly none of the below works although code has been copy-pasted from
+// https://docs.rs/hyphenation/0.8.4/hyphenation/
+// https://lib.rs/crates/hyphenation
+
+// //----------------------------------------------------------------------------------------------------------
+// #[wasm_bindgen]
+// pub fn hyphenate( text: String ) -> String {
+//   // use hyphenation::*;
+//   // let en_us       = hyphenation::Standard::from_embedded( Language::EnglishUS );
+//   // let hyphenated  = en_us.hyphenate( &text );
+//   // let unmarked    = hyphenated.iter().segments();
+//   // let collected : Vec<&str> = unmarked.collect();
+
+//   extern crate hyphenation;
+//   use hyphenation::*;
+//   // use hyphenation::{Hyphenator, Standard, Language};
+//   // use hyphenation::Load;
+
+//   let path_to_dict = "target/debug/build//hyphenation-95b4852037d9f505/out/dictionaries/en-us.standard.bincode";
+//   let en_us = Standard::from_path(Language::EnglishUS, path_to_dict);
+//   let hyphenated  = en_us.hyphenate( &text );
+//   let unmarked    = hyphenated.into_iter().segments();
+//   let collected : Vec<&str> = unmarked.collect();
+
+//   // // Word breaks are represented as byte indices into the string.
+//   // let break_indices = &hyphenated.breaks;
+//   // assert_eq!(break_indices, &[2, 6, 7]);
+
+//   // // The segments of a hyphenated word can be iterated over, marked or unmarked.
+//   // let marked = hyphenated.iter();
+//   // let collected : Vec<String> = marked.collect();
+//   // assert_eq!(collected, vec!["hy-", "phen-", "a-", "tion"]);
+
+//   // let unmarked = hyphenated.iter().segments();
+//   // let collected : Vec<&str> = unmarked.collect();
+//   // assert_eq!(collected, vec!["hy", "phen", "a", "tion"]);
+
+//   return json!( collected ).to_string(); }
 

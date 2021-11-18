@@ -228,6 +228,25 @@ module.exports.find_line_break_positions = function(text) {
     }
 };
 
+/**
+* @param {string} text
+* @returns {string}
+*/
+module.exports.decode_ncrs = function(text) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        var ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.decode_ncrs(retptr, ptr0, len0);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        wasm.__wbindgen_free(r0, r1);
+    }
+};
+
 module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     const obj = getObject(arg1);
     var ret = JSON.stringify(obj === undefined ? null : obj);
@@ -237,7 +256,7 @@ module.exports.__wbindgen_json_serialize = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
 
-module.exports.__wbg_alert_8b1a490f96d00e7d = function(arg0, arg1) {
+module.exports.__wbg_alert_633c15ede0cb44a7 = function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
 };
 

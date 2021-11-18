@@ -37,3 +37,8 @@ export function wrap_text_with_arbitrary_slabs(slabs_js: any, line_width_js: any
 * @returns {string}
 */
 export function find_line_break_positions(text: string): string;
+/**
+* @param {string} text
+* @returns {string}
+*/
+export function decode_ncrs(text: string): string;
