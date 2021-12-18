@@ -342,3 +342,6 @@ production](#command-lines) as development builds will be much, much, much slowe
   * Updating ttf-parser v0.9.0 -> v0.12.3
   * Updating unicode-general-category v0.2.0 -> v0.4.0
 * **[+]** implement `ad.nobr` attribute to signal where breaking glyfs is unsafe
+* **[+]** set `ads.br: 'end'` to avoid spurious line break, loss of rest-of-line
+* **[+]** fix endless loop, spurious repeated hyphens in distribution
+* **[+]** recover myteriously missing first glyf on line after break in sample `missing-t-b42`
